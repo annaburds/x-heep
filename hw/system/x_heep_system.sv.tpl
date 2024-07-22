@@ -5,6 +5,7 @@
 module x_heep_system
   import obi_pkg::*;
   import reg_pkg::*;
+  import serial_link_pkg::*;
 #(
     parameter COREV_PULP = 0,
     parameter FPU = 0,
@@ -17,6 +18,23 @@ module x_heep_system
     parameter NEXT_INT_RND = core_v_mini_mcu_pkg::NEXT_INT == 0 ? 1 : core_v_mini_mcu_pkg::NEXT_INT
 
 ) (
+    % for peripheral in peripherals.items():
+    % if peripheral[0] in ("obi2axi"):
+    % if peripheral[1]['is_included'] in ("yes"):
+
+    input  logic [NumChannels-1:0]                ddr_rcv_clk_i,
+    output logic [NumChannels-1:0]                ddr_rcv_clk_o,
+    input  logic [NumChannels-1:0][NumLanes-1:0]  ddr_i,
+    output logic [NumChannels-1:0][NumLanes-1:0]  ddr_o,
+    input  logic                                  fast_clock,
+
+    % endif
+    % endif
+    % endfor
+
+
+    output logic result,
+
     input logic [NEXT_INT_RND-1:0] intr_vector_ext_i,
 
     input  obi_req_t  [EXT_XBAR_NMASTER_RND-1:0] ext_xbar_master_req_i,
@@ -159,7 +177,12 @@ ${pad.core_v_mini_mcu_bonding}
     .external_subsystem_clkgate_en_no,
     .exit_value_o,
     .ext_dma_slot_tx_i,
-    .ext_dma_slot_rx_i
+    .ext_dma_slot_rx_i,
+    .ddr_i,
+    .ddr_rcv_clk_i,
+    .ddr_o,
+    .ddr_rcv_clk_o,
+    .fast_clock
   );
 
   pad_ring pad_ring_i (
@@ -208,5 +231,25 @@ ${pad_mux_process}
     .init_no()
   );
 
+// needed to synthesise all the physical channels in vivado 
+// or is assigned to one of the pins 
+logic temp_or;
 
+    // OR operation over the elements of array2 and array
+    always_comb begin
+        temp_or = 0;
+        for (int j = 0; j < NumChannels; j++) begin
+            temp_or = temp_or | ddr_rcv_clk_i[j];
+            temp_or = temp_or | ddr_rcv_clk_o[j];
+        end
+        for (int i = 0; i < NumChannels; i++) begin
+            for (int j = 0; j < NumLanes; j++) begin
+                temp_or = temp_or | ddr_i[i][j];
+                temp_or = temp_or | ddr_o[i][j];
+            end
+        end
+    end
+
+    // Assign the final result
+    assign result = temp_or;
 endmodule  // x_heep_system

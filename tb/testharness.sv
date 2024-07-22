@@ -15,8 +15,9 @@ module testharness #(
     parameter USE_EXTERNAL_DEVICE_EXAMPLE = 1,
     parameter CLK_FREQUENCY               = 'd100_000  //KHz
 ) (
-    inout wire clk_i,
-    inout wire rst_ni,
+    inout wire  clk_i,
+    input logic fast_clock,
+    inout wire  rst_ni,
 
     inout wire boot_select_i,
     inout wire execute_from_flash_i,
@@ -136,6 +137,11 @@ module testharness #(
   logic [EXT_DOMAINS_RND-1:0] external_ram_banks_set_retentive_n;
   logic [EXT_DOMAINS_RND-1:0] external_subsystem_clkgate_en_n;
 
+  import serial_link_pkg::*;
+  logic [NumChannels-1:0][NumLanes-1:0] ddr_i_xheep;  // check NumLanes parameter 
+  logic [NumChannels-1:0][NumLanes-1:0] ddr_o_xheep;
+  logic [NumChannels-1:0]               clk_sl_int2ext;
+  logic [NumChannels-1:0]               clk_sl_ext2int;
   // eXtension Interface
   if_xif #(
       .X_NUM_RS(fpu_ss_pkg::X_NUM_RS),
@@ -214,7 +220,6 @@ module testharness #(
       .gpio_14_io(gpio[14]),
       .gpio_15_io(gpio[15]),
       .gpio_16_io(gpio[16]),
-      .gpio_17_io(gpio[17]),
       .spi_flash_sck_io(spi_flash_sck),
       .spi_flash_cs_0_io(spi_flash_csb[0]),
       .spi_flash_cs_1_io(spi_flash_csb[1]),
@@ -275,7 +280,13 @@ module testharness #(
       .external_subsystem_clkgate_en_no(external_subsystem_clkgate_en_n),
       .ext_dma_slot_tx_i(ext_dma_slot_tx),
       .ext_dma_slot_rx_i(ext_dma_slot_rx),
-      .ext_dma_stop_i('0)
+      .ext_dma_stop_i('0),
+      .ddr_i(ddr_i_xheep),
+      .ddr_o(ddr_o_xheep),
+      .ddr_rcv_clk_i(clk_sl_ext2int),
+      .ddr_rcv_clk_o(clk_sl_int2ext),
+      .fast_clock,
+      .result()
   );
 
   // Testbench external bus
@@ -579,6 +590,178 @@ module testharness #(
           .i2s_ws_i(gpio[21]),
           .i2s_sd_o(gpio[22])
       );
+
+      //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      obi_req_t sl_obi2axi_req;
+      assign sl_obi2axi_req = ext_master_req[testharness_pkg::EXT_MASTER4_IDX];//ext_master_req[testharness_pkg::EXT_MASTER4_IDX];
+      obi_resp_t sl_obi2axi_resp;
+      assign ext_master_resp[testharness_pkg::EXT_MASTER4_IDX] = sl_obi2axi_resp ;//ext_master_resp[testharness_pkg::EXT_MASTER4_IDX];
+      obi_req_t sl_axi2obi_req;
+      assign sl_axi2obi_req =ext_slave_req[testharness_pkg::SL_EXT_IDX];// ext_master_req[testharness_pkg::SL_EXT_IDX];
+      obi_resp_t sl_axi2obi_resp;
+      assign ext_slave_resp[testharness_pkg::SL_EXT_IDX]=sl_axi2obi_resp ;// ext_master_resp[testharness_pkg::SL_EXT_IDX];
+      core_v_mini_mcu_pkg::axi_req_t axi_in_req_i, axi_out_req_o;
+      core_v_mini_mcu_pkg::axi_resp_t axi_in_rsp_o, axi_out_rsp_i;
+
+      reg_req_t cfg_req_ext;
+      assign cfg_req_ext = ext_periph_slv_req[testharness_pkg::SL_REG_IDX];
+      reg_rsp_t cfg_rsp_ext;
+      assign ext_periph_slv_rsp[testharness_pkg::SL_REG_IDX] = cfg_rsp_ext;
+
+      core2axi #(
+      ) obi2axi_bridge_virtual_obi_i (
+          .clk_i,
+          .rst_ni,
+
+          .data_req_i(sl_obi2axi_req.req),
+          .data_gnt_o(sl_obi2axi_resp.gnt),
+          .data_rvalid_o(sl_obi2axi_resp.rvalid),
+          .data_addr_i(sl_obi2axi_req.addr),
+          .data_we_i(sl_obi2axi_req.we),
+          .data_be_i(sl_obi2axi_req.be),
+          .data_rdata_o(sl_obi2axi_resp.rdata),
+          .data_wdata_i(sl_obi2axi_req.wdata),
+
+          .aw_id_o(axi_out_req_o.aw.id),
+          .aw_addr_o(axi_out_req_o.aw.addr),
+          .aw_len_o(axi_out_req_o.aw.len),
+          .aw_size_o(axi_out_req_o.aw.size),
+          .aw_burst_o(axi_out_req_o.aw.burst),
+          .aw_lock_o(axi_out_req_o.aw.lock),
+          .aw_cache_o(axi_out_req_o.aw.cache),
+          .aw_prot_o(axi_out_req_o.aw.prot),
+          .aw_region_o(axi_out_req_o.aw.region),
+          .aw_user_o(axi_out_req_o.aw.user),
+          .aw_qos_o(axi_out_req_o.aw.qos),
+          .aw_valid_o(axi_out_req_o.aw_valid),
+          .aw_ready_i(axi_out_rsp_i.aw_ready),
+
+          .w_data_o (axi_out_req_o.w.data),
+          .w_strb_o (axi_out_req_o.w.strb),
+          .w_last_o (axi_out_req_o.w.last),
+          .w_user_o (axi_out_req_o.w.user),
+          .w_valid_o(axi_out_req_o.w_valid),
+          .w_ready_i(axi_out_rsp_i.w_ready),
+
+          .b_id_i(axi_out_rsp_i.b.id),
+          .b_resp_i(axi_out_rsp_i.b.resp),
+          .b_valid_i(axi_out_rsp_i.b_valid),
+          .b_user_i(axi_out_rsp_i.b.user),
+          .b_ready_o(axi_out_req_o.b_ready),
+
+          .ar_id_o(axi_out_req_o.ar.id),
+          .ar_addr_o(axi_out_req_o.ar.addr),
+          .ar_len_o(axi_out_req_o.ar.len),
+          .ar_size_o(axi_out_req_o.ar.size),
+          .ar_burst_o(axi_out_req_o.ar.burst),
+          .ar_lock_o(axi_out_req_o.ar.lock),
+          .ar_cache_o(axi_out_req_o.ar.cache),
+          .ar_prot_o(axi_out_req_o.ar.prot),
+          .ar_region_o(axi_out_req_o.ar.region),
+          .ar_user_o(axi_out_req_o.ar.user),
+          .ar_qos_o(axi_out_req_o.ar.qos),
+          .ar_valid_o(axi_out_req_o.ar_valid),
+          .ar_ready_i(axi_out_rsp_i.ar_ready),
+
+          .r_id_i(axi_out_rsp_i.r.id),
+          .r_data_i(axi_out_rsp_i.r.data),
+          .r_resp_i(axi_out_rsp_i.r.resp),
+          .r_last_i(axi_out_rsp_i.r.last),
+          .r_user_i(axi_out_rsp_i.r.user),  
+          .r_valid_i(axi_out_rsp_i.r_valid),
+          .r_ready_o(axi_out_req_o.r_ready)
+      );
+
+
+
+
+      axi2obi #(
+      ) axi2obi_bridge_virtual_r_obi_i (
+
+          .gnt_i('1),
+
+          .data_req_i(sl_axi2obi_req.req),
+          .data_gnt_o(sl_axi2obi_resp.gnt),
+          .data_rvalid_o(sl_axi2obi_resp.rvalid),
+          .data_addr_i(sl_axi2obi_req.addr),
+          .data_we_i(sl_axi2obi_req.we),
+          .data_be_i(sl_axi2obi_req.be),
+          .data_rdata_o(sl_axi2obi_resp.rdata),
+          .data_wdata_i(sl_axi2obi_req.wdata),
+
+
+          .s00_axi_aclk(clk_i),
+          .s00_axi_aresetn(rst_ni),
+
+          .s00_axi_araddr (axi_in_req_i.ar.addr),
+          .s00_axi_arvalid(axi_in_req_i.ar_valid),
+          .s00_axi_arready(axi_in_rsp_o.ar_ready),
+          .s00_axi_arprot (axi_in_req_i.ar.prot),
+
+          .s00_axi_rdata (axi_in_rsp_o.r.data),
+          .s00_axi_rresp (axi_in_rsp_o.r.resp),
+          .s00_axi_rvalid(axi_in_rsp_o.r_valid),
+          .s00_axi_rready(axi_in_req_i.r_ready),
+
+          .s00_axi_awaddr (axi_in_req_i.aw.addr),
+          .s00_axi_awvalid(axi_in_req_i.aw_valid),
+          .s00_axi_awready(axi_in_rsp_o.aw_ready),
+          .s00_axi_awprot (axi_in_req_i.aw.prot),
+
+          .s00_axi_wdata (axi_in_req_i.w.data),
+          .s00_axi_wvalid(axi_in_req_i.w_valid),
+          .s00_axi_wready(axi_in_rsp_o.w_ready),
+          .s00_axi_wstrb (axi_in_req_i.w.strb),
+
+          .s00_axi_bresp (axi_in_rsp_o.b.resp),
+          .s00_axi_bvalid(axi_in_rsp_o.b_valid),
+          .s00_axi_bready(axi_in_req_i.b_ready)
+      );
+
+
+
+      // SERIAL LINK
+      serial_link_occamy_wrapper #(
+          .axi_req_t(core_v_mini_mcu_pkg::axi_req_t),
+          .axi_rsp_t(core_v_mini_mcu_pkg::axi_resp_t),
+
+          .aw_chan_t(core_v_mini_mcu_pkg::axi_aw_t),
+          .ar_chan_t(core_v_mini_mcu_pkg::axi_ar_t),
+          .r_chan_t (core_v_mini_mcu_pkg::axi_r_t),
+          .w_chan_t (core_v_mini_mcu_pkg::axi_w_t),
+          .b_chan_t (core_v_mini_mcu_pkg::axi_b_t),
+          .cfg_rsp_t(reg_rsp_t),
+          .cfg_req_t(reg_req_t)
+      ) serial_link_occamy_wrapper_i (
+          .clk_i     (clk_i),
+          .fast_clock,
+          .rst_ni    (rst_ni),
+          .clk_reg_i (clk_i),   //intended for clock gating purposes
+          .rst_reg_ni(rst_ni),  //intended for SW reset purposes
+
+          .testmode_i  ('0),
+          .axi_in_req_i(axi_out_req_o),
+          .axi_in_rsp_o(axi_out_rsp_i),
+
+
+          .axi_out_req_o(axi_in_req_i),
+          .axi_out_rsp_i(axi_in_rsp_o),
+
+          .cfg_req_i(cfg_req_ext),  //register configuration
+          .cfg_rsp_o(cfg_rsp_ext),
+
+
+          .ddr_i(ddr_o_xheep),  //Double-Data-Rate (DDR) input data
+          .ddr_rcv_clk_i(clk_sl_int2ext),
+          .ddr_rcv_clk_o(clk_sl_ext2int),
+          .ddr_o(ddr_i_xheep)  //Double-Data-Rate (DDR) output data
+      );
+
+
+
+
+
+
 
 `ifndef VERILATOR
       // Flash used for booting (execute from flash or copy from flash)

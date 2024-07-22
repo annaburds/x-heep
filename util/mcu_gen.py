@@ -527,6 +527,10 @@ def main():
     stack_size  = string2int(obj['linker_script']['stack_size'])
     heap_size  = string2int(obj['linker_script']['heap_size'])
 
+    axi_sl_slave_start_address  = string2int(obj['axi_sl_slave']['address'])
+    axi_sl_slave_size_address  = string2int(obj['axi_sl_slave']['length'])
+
+
 
     if ((int(stack_size,16) + int(heap_size,16)) > xheep.ram_size_address()):
         exit("The stack and heap section must fit in the RAM size, instead they takes " + str(stack_size + heap_size))
@@ -836,6 +840,8 @@ def main():
         "ext_slave_size_address"           : ext_slave_size_address,
         "flash_mem_start_address"          : flash_mem_start_address,
         "flash_mem_size_address"           : flash_mem_size_address,
+        "axi_sl_slave_start_address"       : axi_sl_slave_start_address,
+        "axi_sl_slave_size_address"        : axi_sl_slave_size_address,
         "stack_size"                       : stack_size,
         "heap_size"                        : heap_size,
         "plic_used_n_interrupts"           : plic_used_n_interrupts,
