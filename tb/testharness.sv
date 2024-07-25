@@ -608,8 +608,7 @@ module testharness #(
       reg_rsp_t cfg_rsp_ext;
       assign ext_periph_slv_rsp[testharness_pkg::SL_REG_IDX] = cfg_rsp_ext;
 
-      core2axi #(
-      ) obi2axi_bridge_virtual_obi_i (
+      core2axi #() obi2axi_bridge_virtual_obi_i (
           .clk_i,
           .rst_ni,
 
@@ -667,7 +666,7 @@ module testharness #(
           .r_data_i(axi_out_rsp_i.r.data),
           .r_resp_i(axi_out_rsp_i.r.resp),
           .r_last_i(axi_out_rsp_i.r.last),
-          .r_user_i(axi_out_rsp_i.r.user),  
+          .r_user_i(axi_out_rsp_i.r.user),
           .r_valid_i(axi_out_rsp_i.r_valid),
           .r_ready_o(axi_out_req_o.r_ready)
       );
@@ -675,8 +674,7 @@ module testharness #(
 
 
 
-      axi2obi #(
-      ) axi2obi_bridge_virtual_r_obi_i (
+      axi2obi #() axi2obi_bridge_virtual_r_obi_i (
 
           .gnt_i('1),
 
@@ -721,7 +719,7 @@ module testharness #(
 
 
       // SERIAL LINK
-      serial_link_occamy_wrapper #(
+      serial_link_xheep_wrapper #(
           .axi_req_t(core_v_mini_mcu_pkg::axi_req_t),
           .axi_rsp_t(core_v_mini_mcu_pkg::axi_resp_t),
 
@@ -732,7 +730,7 @@ module testharness #(
           .b_chan_t (core_v_mini_mcu_pkg::axi_b_t),
           .cfg_rsp_t(reg_rsp_t),
           .cfg_req_t(reg_req_t)
-      ) serial_link_occamy_wrapper_i (
+      ) serial_link_xheep_wrapper_i (
           .clk_i     (clk_i),
           .fast_clock,
           .rst_ni    (rst_ni),

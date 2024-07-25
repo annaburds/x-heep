@@ -35,7 +35,8 @@ package testharness_pkg;
           idx: SLOW_MEMORY_IDX,
           start_addr: SLOW_MEMORY_START_ADDRESS,
           end_addr: SLOW_MEMORY_END_ADDRESS
-      }
+      },
+      '{idx: SL_EXT_IDX, start_addr: SL_EXT_START_ADDRESS, end_addr: SL_EXT_END_ADDRESS}
   };
 
   //slave encoder
@@ -82,7 +83,7 @@ package testharness_pkg;
           start_addr: SIMPLE_ACC_START_ADDRESS,
           end_addr: SIMPLE_ACC_END_ADDRESS
       },
-      '{idx: SL_REG_IDX, start_addr: SL_REG_START_ADDRESS, end_addr: SL_REG_END_ADDRESS}      
+      '{idx: SL_REG_IDX, start_addr: SL_REG_START_ADDRESS, end_addr: SL_REG_END_ADDRESS}
   };
 
   localparam int unsigned EXT_PERIPHERALS_PORT_SEL_WIDTH = EXT_NPERIPHERALS > 1 ? $clog2(

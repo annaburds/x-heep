@@ -25,25 +25,11 @@ import serial_link_pkg::*;
   parameter type cfg_rsp_t  = logic,
   parameter type hw2reg_t  = logic,
   parameter type reg2hw_t  = logic,
-  parameter AXI4_ADDRESS_WIDTH = 32,
-  parameter AXI4_RDATA_WIDTH   = 32,
-  parameter AXI4_WDATA_WIDTH   = 32,
-  parameter AXI4_ID_WIDTH      = 16,
-  parameter AXI4_USER_WIDTH    = 10,
-
-
-
-
   parameter int NumChannels = serial_link_pkg::NumChannels,
   parameter int NumLanes = serial_link_pkg::NumLanes,
   parameter int MaxClkDiv = serial_link_pkg::MaxClkDiv,
   parameter bit NoRegCdc = 1'b0,
   localparam int Log2NumChannels = (NumChannels > 1)? $clog2(NumChannels) : 1
-
-
-
-
-  
 ) (
   // There are 3 different clock/resets:
   // 1) clk_i & rst_ni: "always-on" clock & reset coming from the SoC domain. Only config registers are conected to this clock
@@ -75,16 +61,18 @@ import serial_link_pkg::*;
   output logic                      clk_ena_o,
   // synch-reset register
   output logic                      reset_no
-
-
-
-
-
 );
 
   import serial_link_pkg::*;
 
-  localparam int MaxAxiChannelBits = 83;//manually computed!!! Badly designed? - yes
+  // Determine the largest sized AXI channel
+  localparam int AxiChannels[5] = {$bits(b_chan_t),
+                          $bits(aw_chan_t),
+                          $bits(w_chan_t),
+                          $bits(ar_chan_t),
+                          $bits(r_chan_t)};
+  localparam int MaxAxiChannelBits =
+  serial_link_pkg::find_max_channel(AxiChannels);
 
   // The payload that is converted into an AXI stream consists of
   // 1) AXI Beat
@@ -105,12 +93,6 @@ import serial_link_pkg::*;
 
   // Axi stream dimension must be a multiple of 8 bits
   localparam int StreamDataBytes = ($bits(payload_t) + 7) / 8;
-  localparam int CheckBitsVerilogFunction_Payload = $bits(payload_t);
-  localparam int CheckBitsVerilogFunction_B = $bits(b_chan_t);
-  localparam int CheckBitsVerilogFunction_AW = $bits(aw_chan_t); //83
-  localparam int CheckBitsVerilogFunction_W = $bits(w_chan_t);
-  localparam int CheckBitsVerilogFunction_AR = $bits(ar_chan_t); //77
-  localparam int CheckBitsVerilogFunction_R = $bits(r_chan_t);
 
   // Typdefs for Axi Stream interface
   // All except tdata_t are unused at the moment

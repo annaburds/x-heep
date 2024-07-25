@@ -149,7 +149,7 @@ module ao_peripheral_subsystem
   assign ext_peripheral_slave_req_o = ao_peripheral_slv_req[core_v_mini_mcu_pkg::EXT_PERIPHERAL_IDX];
   assign ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::EXT_PERIPHERAL_IDX] = ext_peripheral_slave_resp_i;
 
-    // CFG SERIAL LINK
+  // CFG SERIAL LINK
   assign cfg_req_sl = ao_peripheral_slv_req[core_v_mini_mcu_pkg::SERIAL_LINK_IDX];
   assign ao_peripheral_slv_rsp[core_v_mini_mcu_pkg::SERIAL_LINK_IDX] = cfg_rsp_sl;
 

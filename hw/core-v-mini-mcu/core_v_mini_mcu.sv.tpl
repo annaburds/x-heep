@@ -94,13 +94,6 @@ ${pad.core_v_mini_mcu_interface}
     input  logic [NumChannels-1:0][NumLanes-1:0] ddr_i,
     output logic [NumChannels-1:0][NumLanes-1:0] ddr_o,
 
-    //input  logic                    fast_clock,
-
-
-    //input  logic [NumLanes-1:0]     ddr_i,
-    //input  logic [NumChannels-1:0]  ddr_rcv_clk_i,
-    //output logic [NumLanes-1:0]     ddr_o,
-    //output logic [NumChannels-1:0]  ddr_rcv_clk_o,
     input  logic                    fast_clock
      
     //  output obi_req_t obi_req_obi2axi,
@@ -695,7 +688,7 @@ ${pad.core_v_mini_mcu_interface}
     .s00_axi_bready(axi_in_req_i.b_ready)
   );
 
-  serial_link_occamy_wrapper #(
+  serial_link_xheep_wrapper #(
     .axi_req_t(core_v_mini_mcu_pkg::axi_req_t),
     .axi_rsp_t(core_v_mini_mcu_pkg::axi_resp_t),
 
@@ -708,7 +701,7 @@ ${pad.core_v_mini_mcu_interface}
     .cfg_req_t(reg_req_t)
     //.NumChannels(1),
     //.NumLanes(1)
-  ) serial_link_occamy_wrapper_i (
+  ) serial_link_xheep_wrapper_i (
     .clk_i(clk_i),
     .fast_clock,
     .rst_ni(rst_ni),
