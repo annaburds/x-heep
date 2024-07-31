@@ -46,4 +46,6 @@ lint_off -rule DECLFILENAME -file "*/src/regs/serial_link_reg_top.sv" -match "*"
 lint_off -rule SELRANGE -file "*/src/serial_link.sv" -match "*"
 lint_off -rule WIDTH -file "*/src/serial_link_channel_allocator.sv" -match "*"
 lint_off -rule LITENDIAN -file "*/src/serial_link_data_link.sv" -match "*"
-lint_off -rule WIDTH -file "*/src/channel_allocator/serial_link_channel_allocator.sv" -match "*" 
+lint_off -rule WIDTH -file "*/src/channel_allocator/serial_link_channel_allocator.sv" -match "*"
+lint_off -rule WIDTH -file "*/src/serial_link_xheep_wrapper.sv" -match "*"
+lint_off -rule UNDRIVEN -file "*/src/serial_link_xheep_wrapper.sv" -match "*" // eeedee

@@ -18,9 +18,6 @@ module x_heep_system
     parameter NEXT_INT_RND = core_v_mini_mcu_pkg::NEXT_INT == 0 ? 1 : core_v_mini_mcu_pkg::NEXT_INT
 
 ) (
-    % for peripheral in peripherals.items():
-    % if peripheral[0] in ("obi2axi"):
-    % if peripheral[1]['is_included'] in ("yes"):
 
     input  logic [NumChannels-1:0]                ddr_rcv_clk_i,
     output logic [NumChannels-1:0]                ddr_rcv_clk_o,
@@ -28,9 +25,6 @@ module x_heep_system
     output logic [NumChannels-1:0][NumLanes-1:0]  ddr_o,
     input  logic                                  fast_clock,
 
-    % endif
-    % endif
-    % endfor
 
 
     output logic result,

@@ -608,113 +608,7 @@ module testharness #(
       reg_rsp_t cfg_rsp_ext;
       assign ext_periph_slv_rsp[testharness_pkg::SL_REG_IDX] = cfg_rsp_ext;
 
-      core2axi #() obi2axi_bridge_virtual_obi_i (
-          .clk_i,
-          .rst_ni,
 
-          .data_req_i(sl_obi2axi_req.req),
-          .data_gnt_o(sl_obi2axi_resp.gnt),
-          .data_rvalid_o(sl_obi2axi_resp.rvalid),
-          .data_addr_i(sl_obi2axi_req.addr),
-          .data_we_i(sl_obi2axi_req.we),
-          .data_be_i(sl_obi2axi_req.be),
-          .data_rdata_o(sl_obi2axi_resp.rdata),
-          .data_wdata_i(sl_obi2axi_req.wdata),
-
-          .aw_id_o(axi_out_req_o.aw.id),
-          .aw_addr_o(axi_out_req_o.aw.addr),
-          .aw_len_o(axi_out_req_o.aw.len),
-          .aw_size_o(axi_out_req_o.aw.size),
-          .aw_burst_o(axi_out_req_o.aw.burst),
-          .aw_lock_o(axi_out_req_o.aw.lock),
-          .aw_cache_o(axi_out_req_o.aw.cache),
-          .aw_prot_o(axi_out_req_o.aw.prot),
-          .aw_region_o(axi_out_req_o.aw.region),
-          .aw_user_o(axi_out_req_o.aw.user),
-          .aw_qos_o(axi_out_req_o.aw.qos),
-          .aw_valid_o(axi_out_req_o.aw_valid),
-          .aw_ready_i(axi_out_rsp_i.aw_ready),
-
-          .w_data_o (axi_out_req_o.w.data),
-          .w_strb_o (axi_out_req_o.w.strb),
-          .w_last_o (axi_out_req_o.w.last),
-          .w_user_o (axi_out_req_o.w.user),
-          .w_valid_o(axi_out_req_o.w_valid),
-          .w_ready_i(axi_out_rsp_i.w_ready),
-
-          .b_id_i(axi_out_rsp_i.b.id),
-          .b_resp_i(axi_out_rsp_i.b.resp),
-          .b_valid_i(axi_out_rsp_i.b_valid),
-          .b_user_i(axi_out_rsp_i.b.user),
-          .b_ready_o(axi_out_req_o.b_ready),
-
-          .ar_id_o(axi_out_req_o.ar.id),
-          .ar_addr_o(axi_out_req_o.ar.addr),
-          .ar_len_o(axi_out_req_o.ar.len),
-          .ar_size_o(axi_out_req_o.ar.size),
-          .ar_burst_o(axi_out_req_o.ar.burst),
-          .ar_lock_o(axi_out_req_o.ar.lock),
-          .ar_cache_o(axi_out_req_o.ar.cache),
-          .ar_prot_o(axi_out_req_o.ar.prot),
-          .ar_region_o(axi_out_req_o.ar.region),
-          .ar_user_o(axi_out_req_o.ar.user),
-          .ar_qos_o(axi_out_req_o.ar.qos),
-          .ar_valid_o(axi_out_req_o.ar_valid),
-          .ar_ready_i(axi_out_rsp_i.ar_ready),
-
-          .r_id_i(axi_out_rsp_i.r.id),
-          .r_data_i(axi_out_rsp_i.r.data),
-          .r_resp_i(axi_out_rsp_i.r.resp),
-          .r_last_i(axi_out_rsp_i.r.last),
-          .r_user_i(axi_out_rsp_i.r.user),
-          .r_valid_i(axi_out_rsp_i.r_valid),
-          .r_ready_o(axi_out_req_o.r_ready)
-      );
-
-
-
-
-      axi2obi #() axi2obi_bridge_virtual_r_obi_i (
-
-          .gnt_i('1),
-
-          .data_req_i(sl_axi2obi_req.req),
-          .data_gnt_o(sl_axi2obi_resp.gnt),
-          .data_rvalid_o(sl_axi2obi_resp.rvalid),
-          .data_addr_i(sl_axi2obi_req.addr),
-          .data_we_i(sl_axi2obi_req.we),
-          .data_be_i(sl_axi2obi_req.be),
-          .data_rdata_o(sl_axi2obi_resp.rdata),
-          .data_wdata_i(sl_axi2obi_req.wdata),
-
-
-          .s00_axi_aclk(clk_i),
-          .s00_axi_aresetn(rst_ni),
-
-          .s00_axi_araddr (axi_in_req_i.ar.addr),
-          .s00_axi_arvalid(axi_in_req_i.ar_valid),
-          .s00_axi_arready(axi_in_rsp_o.ar_ready),
-          .s00_axi_arprot (axi_in_req_i.ar.prot),
-
-          .s00_axi_rdata (axi_in_rsp_o.r.data),
-          .s00_axi_rresp (axi_in_rsp_o.r.resp),
-          .s00_axi_rvalid(axi_in_rsp_o.r_valid),
-          .s00_axi_rready(axi_in_req_i.r_ready),
-
-          .s00_axi_awaddr (axi_in_req_i.aw.addr),
-          .s00_axi_awvalid(axi_in_req_i.aw_valid),
-          .s00_axi_awready(axi_in_rsp_o.aw_ready),
-          .s00_axi_awprot (axi_in_req_i.aw.prot),
-
-          .s00_axi_wdata (axi_in_req_i.w.data),
-          .s00_axi_wvalid(axi_in_req_i.w_valid),
-          .s00_axi_wready(axi_in_rsp_o.w_ready),
-          .s00_axi_wstrb (axi_in_req_i.w.strb),
-
-          .s00_axi_bresp (axi_in_rsp_o.b.resp),
-          .s00_axi_bvalid(axi_in_rsp_o.b_valid),
-          .s00_axi_bready(axi_in_req_i.b_ready)
-      );
 
 
 
@@ -723,13 +617,15 @@ module testharness #(
           .axi_req_t(core_v_mini_mcu_pkg::axi_req_t),
           .axi_rsp_t(core_v_mini_mcu_pkg::axi_resp_t),
 
-          .aw_chan_t(core_v_mini_mcu_pkg::axi_aw_t),
-          .ar_chan_t(core_v_mini_mcu_pkg::axi_ar_t),
-          .r_chan_t (core_v_mini_mcu_pkg::axi_r_t),
-          .w_chan_t (core_v_mini_mcu_pkg::axi_w_t),
-          .b_chan_t (core_v_mini_mcu_pkg::axi_b_t),
-          .cfg_rsp_t(reg_rsp_t),
-          .cfg_req_t(reg_req_t)
+          .aw_chan_t (core_v_mini_mcu_pkg::axi_aw_t),
+          .ar_chan_t (core_v_mini_mcu_pkg::axi_ar_t),
+          .r_chan_t  (core_v_mini_mcu_pkg::axi_r_t),
+          .w_chan_t  (core_v_mini_mcu_pkg::axi_w_t),
+          .b_chan_t  (core_v_mini_mcu_pkg::axi_b_t),
+          .cfg_rsp_t (reg_rsp_t),
+          .cfg_req_t (reg_req_t),
+          .obi_req_t (obi_req_t),
+          .obi_resp_t(obi_resp_t)
       ) serial_link_xheep_wrapper_i (
           .clk_i     (clk_i),
           .fast_clock,
@@ -737,13 +633,26 @@ module testharness #(
           .clk_reg_i (clk_i),   //intended for clock gating purposes
           .rst_reg_ni(rst_ni),  //intended for SW reset purposes
 
-          .testmode_i  ('0),
-          .axi_in_req_i(axi_out_req_o),
-          .axi_in_rsp_o(axi_out_rsp_i),
+          .testmode_i('0),
+          //.axi_in_req_i(axi_out_req_o),
+          //.axi_in_rsp_o(axi_out_rsp_i),
+          //.axi_out_req_o(axi_in_req_i),
+          //.axi_out_rsp_i(axi_in_rsp_o),
 
 
-          .axi_out_req_o(axi_in_req_i),
-          .axi_out_rsp_i(axi_in_rsp_o),
+          //.obi_req_i(sl_obi2axi_req),
+          //.obi_rsp_i(sl_obi2axi_resp),
+          //
+          //.obi_req_o(sl_axi2obi_req),  //axi_in_req_i
+          //.obi_rsp_o(sl_axi2obi_resp),
+
+          .obi_req_o(sl_obi2axi_req),
+          .obi_rsp_o(sl_obi2axi_resp),
+
+          .obi_req_i(sl_axi2obi_req),  //axi_in_req_i
+          .obi_rsp_i(sl_axi2obi_resp),
+
+
 
           .cfg_req_i(cfg_req_ext),  //register configuration
           .cfg_rsp_o(cfg_rsp_ext),
