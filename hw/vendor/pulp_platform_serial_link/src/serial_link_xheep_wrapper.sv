@@ -52,13 +52,150 @@ module serial_link_xheep_wrapper
   cfg_rsp_t                  fast_cfg_rsp_o;
 
   
+//    core2axi #(
+//        //.AXI4_WDATA_WIDTH(AXI_DATA_WIDTH),
+//        //.AXI4_RDATA_WIDTH(AXI_DATA_WIDTH)
+//      ) obi2axi_bridge_virtual_obi_i (
+//        .clk_i,
+//        .rst_ni,
+//        .data_req_i(obi_req_i.req),
+//        .data_gnt_o(obi_rsp_i.gnt),
+//        .data_rvalid_o(obi_rsp_i.rvalid),
+//        .data_addr_i(obi_req_i.addr),
+//        .data_we_i(obi_req_i.we),
+//        .data_be_i(obi_req_i.be),
+//        .data_rdata_o(obi_rsp_i.rdata),
+//        .data_wdata_i(obi_req_i.wdata),
+//    
+//        .aw_id_o(axi_in_req_i.aw.id),
+//        .aw_addr_o(axi_in_req_i.aw.addr),
+//        .aw_len_o(axi_in_req_i.aw.len),
+//        .aw_size_o(axi_in_req_i.aw.size),
+//        .aw_burst_o(axi_in_req_i.aw.burst),
+//        .aw_lock_o(axi_in_req_i.aw.lock),
+//        .aw_cache_o(axi_in_req_i.aw.cache),
+//        .aw_prot_o(axi_in_req_i.aw.prot),
+//        .aw_region_o(axi_in_req_i.aw.region),
+//        .aw_user_o(axi_in_req_i.aw.user),
+//        .aw_qos_o(axi_in_req_i.aw.qos),
+//        .aw_valid_o(axi_in_req_i.aw_valid),
+//        .aw_ready_i(axi_in_rsp_o.aw_ready),
+//    
+//        .w_data_o(axi_in_req_i.w.data),
+//        .w_strb_o(axi_in_req_i.w.strb),
+//        .w_last_o(axi_in_req_i.w.last),
+//        .w_user_o(axi_in_req_i.w.user),
+//        .w_valid_o(axi_in_req_i.w_valid),
+//        .w_ready_i(axi_in_rsp_o.w_ready),
+//    
+//        .b_id_i(axi_in_rsp_o.b.id),
+//        .b_resp_i(axi_in_rsp_o.b.resp),
+//        .b_valid_i(axi_in_rsp_o.b_valid),
+//        .b_user_i(axi_in_rsp_o.b.user),
+//        .b_ready_o(axi_in_req_i.b_ready),
+//    
+//        .ar_id_o(axi_in_req_i.ar.id),
+//        .ar_addr_o(axi_in_req_i.ar.addr),
+//        .ar_len_o(axi_in_req_i.ar.len),
+//        .ar_size_o(axi_in_req_i.ar.size),
+//        .ar_burst_o(axi_in_req_i.ar.burst),
+//        .ar_lock_o(axi_in_req_i.ar.lock),
+//        .ar_cache_o(axi_in_req_i.ar.cache),
+//        .ar_prot_o(axi_in_req_i.ar.prot),
+//        .ar_region_o(axi_in_req_i.ar.region),
+//        .ar_user_o(axi_in_req_i.ar.user),
+//        .ar_qos_o(axi_in_req_i.ar.qos),
+//        .ar_valid_o(axi_in_req_i.ar_valid),
+//        .ar_ready_i(axi_in_rsp_o.ar_ready),
+//    
+//        .r_id_i(axi_in_rsp_o.r.id),
+//        .r_data_i(axi_in_rsp_o.r.data),
+//        .r_resp_i(axi_in_rsp_o.r.resp),
+//        .r_last_i(axi_in_rsp_o.r.last),
+//        .r_user_i(axi_in_rsp_o.r.user), 
+//        .r_valid_i('1),
+//        .r_ready_o(axi_in_req_i.r_ready)
+//      );
 
-core2axi #(
-    //.AXI4_WDATA_WIDTH(AXI_DATA_WIDTH),
-    //.AXI4_RDATA_WIDTH(AXI_DATA_WIDTH)
-  ) obi2axi_bridge_virtual_obi_i (
-    .clk_i,
-    .rst_ni,
+per2axi #(
+) i_per2axi
+(
+       .clk_i,
+       .rst_ni,
+       .test_en_i('0),
+
+       .per_slave_req_i(obi_req_i.req),
+       .per_slave_add_i(obi_req_i.addr),
+       .per_slave_we_i(obi_req_i.we),
+       .per_slave_wdata_i(obi_req_i.wdata),
+       .per_slave_be_i(obi_req_i.be),
+       .per_slave_id_i('0),
+       .per_slave_gnt_o(obi_rsp_i.gnt),
+       .per_slave_r_valid_o(obi_rsp_i.rvalid),
+       .per_slave_r_opc_o('0),
+       .per_slave_r_id_o('0),
+       .per_slave_r_rdata_o(obi_rsp_i.rdata),
+
+       .axi_master_aw_valid_o(axi_in_req_i.aw_valid),
+       .axi_master_aw_addr_o(axi_in_req_i.aw.addr),
+       .axi_master_aw_prot_o(axi_in_req_i.aw.prot),
+       .axi_master_aw_region_o(axi_in_req_i.aw.region),
+       .axi_master_aw_len_o(axi_in_req_i.aw.len),
+       .axi_master_aw_size_o(axi_in_req_i.aw.size),
+       .axi_master_aw_burst_o(axi_in_req_i.aw.burst),
+       .axi_master_aw_lock_o(axi_in_req_i.aw.lock),
+       .axi_master_aw_cache_o(axi_in_req_i.aw.cache),
+       .axi_master_aw_qos_o(axi_in_req_i.aw.qos),
+       .axi_master_aw_id_o(axi_in_req_i.aw.id),
+       .axi_master_aw_user_o(axi_in_req_i.aw.user),
+       .axi_master_aw_ready_i(axi_in_rsp_o.aw_ready),
+
+       .axi_master_ar_valid_o(axi_in_req_i.ar_valid),
+       .axi_master_ar_addr_o(axi_in_req_i.ar.addr),
+       .axi_master_ar_prot_o(axi_in_req_i.ar.prot),
+       .axi_master_ar_region_o(axi_in_req_i.ar.region),
+       .axi_master_ar_len_o(axi_in_req_i.ar.len),
+       .axi_master_ar_size_o(axi_in_req_i.ar.size),
+       .axi_master_ar_burst_o(axi_in_req_i.ar.burst),
+       .axi_master_ar_lock_o(axi_in_req_i.ar.lock),
+       .axi_master_ar_cache_o(axi_in_req_i.ar.cache),
+       .axi_master_ar_qos_o(axi_in_req_i.ar.qos),
+       .axi_master_ar_id_o(axi_in_req_i.ar.id),
+       .axi_master_ar_user_o(axi_in_req_i.ar.user),
+       .axi_master_ar_ready_i(axi_in_rsp_o.ar_ready),
+
+       .axi_master_w_data_o(axi_in_req_i.w.data),
+       .axi_master_w_strb_o(axi_in_req_i.w.strb),
+       .axi_master_w_last_o(axi_in_req_i.w.last),
+       .axi_master_w_user_o(axi_in_req_i.w.user),
+       .axi_master_w_valid_o(axi_in_req_i.w_valid),
+       .axi_master_w_ready_i(axi_in_rsp_o.w_ready),
+
+
+       .axi_master_r_id_i(axi_in_rsp_o.r.id),
+       .axi_master_r_data_i(axi_in_rsp_o.r.data),
+       .axi_master_r_resp_i(axi_in_rsp_o.r.resp),
+       .axi_master_r_last_i(axi_in_rsp_o.r.last),
+       .axi_master_r_user_i(axi_in_rsp_o.r.user), 
+       .axi_master_r_valid_i('1),
+
+       .axi_master_r_ready_o(axi_in_req_i.r_ready),
+       .axi_master_b_id_i(axi_in_rsp_o.b.id),
+       .axi_master_b_resp_i(axi_in_rsp_o.b.resp),
+       .axi_master_b_valid_i(axi_in_rsp_o.b_valid),
+       .axi_master_b_user_i(axi_in_rsp_o.b.user),
+       .axi_master_b_ready_o(axi_in_req_i.b_ready),
+
+       .busy_o('0)
+   );
+
+
+  axi2obi #(
+    //.C_S00_AXI_DATA_WIDTH(AXI_DATA_WIDTH),
+    //.C_S00_AXI_ADDR_WIDTH(AXI_ADDR_WIDTH)
+  ) axi2obi_bridge_virtual_r_obi_i (
+    .gnt_i('1),
+
     .data_req_i(obi_req_i.req),
     .data_gnt_o(obi_rsp_i.gnt),
     .data_rvalid_o(obi_rsp_i.rvalid),
@@ -68,82 +205,14 @@ core2axi #(
     .data_rdata_o(obi_rsp_i.rdata),
     .data_wdata_i(obi_req_i.wdata),
 
-    .aw_id_o(axi_in_req_i.aw.id),
-    .aw_addr_o(axi_in_req_i.aw.addr),
-    .aw_len_o(axi_in_req_i.aw.len),
-    .aw_size_o(axi_in_req_i.aw.size),
-    .aw_burst_o(axi_in_req_i.aw.burst),
-    .aw_lock_o(axi_in_req_i.aw.lock),
-    .aw_cache_o(axi_in_req_i.aw.cache),
-    .aw_prot_o(axi_in_req_i.aw.prot),
-    .aw_region_o(axi_in_req_i.aw.region),
-    .aw_user_o(axi_in_req_i.aw.user),
-    .aw_qos_o(axi_in_req_i.aw.qos),
-    .aw_valid_o(axi_in_req_i.aw_valid),
-    .aw_ready_i(axi_in_rsp_o.aw_ready),
-
-    .w_data_o(axi_in_req_i.w.data),
-    .w_strb_o(axi_in_req_i.w.strb),
-    .w_last_o(axi_in_req_i.w.last),
-    .w_user_o(axi_in_req_i.w.user),
-    .w_valid_o(axi_in_req_i.w_valid),
-    .w_ready_i(axi_in_rsp_o.w_ready),
-
-    .b_id_i(axi_in_rsp_o.b.id),
-    .b_resp_i(axi_in_rsp_o.b.resp),
-    .b_valid_i(axi_in_rsp_o.b_valid),
-    .b_user_i(axi_in_rsp_o.b.user),
-    .b_ready_o(axi_in_req_i.b_ready),
-
-    .ar_id_o(axi_in_req_i.ar.id),
-    .ar_addr_o(axi_in_req_i.ar.addr),
-    .ar_len_o(axi_in_req_i.ar.len),
-    .ar_size_o(axi_in_req_i.ar.size),
-    .ar_burst_o(axi_in_req_i.ar.burst),
-    .ar_lock_o(axi_in_req_i.ar.lock),
-    .ar_cache_o(axi_in_req_i.ar.cache),
-    .ar_prot_o(axi_in_req_i.ar.prot),
-    .ar_region_o(axi_in_req_i.ar.region),
-    .ar_user_o(axi_in_req_i.ar.user),
-    .ar_qos_o(axi_in_req_i.ar.qos),
-    .ar_valid_o(axi_in_req_i.ar_valid),
-    .ar_ready_i(axi_in_rsp_o.ar_ready),
-
-    .r_id_i(axi_in_rsp_o.r.id),
-    .r_data_i(axi_in_rsp_o.r.data),
-    .r_resp_i(axi_in_rsp_o.r.resp),
-    .r_last_i(axi_in_rsp_o.r.last),
-    .r_user_i(axi_in_rsp_o.r.user), 
-    .r_valid_i('1),
-    .r_ready_o(axi_in_req_i.r_ready)
-  );
-
-
-
-
-  axi2obi #(
-    //.C_S00_AXI_DATA_WIDTH(AXI_DATA_WIDTH),
-    //.C_S00_AXI_ADDR_WIDTH(AXI_ADDR_WIDTH)
-  ) axi2obi_bridge_virtual_r_obi_i (
-    .gnt_i('1),
-
-    //.data_req_i(obi_req_i.req),
-    //.data_gnt_o(obi_rsp_i.gnt),
-    //.data_rvalid_o(obi_rsp_i.rvalid),
-    //.data_addr_i(obi_req_i.addr),
-    //.data_we_i(obi_req_i.we),
-    //.data_be_i(obi_req_i.be),
-    //.data_rdata_o(obi_rsp_i.rdata),
-    //.data_wdata_i(obi_req_i.wdata),
-
-    .data_req_i(obi_req_o.req),
-    .data_gnt_o(obi_rsp_o.gnt),
-    .data_rvalid_o(obi_rsp_o.rvalid),
-    .data_addr_i(obi_req_o.addr),
-    .data_we_i(obi_req_o.we),
-    .data_be_i(obi_req_o.be),
-    .data_rdata_o(obi_rsp_o.rdata),
-    .data_wdata_i(obi_req_o.wdata),
+    //.data_req_i(obi_req_o.req),
+    //.data_gnt_o(obi_rsp_o.gnt),
+    //.data_rvalid_o(obi_rsp_o.rvalid),
+    //.data_addr_i(obi_req_o.addr),
+    //.data_we_i(obi_req_o.we),
+    //.data_be_i(obi_req_o.be),
+    //.data_rdata_o(obi_rsp_o.rdata),
+    //.data_wdata_i(obi_req_o.wdata),
 
     //.data_req_i(axi_sl_slave_req.req),
     //.data_gnt_o(axi_sl_slave_resp.gnt),

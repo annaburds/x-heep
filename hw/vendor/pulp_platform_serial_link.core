@@ -28,6 +28,10 @@ filesets:
     - pulp_platform_serial_link/src/serial_link.sv
     - pulp_platform_serial_link/src/serial_link_occamy_wrapper.sv
     - pulp_platform_serial_link/src/serial_link_xheep_wrapper.sv
+    - pulp_platform_per2axi/src/per2axi_busy_unit.sv
+    - pulp_platform_per2axi/src/per2axi_req_channel.sv
+    - pulp_platform_per2axi/src/per2axi_res_channel.sv
+    - pulp_platform_per2axi/src/per2axi.sv
     file_type: systemVerilogSource
 
 targets:
