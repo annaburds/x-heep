@@ -264,11 +264,11 @@ int main(int argc, char *argv[])
 #endif // TEST_SINGLE_MODE
 
     // Initialize the DMA for the next tests
-    tgt_src.ptr = (uint8_t *)test_data_4B;
-    tgt_src.inc_du = 1;
-    tgt_src.size_du = TEST_DATA_SIZE;
-    tgt_src.trig = DMA_TRIG_MEMORY;
-    tgt_src.type = DMA_DATA_TYPE_WORD;
+    tgt_src.ptr = (uint8_t *)test_data_4B; // sl address
+    tgt_src.inc_du = 1; // 0 bcs i am reading from the same addr each data
+    tgt_src.size_du = TEST_DATA_SIZE; // max size of the array for the fc 
+    tgt_src.trig = DMA_TRIG_MEMORY; // 0 for static array or 32 taken from dma.h as an external tx (gpio from the first xheep)
+    tgt_src.type = DMA_DATA_TYPE_WORD; // 32 bits axi/obi word length
 
     tgt_dst.ptr = (uint8_t *)copied_data_4B;
     tgt_dst.inc_du = 1;
@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
 
     trans.src = &tgt_src;
     trans.dst = &tgt_dst;
-    trans.src_addr = &tgt_addr;
+    trans.src_addr = &tgt_addr;//not used 
     trans.src_type = DMA_DATA_TYPE_WORD;
     trans.dst_type = DMA_DATA_TYPE_WORD;
     trans.mode = DMA_TRANS_MODE_SINGLE;

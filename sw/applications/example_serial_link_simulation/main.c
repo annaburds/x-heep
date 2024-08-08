@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     CSR_WRITE(CSR_REG_MCYCLE, 0);
     while(1){
     if (*addr_p_external ==NUM_TO_CHECK){
-        CSR_READ(CSR_REG_MCYCLE, &cycles1);
+        //CSR_READ(CSR_REG_MCYCLE, &cycles1);
         
         break;
         }
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
              while(1){
     if (*addr_p_external ==378518920){
         //CSR_READ(CSR_REG_MCYCLE, &cycles1);
-        //CSR_READ(CSR_REG_MCYCLE, &cycles1);
+        CSR_READ(CSR_REG_MCYCLE, &cycles1);
         break;
         }
     }

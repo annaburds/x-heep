@@ -62,6 +62,7 @@ module core2axi
     output logic [AXI4_USER_WIDTH-1:0]    w_user_o,
     output logic                          w_valid_o,
     input  logic                          w_ready_i,
+
     // ---------------------------------------------------------
 
     //AXI write response bus -------------- // USED// ----------
@@ -70,6 +71,7 @@ module core2axi
     input  logic                          b_valid_i,
     input  logic   [AXI4_USER_WIDTH-1:0]  b_user_i,
     output logic                          b_ready_o,
+
     // ---------------------------------------------------------
 
     //AXI read address bus -------------------------------------
@@ -86,6 +88,7 @@ module core2axi
     output logic [ 3:0]                   ar_qos_o,
     output logic                          ar_valid_o,
     input  logic                          ar_ready_i,
+
     // ---------------------------------------------------------
 
     //AXI read data bus ----------------------------------------
@@ -99,7 +102,7 @@ module core2axi
     // ---------------------------------------------------------
   );
 
-
+  
   enum logic [2:0] { IDLE, READ_WAIT, WRITE_DATA, WRITE_ADDR, WRITE_WAIT } CS, NS;
 
   logic [31:0]  rdata;
@@ -148,14 +151,14 @@ module core2axi
               end
             end
           end else begin
-            ar_valid_o = 1'b1;
+            //ar_valid_o = 1'b1;
 
-            if (ar_ready_i) begin
-              granted = 1'b1;
-              NS = READ_WAIT;
-            end else begin
+            //if (ar_ready_i) begin
+            //  granted = 1'b1;
+            //  NS = READ_WAIT;
+            //end else begin
               NS = IDLE;
-            end
+            //end
           end
         end else begin
           NS = IDLE;
@@ -186,11 +189,12 @@ module core2axi
 
       // we have sent the address and data and just wait for the write data to
       // be done
+      // serial link does not send any b_valid signal
       WRITE_WAIT:
       begin
         b_ready_o = 1'b1;
 
-        //if (b_valid_i) // double check serial link to return b valid
+        //if (b_valid_i)
         //begin
           valid = 1'b1;
 
