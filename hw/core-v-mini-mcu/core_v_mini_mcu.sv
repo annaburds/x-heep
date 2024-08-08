@@ -486,6 +486,97 @@ module core_v_mini_mcu
   assign memory_subsystem_banks_powergate_iso_n[1] = memory_subsystem_pwr_ctrl_out[1].isogate_en_n;
   assign memory_subsystem_banks_set_retentive_n[1] = memory_subsystem_pwr_ctrl_out[1].retentive_en_n;
   assign memory_subsystem_clkgate_en_n[1] = memory_subsystem_pwr_ctrl_out[1].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[2] = memory_subsystem_pwr_ctrl_out[2].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[2].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[2];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[2] = memory_subsystem_pwr_ctrl_out[2].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[2] = memory_subsystem_pwr_ctrl_out[2].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[2] = memory_subsystem_pwr_ctrl_out[2].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[3] = memory_subsystem_pwr_ctrl_out[3].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[3].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[3];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[3] = memory_subsystem_pwr_ctrl_out[3].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[3] = memory_subsystem_pwr_ctrl_out[3].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[3] = memory_subsystem_pwr_ctrl_out[3].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[4] = memory_subsystem_pwr_ctrl_out[4].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[4].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[4];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[4] = memory_subsystem_pwr_ctrl_out[4].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[4] = memory_subsystem_pwr_ctrl_out[4].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[4] = memory_subsystem_pwr_ctrl_out[4].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[5] = memory_subsystem_pwr_ctrl_out[5].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[5].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[5];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[5] = memory_subsystem_pwr_ctrl_out[5].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[5] = memory_subsystem_pwr_ctrl_out[5].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[5] = memory_subsystem_pwr_ctrl_out[5].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[6] = memory_subsystem_pwr_ctrl_out[6].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[6].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[6];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[6] = memory_subsystem_pwr_ctrl_out[6].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[6] = memory_subsystem_pwr_ctrl_out[6].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[6] = memory_subsystem_pwr_ctrl_out[6].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[7] = memory_subsystem_pwr_ctrl_out[7].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[7].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[7];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[7] = memory_subsystem_pwr_ctrl_out[7].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[7] = memory_subsystem_pwr_ctrl_out[7].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[7] = memory_subsystem_pwr_ctrl_out[7].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[8] = memory_subsystem_pwr_ctrl_out[8].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[8].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[8];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[8] = memory_subsystem_pwr_ctrl_out[8].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[8] = memory_subsystem_pwr_ctrl_out[8].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[8] = memory_subsystem_pwr_ctrl_out[8].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[9] = memory_subsystem_pwr_ctrl_out[9].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[9].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[9];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[9] = memory_subsystem_pwr_ctrl_out[9].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[9] = memory_subsystem_pwr_ctrl_out[9].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[9] = memory_subsystem_pwr_ctrl_out[9].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[10] = memory_subsystem_pwr_ctrl_out[10].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[10].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[10];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[10] = memory_subsystem_pwr_ctrl_out[10].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[10] = memory_subsystem_pwr_ctrl_out[10].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[10] = memory_subsystem_pwr_ctrl_out[10].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[11] = memory_subsystem_pwr_ctrl_out[11].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[11].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[11];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[11] = memory_subsystem_pwr_ctrl_out[11].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[11] = memory_subsystem_pwr_ctrl_out[11].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[11] = memory_subsystem_pwr_ctrl_out[11].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[12] = memory_subsystem_pwr_ctrl_out[12].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[12].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[12];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[12] = memory_subsystem_pwr_ctrl_out[12].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[12] = memory_subsystem_pwr_ctrl_out[12].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[12] = memory_subsystem_pwr_ctrl_out[12].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[13] = memory_subsystem_pwr_ctrl_out[13].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[13].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[13];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[13] = memory_subsystem_pwr_ctrl_out[13].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[13] = memory_subsystem_pwr_ctrl_out[13].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[13] = memory_subsystem_pwr_ctrl_out[13].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[14] = memory_subsystem_pwr_ctrl_out[14].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[14].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[14];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[14] = memory_subsystem_pwr_ctrl_out[14].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[14] = memory_subsystem_pwr_ctrl_out[14].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[14] = memory_subsystem_pwr_ctrl_out[14].clkgate_en_n;
 
   for (genvar i = 0; i < EXT_DOMAINS_RND; i = i + 1) begin
     assign external_subsystem_powergate_switch_no[i]        = external_subsystem_pwr_ctrl_out[i].pwrgate_en_n;
