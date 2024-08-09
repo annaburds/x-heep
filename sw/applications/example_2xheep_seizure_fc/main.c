@@ -73,9 +73,10 @@ static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0
 
 #define MAX_INT_16 65535
 
-int16_t *intermediate_map[256*128];
+int16_t intermediate_map [256*128];
 
 int32_t NUM_TO_CHECK = 9;
+//int16_t intermediate_mapp [15];
 int32_t NUM_TO_BE_CHECKED;
 
 plic_result_t plic_res;
@@ -157,63 +158,63 @@ int main()
 
         while (gpio_intr_flag==0 ){}
         for (size_t i = 0; i < MAX_DATA_SIZE; i++) { 
-static dma_config_flags_t res;
+        static dma_config_flags_t res;
 
-    static dma_target_t tgt_src;
+        static dma_target_t tgt_src;
 
-    static dma_target_t tgt_dst;
+        static dma_target_t tgt_dst;
 
-    static dma_trans_t trans;
-
-
-
-    tgt_src.ptr = (uint8_t *)     0x50000040      ;
-
-    tgt_src.inc_du = 0;
-
-    tgt_src.size_du = TEST_DATA_LARGE;
-
-    tgt_src.trig = DMA_TRIG_MEMORY;
-
-    tgt_src.type = DMA_DATA_TYPE_WORD;
+        static dma_trans_t trans;
 
 
 
-    tgt_dst.ptr = (uint8_t *)copied_data_4B;
+        tgt_src.ptr = (uint8_t *)     0x50000040      ;
 
-    tgt_dst.inc_du = 1;
+        tgt_src.inc_du = 0;
 
-    tgt_dst.size_du = TEST_DATA_LARGE;
+        tgt_src.size_du = TEST_DATA_LARGE;
 
-    tgt_dst.trig = DMA_TRIG_MEMORY;
+        tgt_src.trig = DMA_TRIG_MEMORY;
 
-    tgt_dst.type = DMA_DATA_TYPE_WORD;
-
-
-
-    trans.src = &tgt_src;
-
-    trans.dst = &tgt_dst;
-
-    trans.mode = DMA_TRANS_MODE_SINGLE;
-
-    trans.win_du = 0;
-
-    trans.sign_ext = 0;
-
-    trans.end = DMA_TRANS_END_INTR;
+        tgt_src.type = DMA_DATA_TYPE_WORD;
 
 
 
-    res |= dma_validate_transaction(&trans, false, false);
+        tgt_dst.ptr = (uint8_t *)copied_data_4B;
 
-    res |= dma_load_transaction(&trans);
+        tgt_dst.inc_du = 1;
 
-    res |= dma_launch(&trans);
+        tgt_dst.size_du = TEST_DATA_LARGE;
+
+        tgt_dst.trig = DMA_TRIG_MEMORY;
+
+        tgt_dst.type = DMA_DATA_TYPE_WORD;
 
 
 
-    while(!dma_is_ready(0)) {
+        trans.src = &tgt_src;
+
+        trans.dst = &tgt_dst;
+
+        trans.mode = DMA_TRANS_MODE_SINGLE;
+
+        trans.win_du = 0;
+
+        trans.sign_ext = 0;
+
+        trans.end = DMA_TRANS_END_INTR;
+
+
+
+        res |= dma_validate_transaction(&trans, false, false);
+
+        res |= dma_load_transaction(&trans);
+
+        res |= dma_launch(&trans);
+
+
+
+        while(!dma_is_ready(0)) {
 
 
 
@@ -237,6 +238,7 @@ static dma_config_flags_t res;
         printf("first write finished with  %d cycles.\n\r", cycles1);
         gpio_intr_flag=0;
 
+        }
     }
 
     printf("DONE\n");
@@ -298,6 +300,7 @@ void conv1d(const int16_t * const data, const signed char * const filter, int16_
                     sum += mult;
                 }
             }
+        
     #endif
             sum += bias[w_n];
 
@@ -362,14 +365,14 @@ void conv_max1d(const int16_t * const data, const signed char * const filter, in
     
     int32_t maximum[128];
     
-    for (int32_t w_n = 0; w_n < 128; w_n++) {
+        for (int32_t w_n = 0; w_n < 128; w_n++) {
         maximum[w_n] = NEG_INF;
     }
     
     
     //loop 0 - unrolled
     register const signed char *filter_address = filter;
-    for (int32_t w_n = 0; w_n < 128; w_n++) {
+        for (int32_t w_n = 0; w_n < 128; w_n++) {
         sum = 0;
 	    for (int32_t w_j = 0; w_j < input_depth; w_j++) {
             register const int16_t *data_address = &data[input_len * w_j];		// reset data address every time we go to a deeper layer
@@ -399,7 +402,7 @@ void conv_max1d(const int16_t * const data, const signed char * const filter, in
         }
     }
     
-    for (int32_t start_index = 1; start_index < input_len - 1; start_index ++) {
+        for (int32_t start_index = 1; start_index < input_len - 1; start_index ++) {
         filter_address = filter;						// reset filter address every time we change position
         register int32_t offset = start_index - 1;						// precalculate this addition
         for (int32_t w_n = 0; w_n < 128; w_n++) {
@@ -431,8 +434,8 @@ void conv_max1d(const int16_t * const data, const signed char * const filter, in
     }
     
     //last loop unrolled
-    filter_address = filter;
-    for (int32_t w_n = 0; w_n < 128; w_n++) {
+        filter_address = filter;
+        for (int32_t w_n = 0; w_n < 128; w_n++) {
         sum = 0;
 	    for (int32_t w_j = 0; w_j < input_depth; w_j++) {
             register const int16_t *data_address = &data[input_len * w_j + input_len - 2];		// reset data address every time we go to a deeper layer
@@ -526,8 +529,8 @@ int16_t forward_propagation(int16_t *data, int16_t *intermediate) {
     #endif
     
     //  ************  FC 1  ************ //
-    layer_out = intermediate_map0;
-    layer_in = intermediate_map1;
+    //layer_out = intermediate_map0;
+    //layer_in = intermediate_map1;
     conv1d(layer_in, dense_w[1], layer_out, dense_b[1], fc_map_size[1],fc_map_size[1],
            fc_depth_size[1], fc_map_size[2], fc_depth_size[2], fc_map_size[1], 0);
     
