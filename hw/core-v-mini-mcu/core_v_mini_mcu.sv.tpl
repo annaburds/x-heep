@@ -563,9 +563,9 @@ ${pad.core_v_mini_mcu_interface}
     .cfg_rsp_t(reg_rsp_t),
     .cfg_req_t(reg_req_t),
     .obi_req_t(obi_req_t),
-    .obi_resp_t(obi_resp_t)
-    //.NumChannels(1),
-    //.NumLanes(1)
+    .obi_resp_t(obi_resp_t),
+    .NumChannels(1),
+    .NumLanes(4)
   ) serial_link_xheep_wrapper_i (
     .clk_i(clk_i),
     .fast_clock,

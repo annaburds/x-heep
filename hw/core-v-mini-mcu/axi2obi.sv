@@ -119,7 +119,6 @@ module axi2obi #(
   end
 
 
-  //always @(clk) begin
   always @(posedge s00_axi_aclk or negedge s00_axi_aresetn) begin
     if (!s00_axi_aresetn) begin
       curr_addr  = '0;
@@ -132,8 +131,6 @@ module axi2obi #(
     end
   end
 
-  //end
-  //assign addr_o = curr_addr;
 
   assign s00_axi_rdata = curr_rdata;
 
@@ -143,9 +140,6 @@ module axi2obi #(
     next_wdata = curr_wdata;
     next_rdata = curr_rdata;
 
-    //we_o = '0;
-    //be_o = '0;
-    //req_o = '0;
     data_gnt_o = '0;
     data_rvalid_o = '0;
     data_rdata_o = '0;
@@ -182,9 +176,6 @@ module axi2obi #(
         if (s00_axi_wvalid == '1) begin
           NS = WRITE_REQ_HANDSHAKE;
           next_rdata = s00_axi_wdata;
-
-
-
         end else begin
           NS = WRITE_REQ_SL;
         end
@@ -208,24 +199,18 @@ module axi2obi #(
         end
       end
       READ_REQ_SL: begin
-        //if (data_req_i == '1 && data_we_i == '1) begin //&& data_req_i == '1 && data_we_i == '1 in  case we have OBI request
-
         NS = READ_REQ_BUFFER;
         next_rdata = 00000001;
         s00_axi_rvalid = '1;
         //end
       end
       READ_REQ_BUFFER: begin
-        //if (data_req_i == '1 && data_we_i == '1) begin //&& data_req_i == '1 && data_we_i == '1 in  case we have OBI request
-
         NS = IDLE;
         next_rdata = 00000001;
         s00_axi_rvalid = '1;
         //end
       end
       READ_REQ: begin
-        //if (data_req_i == '1 && data_we_i == '1) begin //&& data_req_i == '1 && data_we_i == '1 in  case we have OBI request
-
         NS = IDLE;
         data_rvalid_o = '1;
         data_rdata_o = curr_rdata;

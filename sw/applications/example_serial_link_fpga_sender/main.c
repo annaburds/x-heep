@@ -48,7 +48,7 @@ void handler_1()
 
 int main(int argc, char *argv[])
 {
-
+    printf("%d\n",gpio_intr_flag);
     REG_CONFIG();
     AXI_ISOLATE();
 

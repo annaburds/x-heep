@@ -70,13 +70,11 @@ static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0
 #define GPIO_TOGGLE_WRITE 1
 #define GPIO_TOGGLE_READ 8 // BCS IT HAS TO BE INTERRUPT
 #define GPIO_INTR GPIO_TOGGLE_READ + 1
-
 #define MAX_INT_16 65535
-
-int16_t intermediate_map [256*128];
+//int16_t intermediate_map [256*128];
 
 int32_t NUM_TO_CHECK = 9;
-//int16_t intermediate_mapp [15];
+int16_t intermediate_map[256*128];
 int32_t NUM_TO_BE_CHECKED;
 
 plic_result_t plic_res;
@@ -159,80 +157,52 @@ int main()
         while (gpio_intr_flag==0 ){}
         for (size_t i = 0; i < MAX_DATA_SIZE; i++) { 
         static dma_config_flags_t res;
-
         static dma_target_t tgt_src;
-
         static dma_target_t tgt_dst;
-
         static dma_trans_t trans;
 
 
 
-        tgt_src.ptr = (uint8_t *)     0x50000040      ;
-
+        tgt_src.ptr = (uint8_t *)     0x50000040;
         tgt_src.inc_du = 0;
-
         tgt_src.size_du = TEST_DATA_LARGE;
-
         tgt_src.trig = DMA_TRIG_MEMORY;
-
         tgt_src.type = DMA_DATA_TYPE_WORD;
 
 
 
         tgt_dst.ptr = (uint8_t *)copied_data_4B;
-
         tgt_dst.inc_du = 1;
-
         tgt_dst.size_du = TEST_DATA_LARGE;
-
         tgt_dst.trig = DMA_TRIG_MEMORY;
-
         tgt_dst.type = DMA_DATA_TYPE_WORD;
 
 
 
         trans.src = &tgt_src;
-
         trans.dst = &tgt_dst;
-
         trans.mode = DMA_TRANS_MODE_SINGLE;
-
         trans.win_du = 0;
-
         trans.sign_ext = 0;
-
         trans.end = DMA_TRANS_END_INTR;
 
 
 
         res |= dma_validate_transaction(&trans, false, false);
-
         res |= dma_load_transaction(&trans);
-
         res |= dma_launch(&trans);
 
 
 
         while(!dma_is_ready(0)) {
 
-
-
         // here the CPU will be asleep waiting for the DMA to finish. Instead of this you can do anything else!
-
                     CSR_CLEAR_BITS(CSR_REG_MSTATUS, 0x8);
-
                     if (!dma_is_ready(0)) {
-
                         wait_for_interrupt();
-
-
                     }
-
                     CSR_SET_BITS(CSR_REG_MSTATUS, 0x8);
-
         // Change this section to decide what the CPU does while asleep.
-
         }
         CSR_READ(CSR_REG_MCYCLE, &cycles1);    
         printf("first write finished with  %d cycles.\n\r", cycles1);
@@ -241,11 +211,7 @@ int main()
         }
     }
 
-    printf("DONE\n");
-
-
-
-
+    printf("Transaction completed started FC\n");
 
 // =================================================================================
 
