@@ -125,7 +125,7 @@ axi_lite_from_mem #(
   .MaxRequests     ( 32'd2     ),  // fifo size
   //.AxiProt         ( AxiProt  ),
   .axi_req_t       ( axi_req_t  ),
-  .axi_rsp_t       ( axi_resp_t )
+  .axi_rsp_t       ( axi_rsp_t )
 ) i_obi2axi (
   .clk_i,
   .rst_ni,
@@ -217,7 +217,7 @@ axi_to_mem #(
   .AddrWidth(32),
   .DataWidth(32),
   //.IdWidth(),
-  .NumBanks(1),
+  .NumBanks(1)
   //.BufDepth(),
   //.HideStrb(),
   //.OutFifoDepth(1)
