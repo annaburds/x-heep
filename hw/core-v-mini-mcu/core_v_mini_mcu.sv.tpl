@@ -549,6 +549,40 @@ ${pad.core_v_mini_mcu_interface}
   end
 
 
+
+    obi_req_t   obi_sl_req;
+    obi_resp_t  obi_sl_rsp;
+
+
+
+double_access_reg #(
+    //parameter type         obi_req_t  = logic,
+    //parameter type         obi_rsp_t = logic,
+) double_access_reg_i(
+
+    .reader_gnt_o             (axi_sl_m_resp.gnt),
+    .reader_req_i             (axi_sl_m_req.req),
+    .reader_rvalid_o          (axi_sl_m_resp.rvalid),
+    .reader_addr_i            (axi_sl_m_req.addr),
+    .reader_we_i              (axi_sl_m_req.we),
+    .reader_be_i              (axi_sl_m_req.be),
+    .reader_rdata_o           (axi_sl_m_resp.rdata),
+    .reader_wdata_i           (axi_sl_m_req.wdata),
+
+    .writer_req_i             (obi_sl_req.req),
+    .writer_gnt_o             (obi_sl_rsp.gnt),
+    .writer_rvalid_o          (obi_sl_rsp.rvalid),
+    .writer_addr_i            (obi_sl_req.addr),
+    .writer_we_i              (obi_sl_req.we),
+    .writer_be_i              (obi_sl_req.be),
+    .writer_rdata_o           (obi_sl_rsp.rdata),
+    .writer_wdata_i           (obi_sl_req.wdata),
+
+    .clk_i (clk_i),
+    .rst_ni(rst_ni)
+
+);
+
   
 
   serial_link_xheep_wrapper #(
@@ -578,8 +612,11 @@ ${pad.core_v_mini_mcu_interface}
     .obi_req_i(axi_sl_slave_req),
     .obi_rsp_i(axi_sl_slave_resp),
     
-    .obi_req_o(axi_sl_m_req), //axi_in_req_i
-    .obi_rsp_o(axi_sl_m_resp),
+    //.obi_req_o(axi_sl_m_req), //axi_in_req_i
+    //.obi_rsp_o(axi_sl_m_resp),
+
+    .obi_req_o(obi_sl_req),
+    .obi_rsp_o(obi_sl_rsp),
 
     .cfg_req_i(cfg_req_sl),   //register configuration
     .cfg_rsp_o(cfg_rsp_sl),
