@@ -93,13 +93,13 @@ module double_access_reg #(
       IDLE: begin
         if (writer_req_i) begin
           NS = FULL;
-          writer_gnt_o = '1;
           next_data = writer_wdata_i;
         end else begin
           NS = IDLE;
         end
       end
       FULL: begin
+        writer_gnt_o = '1;
         if (reader_req_i == '1 && reader_we_i == '0) begin
           NS = READ;
           reader_gnt_o = '1;
