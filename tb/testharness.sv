@@ -619,14 +619,14 @@ module testharness #(
       //parameter type         obi_rsp_t = logic,
       ) double_access_reg_i (
 
-          .reader_gnt_o   (sl_obi2axi_resp.gnt),
-          .reader_req_i   (sl_obi2axi_req.req),
-          .reader_rvalid_o(sl_obi2axi_resp.rvalid),
-          .reader_addr_i  (sl_obi2axi_req.addr),
-          .reader_we_i    (sl_obi2axi_req.we),
-          .reader_be_i    (sl_obi2axi_req.be),
-          .reader_rdata_o (sl_obi2axi_resp.rdata),
-          .reader_wdata_i (sl_obi2axi_req.wdata),
+          .reader_gnt_o   (sl_axi2obi_resp.gnt),
+          .reader_req_i   (sl_axi2obi_req.req),
+          .reader_rvalid_o(sl_axi2obi_resp.rvalid),
+          .reader_addr_i  (sl_axi2obi_req.addr),
+          .reader_we_i    (sl_axi2obi_req.we),
+          .reader_be_i    (sl_axi2obi_req.be),
+          .reader_rdata_o (sl_axi2obi_resp.rdata),
+          .reader_wdata_i (sl_axi2obi_req.wdata),
 
           .writer_req_i   (obi_sl_req.req),
           .writer_gnt_o   (obi_sl_rsp.gnt),
@@ -682,8 +682,8 @@ module testharness #(
           .obi_req_o(obi_sl_req),
           .obi_rsp_o(obi_sl_rsp),
 
-          .obi_req_i(sl_axi2obi_req),  //axi_in_req_i
-          .obi_rsp_i(sl_axi2obi_resp),
+          .obi_req_i(),  //sl_axi2obi_req),  //axi_in_req_i
+          .obi_rsp_i(),  //sl_axi2obi_resp),
 
 
 

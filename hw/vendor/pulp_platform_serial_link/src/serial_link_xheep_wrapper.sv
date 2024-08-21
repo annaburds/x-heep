@@ -95,14 +95,14 @@ axi_to_mem #(
   .axi_req_i(axi_out_req_o),
   .axi_resp_o(axi_out_rsp_i),
   .mem_req_o(obi_req_o.req),
-  .mem_gnt_i(obi_rsp_i.gnt),
+  .mem_gnt_i(obi_rsp_o.gnt),
   .mem_addr_o(obi_req_o.addr),
   .mem_wdata_o(obi_req_o.wdata),
   .mem_strb_o(),
   .mem_atop_o(),
   .mem_we_o(obi_req_o.we),
-  .mem_rvalid_i(obi_rsp_i.rvalid),
-  .mem_rdata_i(obi_rsp_i.rdata)
+  .mem_rvalid_i(obi_rsp_o.rvalid),
+  .mem_rdata_i(obi_rsp_o.rdata)
 );
 
 

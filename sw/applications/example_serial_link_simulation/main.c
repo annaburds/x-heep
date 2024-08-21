@@ -96,28 +96,16 @@ void __attribute__ ((optimize("00"))) READ_SL(void){
 void __attribute__ ((optimize("00"))) REG_CONFIG(void){
     volatile int32_t *addr_p_reg =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET); 
     *addr_p_reg = (*addr_p_reg)| 0x00000001; // clock enable
-     //printf("addr_p %x\n", *addr_p_reg);
-    
     *addr_p_reg = (*addr_p_reg)& 0x11111101; // rst on
     *addr_p_reg = (*addr_p_reg)| 0x00000002; // rst oFF
-
-
-    //int32_t *addr_p_reg_flow_ctrl =(int32_t *)(SERIAL_LINK_START_ADDRESS  + SERIAL_LINK_SINGLE_CHANNEL_FLOW_CONTROL_FIFO_CLEAR_REG_OFFSET); //0x04000000 
-    //*addr_p_reg_flow_ctrl = (*addr_p_reg_flow_ctrl)& 0x00000001; //0x11111110;
 }
 
 
 void __attribute__ ((optimize("00"))) REG_CONFIG_MULTI(void){
     volatile int32_t *addr_p_reg =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_CTRL_REG_OFFSET); 
     *addr_p_reg = (*addr_p_reg)| 0x00000001; // clock enable
-     //printf("addr_p %x\n", *addr_p_reg);
-    
     *addr_p_reg = (*addr_p_reg)& 0x11111101; // rst on
     *addr_p_reg = (*addr_p_reg)| 0x00000002; // rst oFF
-
-
-    //int32_t *addr_p_reg_flow_ctrl =(int32_t *)(SERIAL_LINK_START_ADDRESS  + SERIAL_LINK_SINGLE_CHANNEL_FLOW_CONTROL_FIFO_CLEAR_REG_OFFSET); //0x04000000 
-    //*addr_p_reg_flow_ctrl = (*addr_p_reg_flow_ctrl)& 0x00000001; //0x11111110;
 }
 
 void __attribute__ ((optimize("00"))) RAW_MODE_EN(void){

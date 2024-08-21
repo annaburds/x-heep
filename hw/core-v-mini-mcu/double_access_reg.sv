@@ -83,7 +83,7 @@ module double_access_reg #(
 
     writer_rdata_o = '0;
     writer_rvalid_o = '0;
-    writer_gnt_o = '0;
+    writer_gnt_o = '1;
     reader_gnt_o = '0;
     reader_rvalid_o = '0;
     //data_data_o = '0;
@@ -91,6 +91,7 @@ module double_access_reg #(
     case (CS)
       // wait for a request to come in from the serial link
       IDLE: begin
+        writer_rvalid_o = '0;
         if (writer_req_i) begin
           NS = FULL;
           next_data = writer_wdata_i;
@@ -99,7 +100,8 @@ module double_access_reg #(
         end
       end
       FULL: begin
-        writer_gnt_o = '1;
+        writer_gnt_o = '0;
+        writer_rvalid_o = '1;
         if (reader_req_i == '1 && reader_we_i == '0) begin
           NS = READ;
           reader_gnt_o = '1;
