@@ -46,8 +46,8 @@ module serial_link_xheep_wrapper
   logic clk_ena;
   logic reset_n;
 
-  axi_req_t                  fast_sl_req_i,fast_sl_req_O,axi_in_req_i,axi_out_req_o;
-  axi_rsp_t                  fast_sl_rsp_i,fast_sl_rsp_O,axi_in_rsp_o,axi_out_rsp_i;
+  axi_req_t                  fast_sl_req_i,fast_sl_req_O,axi_in_req_i,axi_out_req_o,  axi_lite_req;
+  axi_rsp_t                  fast_sl_rsp_i,fast_sl_rsp_O,axi_in_rsp_o,axi_out_rsp_i,  axi_lite_rsp;
   cfg_req_t                  fast_cfg_req_i;
   cfg_rsp_t                  fast_cfg_rsp_o;
 
@@ -72,9 +72,29 @@ axi_lite_from_mem #(
   .mem_rsp_valid_o          (obi_rsp_i.rvalid),
   .mem_rsp_rdata_o          (obi_rsp_i.rdata),
   .mem_rsp_error_o          (),
-  .axi_req_o                (axi_in_req_i),
-  .axi_rsp_i                (axi_in_rsp_o)
+  .axi_req_o                (axi_lite_req),
+  .axi_rsp_i                (axi_lite_rsp)
 );
+
+axi_lite_to_axi #(
+  .AxiDataWidth(32'd0),
+  
+  .req_lite_t(axi_req_t),
+  .resp_lite_t(axi_rsp_t),
+  
+  .axi_req_t(axi_req_t),
+  .axi_resp_t(axi_rsp_t)
+) i_axi_lite_to_axi(
+  // Slave AXI LITE port
+  .slv_req_lite_i(axi_lite_req),
+  .slv_resp_lite_o(axi_lite_rsp),
+  .slv_aw_cache_i(),
+  .slv_ar_cache_i(),
+  .mst_req_o(axi_in_req_i),
+  .mst_resp_i(axi_in_rsp_o)
+);
+
+
 
 
 
@@ -84,10 +104,10 @@ axi_to_mem #(
   .AddrWidth(32),
   .DataWidth(32),
   //.IdWidth(),
-  .NumBanks(1)
+  .NumBanks(1),
   //.BufDepth(),
   //.HideStrb(),
-  //.OutFifoDepth(1)
+  .OutFifoDepth(5)
   ) axi_to_mem_i(
   .clk_i,
   .rst_ni,

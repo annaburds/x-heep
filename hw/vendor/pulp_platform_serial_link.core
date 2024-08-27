@@ -41,6 +41,7 @@ filesets:
     - pulp_platform_axi_slice/src/axi_w_buffer.sv
     - pulp_platform_axi_slice/src/axi_slice.sv
     - pulp_platform_axi/src/axi_lite_from_mem.sv
+    - pulp_platform_axi/src/axi_lite_to_axi.sv
     - pulp_platform_axi/src/axi_to_mem.sv
     - pulp_platform_axi/src/axi_to_detailed_mem.sv
     - pulp_platform_common_cells/src/mem_to_banks_detailed.sv
