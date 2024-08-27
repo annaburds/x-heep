@@ -530,6 +530,9 @@ def main():
     axi_sl_slave_start_address  = string2int(obj['axi_sl_slave']['address'])
     axi_sl_slave_size_address  = string2int(obj['axi_sl_slave']['length'])
 
+    sl_receiver_reg_start_address  = string2int(obj['sl_receiver_reg']['address'])
+    sl_receiver_reg_size_address  = string2int(obj['sl_receiver_reg']['length'])
+
 
 
     if ((int(stack_size,16) + int(heap_size,16)) > xheep.ram_size_address()):
@@ -842,6 +845,8 @@ def main():
         "flash_mem_size_address"           : flash_mem_size_address,
         "axi_sl_slave_start_address"       : axi_sl_slave_start_address,
         "axi_sl_slave_size_address"        : axi_sl_slave_size_address,
+        "sl_receiver_reg_start_address"    : sl_receiver_reg_start_address,
+        "sl_receiver_reg_size_address"     : sl_receiver_reg_size_address,
         "stack_size"                       : stack_size,
         "heap_size"                        : heap_size,
         "plic_used_n_interrupts"           : plic_used_n_interrupts,

@@ -17,7 +17,8 @@ int main(int argc, char *argv[])
 
     volatile int32_t *addr_p = 0x50000040;
     volatile int32_t *addr_p_external = 0xF0010000;
-
+    volatile int32_t *addr_p_recreg = 0x51000000;
+    *addr_p_recreg = NUM_TO_CHECK;
 
     REG_CONFIG();
     AXI_ISOLATE();

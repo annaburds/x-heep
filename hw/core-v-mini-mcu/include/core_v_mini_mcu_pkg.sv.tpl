@@ -42,15 +42,16 @@ package core_v_mini_mcu_pkg;
   localparam logic [31:0] DMA_WRITE_CH0_IDX = 4;
   localparam logic [31:0] DMA_ADDR_CH0_IDX = 5;
   localparam logic [31:0] AXI_SL_M_IDX = 6;
+  localparam logic [31:0] SL_RECREG_M_IDX = 7;
 
-  localparam SYSTEM_XBAR_NMASTER = 7;
+  localparam SYSTEM_XBAR_NMASTER = 8;
 
   // Internal slave memory map and index
   // -----------------------------------
   //must be power of two
   localparam int unsigned MEM_SIZE = 32'h${f'{xheep.ram_size_address():08X}'};
 
-  localparam SYSTEM_XBAR_NSLAVE = ${xheep.ram_numbanks() + 6};
+  localparam SYSTEM_XBAR_NSLAVE = ${xheep.ram_numbanks() + 7};
 
   localparam int unsigned LOG_SYSTEM_XBAR_NMASTER = SYSTEM_XBAR_NMASTER > 1 ? $clog2(SYSTEM_XBAR_NMASTER) : 32'd1;
   localparam int unsigned LOG_SYSTEM_XBAR_NSLAVE = SYSTEM_XBAR_NSLAVE > 1 ? $clog2(SYSTEM_XBAR_NSLAVE) : 32'd1;
@@ -104,6 +105,12 @@ package core_v_mini_mcu_pkg;
   localparam logic[31:0] AXI_SL_SLAVE_IDX = 32'd${int(xheep.ram_numbanks()) + 5};
 
 
+  localparam logic[31:0] SL_RECREG_S_START_ADDRESS = 32'h${sl_receiver_reg_start_address};
+  localparam logic[31:0] SL_RECREG_S_SIZE = 32'h${sl_receiver_reg_size_address};
+  localparam logic[31:0] SL_RECREG_S_END_ADDRESS = SL_RECREG_S_START_ADDRESS + SL_RECREG_S_SIZE;
+  localparam logic[31:0] SL_RECREG_S_IDX = 32'd${int(xheep.ram_numbanks()) + 6};
+
+
   localparam addr_map_rule_t [SYSTEM_XBAR_NSLAVE-1:0] XBAR_ADDR_RULES = '{
       '{ idx: ERROR_IDX, start_addr: ERROR_START_ADDRESS, end_addr: ERROR_END_ADDRESS },
 % for bank in xheep.iter_ram_banks():
@@ -113,7 +120,8 @@ package core_v_mini_mcu_pkg;
       '{ idx: AO_PERIPHERAL_IDX, start_addr: AO_PERIPHERAL_START_ADDRESS, end_addr: AO_PERIPHERAL_END_ADDRESS },
       '{ idx: PERIPHERAL_IDX, start_addr: PERIPHERAL_START_ADDRESS, end_addr: PERIPHERAL_END_ADDRESS },
       '{ idx: FLASH_MEM_IDX, start_addr: FLASH_MEM_START_ADDRESS, end_addr: FLASH_MEM_END_ADDRESS },
-      '{ idx: AXI_SL_SLAVE_IDX, start_addr: AXI_SL_SLAVE_START_ADDRESS, end_addr: AXI_SL_SLAVE_END_ADDRESS }
+      '{ idx: AXI_SL_SLAVE_IDX, start_addr: AXI_SL_SLAVE_START_ADDRESS, end_addr: AXI_SL_SLAVE_END_ADDRESS },
+      '{ idx: SL_RECREG_S_IDX, start_addr: SL_RECREG_S_START_ADDRESS, end_addr: SL_RECREG_S_END_ADDRESS }
  
   };
 

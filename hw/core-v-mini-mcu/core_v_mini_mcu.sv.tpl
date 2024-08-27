@@ -374,6 +374,8 @@ ${pad.core_v_mini_mcu_interface}
       .flash_mem_slave_resp_i(flash_mem_slave_resp),
       .axi_sl_slave_req_o(axi_sl_slave_req),
       .axi_sl_slave_resp_i(axi_sl_slave_resp),
+      .sl_recreg_resp_i(),
+      .sl_recreg_req_o(),
       .ext_core_instr_req_o(ext_core_instr_req_o),
       .ext_core_instr_resp_i(ext_core_instr_resp_i),
       .ext_core_data_req_o(ext_core_data_req_o),

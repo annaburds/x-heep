@@ -140,8 +140,13 @@
         length:  0x01000000,
     },
 
-    axi_sl_slave:    { // SL test for int_bus-sl <-> sl-ext_bus configuration
+    axi_sl_slave:    { 
         address: 0x50000000,
+        length:  0x01000000,
+    },
+
+    sl_receiver_reg:    {
+        address: 0x51000000,
         length:  0x01000000,
     },
 
