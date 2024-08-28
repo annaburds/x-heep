@@ -215,8 +215,8 @@ module xilinx_core_v_mini_mcu_wrapper
       .ddr_i,
       .ddr_o,
       .ddr_rcv_clk_i,
-      .ddr_rcv_clk_o,
-      .fast_clock(clk_gen)
+      .ddr_rcv_clk_o//,
+      //.fast_clock(clk_gen)
   );
 
   assign exit_value_o = exit_value[0];
