@@ -284,9 +284,8 @@ module testharness #(
       .ddr_i(ddr_i_xheep),
       .ddr_o(ddr_o_xheep),
       .ddr_rcv_clk_i(clk_sl_ext2int),
-      .ddr_rcv_clk_o(clk_sl_int2ext),
-      .fast_clock,
-      .result()
+      .ddr_rcv_clk_o(clk_sl_int2ext)  //,
+      //.fast_clock
   );
 
   // Testbench external bus
@@ -659,7 +658,7 @@ module testharness #(
           .obi_resp_t(obi_resp_t)
       ) serial_link_xheep_wrapper_i (
           .clk_i     (clk_i),
-          .fast_clock,
+          .fast_clock(clk_i),
           .rst_ni    (rst_ni),
           .clk_reg_i (clk_i),   //intended for clock gating purposes
           .rst_reg_ni(rst_ni),  //intended for SW reset purposes

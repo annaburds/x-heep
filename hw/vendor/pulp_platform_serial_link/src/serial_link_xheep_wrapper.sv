@@ -134,48 +134,48 @@ axi_to_mem #(
     .clk_o (rst_serial_link_n)
   );
 
-  axi_cdc #(
-      .axi_req_t        ( axi_req_t   ),
-      .axi_resp_t       ( axi_rsp_t   ),
-      .aw_chan_t        ( aw_chan_t   ),
-      .w_chan_t         ( w_chan_t    ),
-      .b_chan_t         ( b_chan_t    ),
-      .ar_chan_t        ( ar_chan_t   ),
-      .r_chan_t         ( r_chan_t    ),
-  /// Depth of the FIFO crossing the clock domain, given as 2**LOG_DEPTH.
-      .LogDepth(2)
-)axi_cdc_i (
-  // slave side - clocked by `src_clk_i`
-  .src_clk_i(clk_i),
-  .src_rst_ni(rst_ni),
-  .src_req_i(axi_in_req_i),
-  .src_resp_o(axi_in_rsp_o),
-  // master side - clocked by `dst_clk_i`
-  .dst_clk_i(fast_clock),
-  .dst_rst_ni(rst_ni),
-  .dst_req_o(fast_sl_req_i),
-  .dst_resp_i(fast_sl_rsp_i)
-);
+//  axi_cdc #(
+//      .axi_req_t        ( axi_req_t   ),
+//      .axi_resp_t       ( axi_rsp_t   ),
+//      .aw_chan_t        ( aw_chan_t   ),
+//      .w_chan_t         ( w_chan_t    ),
+//      .b_chan_t         ( b_chan_t    ),
+//      .ar_chan_t        ( ar_chan_t   ),
+//      .r_chan_t         ( r_chan_t    ),
+//  /// Depth of the FIFO crossing the clock domain, given as 2**LOG_DEPTH.
+//      .LogDepth(2)
+//)axi_cdc_i (
+//  // slave side - clocked by `src_clk_i`
+//  .src_clk_i(clk_i),
+//  .src_rst_ni(rst_ni),
+//  .src_req_i(axi_in_req_i),
+//  .src_resp_o(axi_in_rsp_o),
+//  // master side - clocked by `dst_clk_i`
+//  .dst_clk_i(fast_clock),
+//  .dst_rst_ni(rst_ni),
+//  .dst_req_o(fast_sl_req_i),
+//  .dst_resp_i(fast_sl_rsp_i)
+//);
+//
 
 
 
 
 
-
-reg_cdc #(
-    .req_t(cfg_req_t),
-    .rsp_t(cfg_rsp_t)
-) reg_cdc_i(
-    .src_clk_i(clk_reg_i),
-    .src_rst_ni(rst_ni),
-    .src_req_i(cfg_req_i),
-    .src_rsp_o(cfg_rsp_o),
-
-    .dst_clk_i(fast_clock),
-    .dst_rst_ni(rst_ni),
-    .dst_req_o(fast_cfg_req_i),
-    .dst_rsp_i(fast_cfg_rsp_o)
-);
+//reg_cdc #(
+//    .req_t(cfg_req_t),
+//    .rsp_t(cfg_rsp_t)
+//) reg_cdc_i(
+//    .src_clk_i(clk_reg_i),
+//    .src_rst_ni(rst_ni),
+//    .src_req_i(cfg_req_i),
+//    .src_rsp_o(cfg_rsp_o),
+//
+//    .dst_clk_i(fast_clock),
+//    .dst_rst_ni(rst_ni),
+//    .dst_req_o(fast_cfg_req_i),
+//    .dst_rsp_i(fast_cfg_rsp_o)
+//);
 
 
   axi_cdc #(
@@ -221,19 +221,19 @@ reg_cdc #(
       .NumLanes         ( NumLanes    ),
       .MaxClkDiv        ( MaxClkDiv   )
     ) i_serial_link (
-      .clk_i          ( fast_clock             ),
+      .clk_i          ( clk_i             ),
       .rst_ni         ( rst_ni            ),
-      .clk_sl_i       ( fast_clock   ),
+      .clk_sl_i       ( clk_i   ),
       .rst_sl_ni      ( rst_serial_link_n ),
-      .clk_reg_i      ( fast_clock         ),
+      .clk_reg_i      ( clk_i         ),
       .rst_reg_ni     ( rst_reg_ni        ),
       .testmode_i     ( 1'b0              ),
-      .axi_in_req_i   ( fast_sl_req_i      ),
-      .axi_in_rsp_o   ( fast_sl_rsp_i     ),//axi_in_rsp_o      ),
+      .axi_in_req_i   ( axi_in_req_i      ),
+      .axi_in_rsp_o   ( axi_in_rsp_o     ),//axi_in_rsp_o      ),
       .axi_out_req_o  ( fast_sl_req_O     ),
       .axi_out_rsp_i  ( fast_sl_rsp_O     ),
-      .cfg_req_i      ( fast_cfg_req_i         ),
-      .cfg_rsp_o      ( fast_cfg_rsp_o    ),//cfg_rsp_o         ),
+      .cfg_req_i      ( cfg_req_i         ),
+      .cfg_rsp_o      ( cfg_rsp_o    ),//cfg_rsp_o         ),
       .ddr_rcv_clk_i  ( ddr_rcv_clk_i     ),
       .ddr_rcv_clk_o  ( ddr_rcv_clk_o     ),
       .ddr_i          ( ddr_i             ),
@@ -263,19 +263,19 @@ reg_cdc #(
       .NumLanes         ( NumLanes    ),
       .MaxClkDiv        ( MaxClkDiv   )
     ) i_serial_link (
-      .clk_i          ( fast_clock        ),
+      .clk_i          ( clk_i        ),
       .rst_ni         ( rst_ni            ),
-      .clk_sl_i       ( fast_clock        ),
+      .clk_sl_i       ( clk_i        ),
       .rst_sl_ni      ( rst_serial_link_n ),
-      .clk_reg_i      ( fast_clock        ),
+      .clk_reg_i      ( clk_i        ),
       .rst_reg_ni     ( rst_reg_ni        ),
       .testmode_i     ( 1'b0              ),
-      .axi_in_req_i   ( fast_sl_req_i     ),
-      .axi_in_rsp_o   ( fast_sl_rsp_i     ),//axi_in_rsp_o      ),
+      .axi_in_req_i   ( axi_in_req_i     ),
+      .axi_in_rsp_o   ( axi_in_rsp_o     ),//axi_in_rsp_o      ),
       .axi_out_req_o  ( fast_sl_req_O     ),
       .axi_out_rsp_i  ( fast_sl_rsp_O     ),
-      .cfg_req_i      ( fast_cfg_req_i    ),
-      .cfg_rsp_o      ( fast_cfg_rsp_o    ),//cfg_rsp_o         ),
+      .cfg_req_i      ( cfg_req_i    ),
+      .cfg_rsp_o      ( cfg_rsp_o    ),//cfg_rsp_o         ),
       .ddr_rcv_clk_i  ( ddr_rcv_clk_i     ),
       .ddr_rcv_clk_o  ( ddr_rcv_clk_o     ),
       .ddr_i          ( ddr_i             ),

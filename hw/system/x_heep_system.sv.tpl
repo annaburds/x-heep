@@ -23,11 +23,9 @@ module x_heep_system
     output logic [NumChannels-1:0]                ddr_rcv_clk_o,
     input  logic [NumChannels-1:0][NumLanes-1:0]  ddr_i,
     output logic [NumChannels-1:0][NumLanes-1:0]  ddr_o,
-    input  logic                                  fast_clock,
+    //input  logic                                  fast_clock,
 
 
-
-    output logic result,
 
     input logic [NEXT_INT_RND-1:0] intr_vector_ext_i,
 
@@ -175,8 +173,8 @@ ${pad.core_v_mini_mcu_bonding}
     .ddr_i,
     .ddr_rcv_clk_i,
     .ddr_o,
-    .ddr_rcv_clk_o,
-    .fast_clock
+    .ddr_rcv_clk_o//,
+    //.fast_clock
   );
 
   pad_ring pad_ring_i (
@@ -225,25 +223,5 @@ ${pad_mux_process}
     .init_no()
   );
 
-// needed to synthesise all the physical channels in vivado 
-// or is assigned to one of the pins 
-logic temp_or;
 
-    // OR operation over the elements of array2 and array
-    always_comb begin
-        temp_or = 0;
-        for (int j = 0; j < NumChannels; j++) begin
-            temp_or = temp_or | ddr_rcv_clk_i[j];
-            temp_or = temp_or | ddr_rcv_clk_o[j];
-        end
-        for (int i = 0; i < NumChannels; i++) begin
-            for (int j = 0; j < NumLanes; j++) begin
-                temp_or = temp_or | ddr_i[i][j];
-                temp_or = temp_or | ddr_o[i][j];
-            end
-        end
-    end
-
-    // Assign the final result
-    assign result = temp_or;
 endmodule  // x_heep_system

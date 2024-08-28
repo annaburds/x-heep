@@ -89,9 +89,9 @@ ${pad.core_v_mini_mcu_interface}
     input  logic [NumChannels-1:0]    ddr_rcv_clk_i,  // adapt for multi channel
     output logic [NumChannels-1:0]    ddr_rcv_clk_o,
     input  logic [NumChannels-1:0][NumLanes-1:0] ddr_i,
-    output logic [NumChannels-1:0][NumLanes-1:0] ddr_o,
+    output logic [NumChannels-1:0][NumLanes-1:0] ddr_o//,
 
-    input  logic                    fast_clock
+    //input  logic                    fast_clock
      
 
 );
@@ -604,7 +604,7 @@ double_access_reg #(
     .NumLanes(4)
   ) serial_link_xheep_wrapper_i (
     .clk_i(clk_i),
-    .fast_clock,
+    .fast_clock(clk_i),
     .rst_ni(rst_ni),
     .clk_reg_i(clk_i),        //intended for clock gating purposes
     .rst_reg_ni(rst_ni),      //intended for SW reset purposes
