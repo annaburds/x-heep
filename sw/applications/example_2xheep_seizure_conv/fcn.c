@@ -74,8 +74,6 @@ signed char* conv1d_w[] = {conv1d_0_w, conv1d_1_w, conv1d_2_w};
 
 signed char* conv1d_b[] = {conv1d_0_b, conv1d_1_b, conv1d_2_b};
 
-signed char* dense_w[] =  {dense_0_w, dense_1_w};
-
 signed char* dense_b[] =  {dense_0_b, dense_1_b};
 
 signed char* bn[] =  {bn_0_gamma, bn_0_betta, bn_0_mean, bn_0_var,bn_1_gamma, bn_1_betta, bn_1_mean, bn_1_var,bn_2_gamma, bn_2_betta, bn_2_mean, bn_2_var};

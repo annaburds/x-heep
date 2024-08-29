@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     //CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
     //CSR_WRITE(CSR_REG_MCYCLE, 0);
     printf("ASD\n");
-    //WRITE_SL();
+    WRITE_SL();
     //CSR_READ(CSR_REG_MCYCLE, &cycles1);
     //printf("first write finished with  %d cycles, these cycles also include GPIO signal initialisation\n\r", cycles1);
 

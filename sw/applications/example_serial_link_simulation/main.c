@@ -19,16 +19,18 @@ int main(int argc, char *argv[])
     volatile int32_t *addr_p_external = 0xF0010000;
     volatile int32_t *addr_p_recreg = 0x51000000;
     //*addr_p_recreg = NUM_TO_CHECK;
-
+    printf("START\n");
     REG_CONFIG();
+    printf("REG CONFIG DONE\n");
     AXI_ISOLATE();
-
-    EXTERNAL_BUS_SL_CONFIG();
+    printf("AXI ISOLATE DONE\n");
+    //EXTERNAL_BUS_SL_CONFIG();
     
     unsigned int cycles1,cycles2;
     CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
 
     *addr_p = NUM_TO_CHECK;
+    printf("SENT DDR\n");
     CSR_WRITE(CSR_REG_MCYCLE, 0);
     while(1){
     if (*addr_p_external ==NUM_TO_CHECK){
@@ -40,16 +42,14 @@ int main(int argc, char *argv[])
    *addr_p = 6550039;
     while(1){
    if (*addr_p_external ==6550039){
-       //CSR_READ(CSR_REG_MCYCLE, &cycles1);
-       
+
        break;
        }
    }
    *addr_p = 38734;
         while(1){
    if (*addr_p_external ==38734){
-       //CSR_READ(CSR_REG_MCYCLE, &cycles1);
-       
+
        break;
        }
    }

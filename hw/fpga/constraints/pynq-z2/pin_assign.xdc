@@ -89,7 +89,7 @@ set_property -dict {PACKAGE_PIN U7 IOSTANDARD LVCMOS33} [get_ports {ddr_o[1]}] ;
 set_property -dict {PACKAGE_PIN C20 IOSTANDARD LVCMOS33} [get_ports {ddr_o[2]}] ; # rpi_gpio_tri_io[10]
 set_property -dict {PACKAGE_PIN Y6 IOSTANDARD LVCMOS33} [get_ports {ddr_o[3]}] ; # rpi_gpio_tri_io[7]
 
-set_property -dict {PACKAGE_PIN N15 IOSTANDARD LVCMOS33} [get_ports {result}] ;
+#set_property -dict {PACKAGE_PIN N15 IOSTANDARD LVCMOS33} [get_ports {result}] ;
 
 
 

@@ -46,7 +46,7 @@
 #include "core_v_mini_mcu.h"
 #include "power_manager.h"
 #include "x-heep.h"
-#include "timer_util.h"
+//#include "timer_util.h"
 
 #define GPIO_TOGGLE_WRITE 1
 #define GPIO_TOGGLE_READ 8 // BCS IT HAS TO BE INTERRUPT
@@ -361,7 +361,7 @@ int16_t forward_propagation(int16_t *data, int16_t *intermediate) {
     // SL configurations
     REG_CONFIG();
     AXI_ISOLATE();   
-    
+    printf("REG CONFIG SL DONE\n");
     
     int32_t fc_depth_size[3] = {128, 100, 2};
     int32_t fc_map_size[3] = {16, 1, 1};
@@ -371,18 +371,28 @@ int16_t forward_propagation(int16_t *data, int16_t *intermediate) {
     //  ************  BLOCK 0  ************ //
     int16_t *layer_out = intermediate_map0;
     int16_t *layer_in = intermediate_map1;
+    unsigned int cycles1,cycles2,cycles3;
+    CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
+    CSR_WRITE(CSR_REG_MCYCLE, 0);
     conv_block(0, layer_in, layer_out);
-    
-    
+    CSR_READ(CSR_REG_MCYCLE, &cycles1);
+    printf("BLOCK 0 takes  %d cycles\n\r", cycles1);
     //  ************  BLOCK 1  ************ //
     layer_out = intermediate_map1;
     layer_in = intermediate_map0;
+    CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
+    CSR_WRITE(CSR_REG_MCYCLE, 0);
     conv_block(1, layer_in, layer_out);
-    
+    CSR_READ(CSR_REG_MCYCLE, &cycles2);
+    printf("BLOCK 1 takes  %d cycles\n\r", cycles2);
     //  ************  BLOCK 2  ************ //
     layer_out = intermediate_map0;
     layer_in = intermediate_map1;
+    CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
+    CSR_WRITE(CSR_REG_MCYCLE, 0);
     conv_block(2, layer_in, layer_out);
+    CSR_READ(CSR_REG_MCYCLE, &cycles3);
+    printf("BLOCK 2 takes  %d cycles\n\r", cycles3);
     WRITE_SL(layer_out);
     //  ************  FC 0  ************ //
 
@@ -404,6 +414,7 @@ void __attribute__((optimize("00"))) WRITE_SL(int16_t *data)
     gpio_write(GPIO_TOGGLE_WRITE, false);
     gpio_write(GPIO_TOGGLE_WRITE, true); 
     for (size_t i = 0; i < MAX_DATA_SIZE; i++) {
+        printf("SL SENDING DATA\n");
         *addr_p = data[i];
     }
 }
