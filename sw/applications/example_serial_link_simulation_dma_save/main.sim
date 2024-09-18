@@ -8,71 +8,39 @@
 #include "csr.h"
 
 
-int32_t NUM_TO_CHECK = 429496729;
+int32_t NUM_TO_CHECK = 9;
 int32_t NUM_TO_BE_CHECKED;
 void WRITE_SL(void);
 
 int main(int argc, char *argv[])
 {
 
-    volatile int32_t *addr_p = 0x50000040;
-    volatile int32_t *addr_p_external = 0xF0010000;
-    volatile int32_t *addr_p_recreg = 0x51000000;
-    //*addr_p_recreg = NUM_TO_CHECK;
-    //printf("START\n");
-    REG_CONFIG();
-    //printf("REG CONFIG DONE\n");
-    AXI_ISOLATE();
-    //printf("AXI ISOLATE DONE\n");
-    EXTERNAL_BUS_SL_CONFIG();
     
-    *addr_p_external = NUM_TO_CHECK;
-    while(1){
-    if (*addr_p_recreg ==NUM_TO_CHECK){
-        
-        break;
-        }
-    }
 
 
+    //REG_CONFIG_MULTICHANNEL();
+    //AXI_ISOLATE_MULTICHANNEL();
+    //EXTERNAL_BUS_SL_CONFIG_MULTICHANNEL();
 
-    //unsigned int cycles1,cycles2;
-    //CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
-//
-    //*addr_p = NUM_TO_CHECK;
-    ////printf("SENT DDR\n");
-    //
-    //CSR_WRITE(CSR_REG_MCYCLE, 0);
-    //while(1){
-    //if (*addr_p_external ==NUM_TO_CHECK){
-    //    CSR_READ(CSR_REG_MCYCLE, &cycles1);
-//    //    
-//    //    break;
-//    //    }
-//    //}
-//    //*addr_p = 6550039;
-//    //while(1){
-//    //if (*addr_p_external ==6550039){
-//
-//    //   break;
-//    //   }
-//    //}
-//    //*addr_p = 38734;
-//    //    while(1){
-//    //if (*addr_p_external ==38734){
-//
-    //   break;
-    //   }
-    //}
-    //*addr_p = 378518920;
-    //        while(1){
-    //if (*addr_p_external ==378518920){
-    //   //CSR_READ(CSR_REG_MCYCLE, &cycles1);
-    //   CSR_READ(CSR_REG_MCYCLE, &cycles1);
-    //   break;
-    //   }
-    //}
-    //printf("first write finished with  %d cycles\n\r", cycles1);
+    REG_CONFIG();
+    AXI_ISOLATE();
+    EXTERNAL_BUS_SL_CONFIG();
+
+    unsigned int cycles1,cycles2;
+    CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
+
+    CSR_WRITE(CSR_REG_MCYCLE, 0);
+
+    WRITE_SL();
+
+    
+  
+    READ_SL();
+    CSR_READ(CSR_REG_MCYCLE, &cycles1);
+    printf("first write finished with  %d cycles\n\r", cycles1);
+
+
+    
     printf("DONE\n");
     
     return EXIT_SUCCESS;
@@ -80,16 +48,10 @@ int main(int argc, char *argv[])
 
 void __attribute__ ((optimize("00"))) WRITE_SL(void){
 
+
     volatile int32_t *addr_p = 0x50000040;
     *addr_p = NUM_TO_CHECK;
 
-    //printf("asd\n");     
-    
-    //*addr_p = NUM_TO_CHECK;
-    //*addr_p = 28;
-    //*addr_p = 47;
-    //*addr_p = 5;
-    //*addr_p = 3;
     //printf("writing %d  to %p \n",*addr_p, addr_p);
 }
 
@@ -108,16 +70,26 @@ void __attribute__ ((optimize("00"))) READ_SL(void){
 void __attribute__ ((optimize("00"))) REG_CONFIG(void){
     volatile int32_t *addr_p_reg =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET); 
     *addr_p_reg = (*addr_p_reg)| 0x00000001; // clock enable
+     //printf("addr_p %x\n", *addr_p_reg);
+    
     *addr_p_reg = (*addr_p_reg)& 0x11111101; // rst on
     *addr_p_reg = (*addr_p_reg)| 0x00000002; // rst oFF
+
+
+    //int32_t *addr_p_reg_flow_ctrl =(int32_t *)(SERIAL_LINK_START_ADDRESS  + SERIAL_LINK_SINGLE_CHANNEL_FLOW_CONTROL_FIFO_CLEAR_REG_OFFSET); //0x04000000 
+    //*addr_p_reg_flow_ctrl = (*addr_p_reg_flow_ctrl)& 0x00000001; //0x11111110;
 }
-
-
-void __attribute__ ((optimize("00"))) REG_CONFIG_MULTI(void){
+void __attribute__ ((optimize("00"))) REG_CONFIG_MULTICHANNEL(void){
     volatile int32_t *addr_p_reg =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_CTRL_REG_OFFSET); 
     *addr_p_reg = (*addr_p_reg)| 0x00000001; // clock enable
+     //printf("addr_p %x\n", *addr_p_reg);
+    
     *addr_p_reg = (*addr_p_reg)& 0x11111101; // rst on
     *addr_p_reg = (*addr_p_reg)| 0x00000002; // rst oFF
+
+
+    //int32_t *addr_p_reg_flow_ctrl =(int32_t *)(SERIAL_LINK_START_ADDRESS  + SERIAL_LINK_SINGLE_CHANNEL_FLOW_CONTROL_FIFO_CLEAR_REG_OFFSET); //0x04000000 
+    //*addr_p_reg_flow_ctrl = (*addr_p_reg_flow_ctrl)& 0x00000001; //0x11111110;
 }
 
 void __attribute__ ((optimize("00"))) RAW_MODE_EN(void){
@@ -152,6 +124,15 @@ void __attribute__ ((optimize("00"))) AXI_ISOLATE(void){
     *addr_p_reg_ISOLATE_OUT &= ~(1<<9); // axi_out_isolate
     }
 
+void __attribute__ ((optimize("00"))) AXI_ISOLATE_MULTICHANNEL(void){
+    int32_t *addr_p_reg_ISOLATE_IN =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_CTRL_REG_OFFSET); 
+
+    //*addr_p_reg_ISOLATE_IN = (*addr_p_reg_ISOLATE_IN)& (8 << 0); // axi_in_isolate
+    *addr_p_reg_ISOLATE_IN &= ~(1<<8);
+    int32_t *addr_p_reg_ISOLATE_OUT =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_CTRL_REG_OFFSET);
+    *addr_p_reg_ISOLATE_OUT &= ~(1<<9); // axi_out_isolate
+    }
+
 void __attribute__ ((optimize("00"))) EXTERNAL_BUS_SL_CONFIG(void){
     // /*                     -------                     */
     // /*  SL TESTHARNESS EXTERNAL BUS X-heep system      */
@@ -182,5 +163,19 @@ void __attribute__ ((optimize("00"))) EXTERNAL_BUS_SL_CONFIG(void){
     // //*addr_p_RAW_MODE_IN_CH_SEL_REG_ext = (*addr_p_RAW_MODE_IN_CH_SEL_REG_ext)| 0x00000001; // raw mode select channel 
 
 
+
+    }
+
+void __attribute__ ((optimize("00"))) EXTERNAL_BUS_SL_CONFIG_MULTICHANNEL(void){
+    volatile int32_t *addr_p_reg_ext =(int32_t *)(EXT_PERIPHERAL_START_ADDRESS + 0x04000 + SERIAL_LINK_CTRL_REG_OFFSET); //0x04000000 
+    *addr_p_reg_ext = (*addr_p_reg_ext)| 0x00000001; // ctrl clock enable external
+
+    *addr_p_reg_ext = (*addr_p_reg_ext)& 0x11111101; // rst on
+    *addr_p_reg_ext = (*addr_p_reg_ext)| 0x00000002; // rst oFF
+
+    int32_t *addr_p_reg_ISOLATE_IN_ext =(int32_t *)(EXT_PERIPHERAL_START_ADDRESS + 0x04000 + SERIAL_LINK_CTRL_REG_OFFSET); 
+    *addr_p_reg_ISOLATE_IN_ext &= ~(1<<8);
+    int32_t *addr_p_reg_ISOLATE_OUT_ext =(int32_t *)(EXT_PERIPHERAL_START_ADDRESS + 0x04000 + SERIAL_LINK_CTRL_REG_OFFSET);
+    *addr_p_reg_ISOLATE_OUT_ext &= ~(1<<9);
 
     }

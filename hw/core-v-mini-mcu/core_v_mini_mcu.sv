@@ -374,8 +374,8 @@ module core_v_mini_mcu
   obi_req_t  dma_addr_ch0_req;
   obi_resp_t dma_addr_ch0_resp;
 
-  obi_req_t  axi_sl_m_req;
-  obi_resp_t axi_sl_m_resp;
+  obi_req_t axi_sl_m_req, sl_recreg_req_o;
+  obi_resp_t axi_sl_m_resp, sl_recreg_resp_i;
 
   obi_req_t  axi_sl_slave_req;
   obi_resp_t axi_sl_slave_resp;
@@ -535,6 +535,48 @@ module core_v_mini_mcu
   assign memory_subsystem_banks_powergate_iso_n[8] = memory_subsystem_pwr_ctrl_out[8].isogate_en_n;
   assign memory_subsystem_banks_set_retentive_n[8] = memory_subsystem_pwr_ctrl_out[8].retentive_en_n;
   assign memory_subsystem_clkgate_en_n[8] = memory_subsystem_pwr_ctrl_out[8].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[9] = memory_subsystem_pwr_ctrl_out[9].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[9].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[9];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[9] = memory_subsystem_pwr_ctrl_out[9].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[9] = memory_subsystem_pwr_ctrl_out[9].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[9] = memory_subsystem_pwr_ctrl_out[9].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[10] = memory_subsystem_pwr_ctrl_out[10].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[10].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[10];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[10] = memory_subsystem_pwr_ctrl_out[10].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[10] = memory_subsystem_pwr_ctrl_out[10].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[10] = memory_subsystem_pwr_ctrl_out[10].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[11] = memory_subsystem_pwr_ctrl_out[11].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[11].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[11];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[11] = memory_subsystem_pwr_ctrl_out[11].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[11] = memory_subsystem_pwr_ctrl_out[11].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[11] = memory_subsystem_pwr_ctrl_out[11].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[12] = memory_subsystem_pwr_ctrl_out[12].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[12].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[12];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[12] = memory_subsystem_pwr_ctrl_out[12].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[12] = memory_subsystem_pwr_ctrl_out[12].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[12] = memory_subsystem_pwr_ctrl_out[12].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[13] = memory_subsystem_pwr_ctrl_out[13].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[13].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[13];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[13] = memory_subsystem_pwr_ctrl_out[13].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[13] = memory_subsystem_pwr_ctrl_out[13].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[13] = memory_subsystem_pwr_ctrl_out[13].clkgate_en_n;
+  //pwrgate exposed both outside and inside to deal with memories with embedded SLEEP mode or external PWR cells
+  assign memory_subsystem_banks_powergate_switch_no[14] = memory_subsystem_pwr_ctrl_out[14].pwrgate_en_n;
+  assign memory_subsystem_pwr_ctrl_in[14].pwrgate_ack_n = memory_subsystem_banks_powergate_switch_ack_ni[14];
+  //isogate exposed outside for UPF sim flow and switch cells
+  assign memory_subsystem_banks_powergate_iso_n[14] = memory_subsystem_pwr_ctrl_out[14].isogate_en_n;
+  assign memory_subsystem_banks_set_retentive_n[14] = memory_subsystem_pwr_ctrl_out[14].retentive_en_n;
+  assign memory_subsystem_clkgate_en_n[14] = memory_subsystem_pwr_ctrl_out[14].clkgate_en_n;
 
   for (genvar i = 0; i < EXT_DOMAINS_RND; i = i + 1) begin
     assign external_subsystem_powergate_switch_no[i]        = external_subsystem_pwr_ctrl_out[i].pwrgate_en_n;
@@ -673,8 +715,8 @@ module core_v_mini_mcu
       .flash_mem_slave_resp_i(flash_mem_slave_resp),
       .axi_sl_slave_req_o(axi_sl_slave_req),
       .axi_sl_slave_resp_i(axi_sl_slave_resp),
-      .sl_recreg_resp_i(),
-      .sl_recreg_req_o(),
+      .sl_recreg_resp_i,
+      .sl_recreg_req_o,
       .ext_core_instr_req_o(ext_core_instr_req_o),
       .ext_core_instr_resp_i(ext_core_instr_resp_i),
       .ext_core_data_req_o(ext_core_data_req_o),
@@ -863,14 +905,23 @@ module core_v_mini_mcu
   //parameter type         obi_rsp_t = logic,
   ) double_access_reg_i (
 
-      .reader_gnt_o   (axi_sl_m_resp.gnt),
-      .reader_req_i   (axi_sl_m_req.req),
-      .reader_rvalid_o(axi_sl_m_resp.rvalid),
-      .reader_addr_i  (axi_sl_m_req.addr),
-      .reader_we_i    (axi_sl_m_req.we),
-      .reader_be_i    (axi_sl_m_req.be),
-      .reader_rdata_o (axi_sl_m_resp.rdata),
-      .reader_wdata_i (axi_sl_m_req.wdata),
+      //.reader_gnt_o             (sl_recreg_resp_i.gnt),
+      //.reader_req_i             (sl_recreg_req_o.req),
+      //.reader_rvalid_o          (sl_recreg_resp_i.rvalid),
+      //.reader_addr_i            (sl_recreg_req_o.addr),
+      //.reader_we_i              (sl_recreg_req_o.we),
+      //.reader_be_i              (sl_recreg_req_o.be),
+      //.reader_rdata_o           (sl_recreg_resp_i.rdata),
+      //.reader_wdata_i           (sl_recreg_req_o.wdata),
+
+      .reader_gnt_o   (sl_recreg_resp_i.gnt),
+      .reader_req_i   (sl_recreg_req_o.req),
+      .reader_rvalid_o(sl_recreg_resp_i.rvalid),
+      .reader_addr_i  (sl_recreg_req_o.addr),
+      .reader_we_i    (sl_recreg_req_o.we),
+      .reader_be_i    (sl_recreg_req_o.be),
+      .reader_rdata_o (sl_recreg_resp_i.rdata),
+      .reader_wdata_i (sl_recreg_req_o.wdata),
 
       .writer_req_i   (obi_sl_req.req),
       .writer_gnt_o   (obi_sl_rsp.gnt),

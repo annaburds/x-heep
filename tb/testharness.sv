@@ -613,33 +613,33 @@ module testharness #(
 
 
 
-      double_access_reg #(
-      //parameter type         obi_req_t  = logic,
-      //parameter type         obi_rsp_t = logic,
-      ) double_access_reg_i (
-
-          .reader_gnt_o   (sl_axi2obi_resp.gnt),
-          .reader_req_i   (sl_axi2obi_req.req),
-          .reader_rvalid_o(sl_axi2obi_resp.rvalid),
-          .reader_addr_i  (sl_axi2obi_req.addr),
-          .reader_we_i    (sl_axi2obi_req.we),
-          .reader_be_i    (sl_axi2obi_req.be),
-          .reader_rdata_o (sl_axi2obi_resp.rdata),
-          .reader_wdata_i (sl_axi2obi_req.wdata),
-
-          .writer_req_i   (obi_sl_req.req),
-          .writer_gnt_o   (obi_sl_rsp.gnt),
-          .writer_rvalid_o(obi_sl_rsp.rvalid),
-          .writer_addr_i  (obi_sl_req.addr),
-          .writer_we_i    (obi_sl_req.we),
-          .writer_be_i    (obi_sl_req.be),
-          .writer_rdata_o (obi_sl_rsp.rdata),
-          .writer_wdata_i (obi_sl_req.wdata),
-
-          .clk_i (clk_i),
-          .rst_ni(rst_ni)
-
-      );
+      //double_access_reg #(
+      ////parameter type         obi_req_t  = logic,
+      ////parameter type         obi_rsp_t = logic,
+      //) double_access_reg_i (
+      //
+      //    .reader_gnt_o   (sl_axi2obi_resp.gnt),
+      //    .reader_req_i   (sl_axi2obi_req.req),
+      //    .reader_rvalid_o(sl_axi2obi_resp.rvalid),
+      //    .reader_addr_i  (sl_axi2obi_req.addr),
+      //    .reader_we_i    (sl_axi2obi_req.we),
+      //    .reader_be_i    (sl_axi2obi_req.be),
+      //    .reader_rdata_o (sl_axi2obi_resp.rdata),
+      //    .reader_wdata_i (sl_axi2obi_req.wdata),
+      //
+      //    .writer_req_i   (obi_sl_req.req),
+      //    .writer_gnt_o   (obi_sl_rsp.gnt),
+      //    .writer_rvalid_o(obi_sl_rsp.rvalid),
+      //    .writer_addr_i  (obi_sl_req.addr),
+      //    .writer_we_i    (obi_sl_req.we),
+      //    .writer_be_i    (obi_sl_req.be),
+      //    .writer_rdata_o (obi_sl_rsp.rdata),
+      //    .writer_wdata_i (obi_sl_req.wdata),
+      //
+      //    .clk_i (clk_i),
+      //    .rst_ni(rst_ni)
+      //
+      //);
 
 
       // SERIAL LINK
@@ -678,11 +678,11 @@ module testharness #(
 
           //.obi_req_o(sl_obi2axi_req),
           //.obi_rsp_o(sl_obi2axi_resp),
-          .obi_req_o(obi_sl_req),
-          .obi_rsp_o(obi_sl_rsp),
+          .obi_req_o(),  //obi_sl_req),
+          .obi_rsp_o(),  //obi_sl_rsp),
 
-          .obi_req_i(),  //sl_axi2obi_req),  //axi_in_req_i
-          .obi_rsp_i(),  //sl_axi2obi_resp),
+          .obi_req_i(sl_axi2obi_req),  //sl_axi2obi_req),  //axi_in_req_i
+          .obi_rsp_i(sl_axi2obi_resp), //sl_axi2obi_resp),
 
 
 

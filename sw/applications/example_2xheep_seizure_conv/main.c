@@ -413,9 +413,11 @@ void __attribute__((optimize("00"))) WRITE_SL(int16_t *data)
     volatile int32_t *addr_p = 0x50000040;
     gpio_write(GPIO_TOGGLE_WRITE, false);
     gpio_write(GPIO_TOGGLE_WRITE, true); 
+    printf("SL SENDING DATA\n");
     for (size_t i = 0; i < MAX_DATA_SIZE; i++) {
-        printf("SL SENDING DATA\n");
+        
         *addr_p = data[i];
+        printf("data %d\n",data[i]);
     }
 }
 

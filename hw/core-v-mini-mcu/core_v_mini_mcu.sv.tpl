@@ -129,8 +129,8 @@ ${pad.core_v_mini_mcu_interface}
   obi_req_t dma_addr_ch0_req;
   obi_resp_t dma_addr_ch0_resp;
 
-    obi_req_t axi_sl_m_req;
-    obi_resp_t axi_sl_m_resp;
+    obi_req_t axi_sl_m_req, sl_recreg_req_o;
+    obi_resp_t axi_sl_m_resp, sl_recreg_resp_i;
 
     obi_req_t axi_sl_slave_req;
     obi_resp_t axi_sl_slave_resp;
@@ -374,8 +374,8 @@ ${pad.core_v_mini_mcu_interface}
       .flash_mem_slave_resp_i(flash_mem_slave_resp),
       .axi_sl_slave_req_o(axi_sl_slave_req),
       .axi_sl_slave_resp_i(axi_sl_slave_resp),
-      .sl_recreg_resp_i(),
-      .sl_recreg_req_o(),
+      .sl_recreg_resp_i,
+      .sl_recreg_req_o,
       .ext_core_instr_req_o(ext_core_instr_req_o),
       .ext_core_instr_resp_i(ext_core_instr_resp_i),
       .ext_core_data_req_o(ext_core_data_req_o),
@@ -562,15 +562,24 @@ double_access_reg #(
     //parameter type         obi_rsp_t = logic,
 ) double_access_reg_i(
 
-    .reader_gnt_o             (axi_sl_m_resp.gnt),
-    .reader_req_i             (axi_sl_m_req.req),
-    .reader_rvalid_o          (axi_sl_m_resp.rvalid),
-    .reader_addr_i            (axi_sl_m_req.addr),
-    .reader_we_i              (axi_sl_m_req.we),
-    .reader_be_i              (axi_sl_m_req.be),
-    .reader_rdata_o           (axi_sl_m_resp.rdata),
-    .reader_wdata_i           (axi_sl_m_req.wdata),
+    //.reader_gnt_o             (sl_recreg_resp_i.gnt),
+    //.reader_req_i             (sl_recreg_req_o.req),
+    //.reader_rvalid_o          (sl_recreg_resp_i.rvalid),
+    //.reader_addr_i            (sl_recreg_req_o.addr),
+    //.reader_we_i              (sl_recreg_req_o.we),
+    //.reader_be_i              (sl_recreg_req_o.be),
+    //.reader_rdata_o           (sl_recreg_resp_i.rdata),
+    //.reader_wdata_i           (sl_recreg_req_o.wdata),
 
+    .reader_gnt_o             (sl_recreg_resp_i.gnt),
+    .reader_req_i             (sl_recreg_req_o.req),
+    .reader_rvalid_o          (sl_recreg_resp_i.rvalid),
+    .reader_addr_i            (sl_recreg_req_o.addr),
+    .reader_we_i              (sl_recreg_req_o.we),
+    .reader_be_i              (sl_recreg_req_o.be),
+    .reader_rdata_o           (sl_recreg_resp_i.rdata),
+    .reader_wdata_i           (sl_recreg_req_o.wdata),
+    
     .writer_req_i             (obi_sl_req.req),
     .writer_gnt_o             (obi_sl_rsp.gnt),
     .writer_rvalid_o          (obi_sl_rsp.rvalid),

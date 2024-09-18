@@ -324,6 +324,7 @@ void conv_block(const int32_t block, int16_t * const layer_in, int16_t * const c
     batch_normalization(conv1d_out, bn[block * 4], bn[block * 4 + 1], bn[block * 4 + 2], bn[block * 4 + 3],
                         conv1d_out, map_size[block+1]);
 
+    printf("CONV block %d mapsize %d depth %d \n\r",block, map_size[block+1],depth_size[block + 1]);
     relu(conv1d_out, map_size[block+1] * depth_size[block + 1]);
 }
 
@@ -337,27 +338,43 @@ int16_t forward_propagation(int16_t *data, int16_t *intermediate) {
     //  ************  BLOCK 0  ************ //
     int16_t *layer_out = intermediate_map0;
     int16_t *layer_in = intermediate_map1;
+    unsigned int cycles1;
+    CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
+    CSR_WRITE(CSR_REG_MCYCLE, 0);
     conv_block(0, layer_in, layer_out);
+    CSR_READ(CSR_REG_MCYCLE, &cycles1);
+    printf("CONV 0 -  %d cycles\n\r", cycles1);
     //heep_kResults[kResultsIdx++] = 110;
     
     
     //  ************  BLOCK 1  ************ //
     layer_out = intermediate_map1;
     layer_in = intermediate_map0;
+    CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
+    CSR_WRITE(CSR_REG_MCYCLE, 0);
     conv_block(1, layer_in, layer_out);
+    CSR_READ(CSR_REG_MCYCLE, &cycles1);
+    printf("CONV 0 -  %d cycles\n\r", cycles1);
     //heep_kResults[kResultsIdx++] = 1110;
     
     //  ************  BLOCK 2  ************ //
     layer_out = intermediate_map0;
     layer_in = intermediate_map1;
+    CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
+    CSR_WRITE(CSR_REG_MCYCLE, 0);
     conv_block(2, layer_in, layer_out);
+    CSR_READ(CSR_REG_MCYCLE, &cycles1);
+    printf("CONV 2 -  %d cycles\n\r", cycles1);
     
     //  ************  FC 0  ************ //
     layer_out = intermediate_map1;
     layer_in = intermediate_map0;
+    CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
+    CSR_WRITE(CSR_REG_MCYCLE, 0);
     conv1d(layer_in, dense_w[0], layer_out, dense_b[0], fc_map_size[0],fc_map_size[0],
            fc_depth_size[0], fc_map_size[1], fc_depth_size[1], fc_map_size[0], 1);
-    
+    CSR_READ(CSR_REG_MCYCLE, &cycles1);
+    printf("FC 0 -  %d cycles\n\r", cycles1);
     #ifdef PRINT_FC0_OUT
     printf("\nFC 0 out:\n");
     for(int i=0; i< fc_depth_size[1]*fc_map_size[0]; i++)
@@ -368,9 +385,12 @@ int16_t forward_propagation(int16_t *data, int16_t *intermediate) {
     //  ************  FC 1  ************ //
     layer_out = intermediate_map0;
     layer_in = intermediate_map1;
+    CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
+    CSR_WRITE(CSR_REG_MCYCLE, 0);
     conv1d(layer_in, dense_w[1], layer_out, dense_b[1], fc_map_size[1],fc_map_size[1],
            fc_depth_size[1], fc_map_size[2], fc_depth_size[2], fc_map_size[1], 0);
-    
+    CSR_READ(CSR_REG_MCYCLE, &cycles1);
+    printf("FC 1 -  %d cycles\n\r", cycles1);
     #ifdef PRINT_FC1_OUT
     printf("\n\nFC 1 out:\n");
     for(int i=0; i< fc_depth_size[2]*fc_map_size[1]; i++)

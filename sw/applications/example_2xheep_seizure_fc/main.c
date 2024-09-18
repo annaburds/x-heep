@@ -50,7 +50,7 @@
 #include "dma.h"
 #include "dma_regs.h"
 #include "fast_intr_ctrl.h"
-#include "timer_sdk.h"
+//#include "timer_sdk.h"
 
 
 
@@ -58,7 +58,7 @@
 
 
 
-static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0}
+static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 
 // Enable the C level optimizations for performance gains (loop reordering - loop unrolling)
 #define CONV_OPTIMIZED
@@ -112,10 +112,10 @@ int16_t forward_propagation(int16_t *data, int16_t *intermediate);
 
 int main()
 {
-    #ifdef PRINT_CYCLES
-        timer_init();
-        timer_start();
-    #endif
+    //#ifdef PRINT_CYCLES
+    //    timer_init();
+    //    timer_start();
+    //#endif
 // =================================================================================
 
     REG_CONFIG();
@@ -163,7 +163,7 @@ int main()
 
 
 
-        tgt_src.ptr = (uint8_t *)     0x50000040;
+        tgt_src.ptr = (uint8_t *)     0x51000000;
         tgt_src.inc_du = 0;
         tgt_src.size_du = TEST_DATA_LARGE;
         tgt_src.trig = DMA_TRIG_MEMORY;
@@ -511,4 +511,46 @@ int16_t forward_propagation(int16_t *data, int16_t *intermediate) {
         return 0;
     else
         return 1;
+}
+
+
+void __attribute__((optimize("00"))) REG_CONFIG(void)
+{
+    volatile int32_t *addr_p_reg = (int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET);
+    *addr_p_reg = (*addr_p_reg) | 0x00000001;
+    *addr_p_reg = (*addr_p_reg) & 0x11111101; 
+    *addr_p_reg = (*addr_p_reg) | 0x00000002; //needed reset for the credits count in serial link
+}
+
+void __attribute__((optimize("00"))) RAW_MODE_EN(void)
+{
+    int32_t *addr_p_reg_RAW_MODE = (int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_EN_REG_OFFSET);
+    *addr_p_reg_RAW_MODE = (*addr_p_reg_RAW_MODE) | 0x00000001; // raw mode en
+
+    int32_t *addr_p_RAW_MODE_IN_CH_SEL_REG = (int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_IN_CH_SEL_REG_OFFSET);
+    //*addr_p_RAW_MODE_IN_CH_SEL_REG = (*addr_p_RAW_MODE_IN_CH_SEL_REG)| 0x00000001; // raw mode select channel
+
+    int32_t *addr_p_RAW_MODE_OUT_CH_MASK_REG = (int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_OUT_CH_MASK_REG_OFFSET);
+    *addr_p_RAW_MODE_OUT_CH_MASK_REG = (*addr_p_RAW_MODE_OUT_CH_MASK_REG) | 0x00000008; // raw mode mask
+
+    int32_t *addr_p_RAW_MODE_OUT_DATA_FIFO_REG = (int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_OUT_DATA_FIFO_REG_OFFSET);
+    *addr_p_RAW_MODE_OUT_DATA_FIFO_REG = (*addr_p_RAW_MODE_OUT_DATA_FIFO_REG) | 0x00000001;
+
+    int32_t *addr_p_RAW_MODE_OUT_DATA_FIFO_CTRL_REG = (int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_OUT_DATA_FIFO_CTRL_REG_OFFSET);
+    *addr_p_RAW_MODE_OUT_DATA_FIFO_CTRL_REG = (*addr_p_RAW_MODE_OUT_DATA_FIFO_CTRL_REG) | 0x00000001;
+
+    int32_t *addr_p_RAW_MODE_OUT_EN_REG = (int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_OUT_EN_REG_OFFSET);
+    *addr_p_RAW_MODE_OUT_EN_REG = (*addr_p_RAW_MODE_OUT_EN_REG) | 0x00000001;
+
+    int32_t *addr_p_RAW_MODE_IN_DATA_REG = (int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_IN_DATA_REG_OFFSET);
+    *addr_p_RAW_MODE_IN_DATA_REG = (*addr_p_RAW_MODE_IN_DATA_REG) | 0x00000001;
+}
+
+void __attribute__((optimize("00"))) AXI_ISOLATE(void)
+{
+    int32_t *addr_p_reg_ISOLATE_IN = (int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET);
+
+    *addr_p_reg_ISOLATE_IN &= ~(1 << 8);
+    int32_t *addr_p_reg_ISOLATE_OUT = (int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET);
+    *addr_p_reg_ISOLATE_OUT &= ~(1 << 9); 
 }
