@@ -91,7 +91,6 @@ module double_access_reg #(
     case (CS)
       // wait for a request to come in from the serial link
       IDLE: begin
-        writer_rvalid_o = '0;
         if (writer_req_i) begin
           NS = FULL;
           next_data = writer_wdata_i;
@@ -112,9 +111,13 @@ module double_access_reg #(
       end
       READ: begin
         reader_rvalid_o = '1;
-        reader_rdata_o = curr_data;
-        NS = IDLE;
-
+        reader_rdata_o  = curr_data;
+        if (writer_req_i) begin
+          NS = FULL;
+          next_data = writer_wdata_i;
+        end else begin
+          NS = IDLE;
+        end
       end
       default: NS = IDLE;
     endcase
