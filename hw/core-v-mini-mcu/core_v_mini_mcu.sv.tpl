@@ -595,19 +595,9 @@ ${pad.core_v_mini_mcu_interface}
 // );
 
 fifo_serial_link_wrapper #(
-    //parameter type         obi_req_t  = logic,
-    //parameter type         obi_rsp_t = logic,
+  .FIFO_DEPTH(8)
 ) fifo_serial_link_wrapper_i(
-
-    //.reader_gnt_o             (sl_recreg_resp_i.gnt),
-    //.reader_req_i             (sl_recreg_req_o.req),
-    //.reader_rvalid_o          (sl_recreg_resp_i.rvalid),
-    //.reader_addr_i            (sl_recreg_req_o.addr),
-    //.reader_we_i              (sl_recreg_req_o.we),
-    //.reader_be_i              (sl_recreg_req_o.be),
-    //.reader_rdata_o           (sl_recreg_resp_i.rdata),
-    //.reader_wdata_i           (sl_recreg_req_o.wdata),
-
+  
     .reader_gnt_o             (sl_recreg_resp_i.gnt),
     .reader_req_i             (sl_recreg_req_o.req),
     .reader_rvalid_o          (sl_recreg_resp_i.rvalid),

@@ -34,7 +34,10 @@ int main(int argc, char *argv[])
 
     unsigned int cycles1,cycles2,cycles3;
     WRITE_SL();
-
+    for (int i = 1; i <= 8; i++) {
+        *addr_p_external = i;
+        printf("sent %x\n\r", i);
+    }
 
 
 
@@ -77,21 +80,53 @@ int main(int argc, char *argv[])
         res |= dma_validate_transaction(&trans, false, false);
         res |= dma_load_transaction(&trans);
         res |= dma_launch(&trans);
-        printf("DMA launched\n\r");
+        printf("DMA launched: transaction 1\n\r");
 
 
-        while(!dma_is_ready(0)) {
+        if(!dma_is_ready(0)) {
             CSR_CLEAR_BITS(CSR_REG_MSTATUS, 0x8);
                     if (!dma_is_ready(0)) {
                         wait_for_interrupt();
                     }
             CSR_SET_BITS(CSR_REG_MSTATUS, 0x8);
         }  
-        CSR_READ(CSR_REG_MCYCLE, &cycles2);
-        printf("DMA reading takes  %d cycles\n\r", cycles2);
+        CSR_READ(CSR_REG_MCYCLE, &cycles1);
+        printf("DMA reading takes  %d cycles\n\r", cycles1);
         for (int i = 0; i < TEST_DATA_LARGE; i++) {
             printf("read from dma %x .\n\r", copied_data_4B[i]);
         }
+
+
+
+
+    for (int i = 0x11; i <= 0x18; i++) {
+        *addr_p_external = i;
+        printf("sent %x\n\r", i);
+    }
+
+
+
+        CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
+        CSR_WRITE(CSR_REG_MCYCLE, 0);
+        res |= dma_validate_transaction(&trans, false, false);
+        res |= dma_load_transaction(&trans);
+        res |= dma_launch(&trans);
+        printf("DMA launched: transaction 2\n\r");
+
+
+        if(!dma_is_ready(0)) {
+            CSR_CLEAR_BITS(CSR_REG_MSTATUS, 0x8);
+                    if (!dma_is_ready(0)) {
+                        wait_for_interrupt();
+                    }
+            CSR_SET_BITS(CSR_REG_MSTATUS, 0x8);
+        }  
+        CSR_READ(CSR_REG_MCYCLE, &cycles1);
+        printf("DMA reading takes  %d cycles\n\r", cycles1);
+        for (int i = 0; i < TEST_DATA_LARGE; i++) {
+            printf("read from dma %x .\n\r", copied_data_4B[i]);
+        }
+
 
 
     printf("DONE\n");  
@@ -119,10 +154,10 @@ void __attribute__ ((optimize("00"))) WRITE_SL(void){
     // }
     // printf("sending full axi package through external SL 32 bits takes  %d cycles\n\r", cycles1);
         
-    for (int i = 0; i < TEST_DATA_LARGE; i++) {
-        *addr_p_external = i;
-        printf("sent %x\n\r", i);
-    }
+    // for (int i = 0; i < TEST_DATA_LARGE; i++) {
+    //     *addr_p_external = i;
+    //     printf("sent %x\n\r", i);
+    // }
 }
 
 void __attribute__ ((optimize("00"))) DMA_READ(void){

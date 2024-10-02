@@ -54,6 +54,7 @@ filesets:
     - hw/core-v-mini-mcu/axi2obi.sv
     - hw/core-v-mini-mcu/double_access_reg.sv
     - hw/core-v-mini-mcu/clock_divider_simple.sv
+    - hw/core-v-mini-mcu/fifo_serial_link_wrapper.sv
     file_type: systemVerilogSource
 
   rtl-simulation:
