@@ -169,7 +169,7 @@ void __attribute__ ((optimize("00"))) WRITE_SL_CONFIG(void){
 void __attribute__ ((optimize("00"))) REG_CONFIG(void){
     volatile int32_t *addr_p_reg =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET); 
     *addr_p_reg = (*addr_p_reg)| 0x00000001; // clock enable
-    *addr_p_reg = (*addr_p_reg)& 0x11111101; // rst on
+    *addr_p_reg = (*addr_p_reg)& 0xFFFFFFFD; // rst on
     *addr_p_reg = (*addr_p_reg)| 0x00000002; // rst oFF
 }
 
@@ -177,7 +177,7 @@ void __attribute__ ((optimize("00"))) REG_CONFIG(void){
 void __attribute__ ((optimize("00"))) REG_CONFIG_MULTI(void){
     volatile int32_t *addr_p_reg =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_CTRL_REG_OFFSET); 
     *addr_p_reg = (*addr_p_reg)| 0x00000001; // clock enable
-    *addr_p_reg = (*addr_p_reg)& 0x11111101; // rst on
+    *addr_p_reg = (*addr_p_reg)& 0xFFFFFFFD; // rst on
     *addr_p_reg = (*addr_p_reg)| 0x00000002; // rst oFF
 }
 
@@ -218,7 +218,7 @@ void __attribute__ ((optimize("00"))) EXTERNAL_BUS_SL_CONFIG(void){
     volatile int32_t *addr_p_reg_ext =(int32_t *)(EXT_PERIPHERAL_START_ADDRESS + 0x04000 + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET); //0x04000000 
     *addr_p_reg_ext = (*addr_p_reg_ext)| 0x00000001; // ctrl clock enable external
 
-    *addr_p_reg_ext = (*addr_p_reg_ext)& 0x11111101; // rst on
+    *addr_p_reg_ext = (*addr_p_reg_ext)& 0xFFFFFFFD; // rst on
     *addr_p_reg_ext = (*addr_p_reg_ext)| 0x00000002; // rst oFF
     // /*  AXI ISOLATE                   */ 
     // all channels are isolated by default 

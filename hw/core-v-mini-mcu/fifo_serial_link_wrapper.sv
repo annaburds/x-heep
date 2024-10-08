@@ -46,7 +46,7 @@ module fifo_serial_link_wrapper #(
   assign writer_gnt_o = ~full;
   assign reader_gnt_o = ~empty;
 
-  assign push = (~full) & writer_req_i;  //& (writter_we_i)
+  assign push = (~full) & writer_req_i & (writer_we_i);
   assign pop = (~empty) & reader_req_i & (~reader_we_i);
 
   assign writer_rvalid_n = push;
