@@ -17,7 +17,9 @@ module serial_link_xheep_wrapper
   parameter int NumChannels = 1,
   //parameter int NumChannels = 32,
   parameter int NumLanes = 4,//8,
-  parameter int MaxClkDiv = 32
+  parameter int MaxClkDiv = 32,
+  parameter int AddrWidth = 32,
+  parameter int DataWidth = 32
 ) (
   input  logic                      clk_i,
   input  logic                      fast_clock,
@@ -53,9 +55,9 @@ module serial_link_xheep_wrapper
 
 
 axi_lite_from_mem #(
-  .MemAddrWidth    ( 32'd32    ),
-  .AxiAddrWidth    ( 32'd32    ),
-  .DataWidth       ( 32'd32       ),
+  .MemAddrWidth    ( AddrWidth ),
+  .AxiAddrWidth    ( AddrWidth ),
+  .DataWidth       ( DataWidth ),
   .MaxRequests     ( 32'd2     ),  // fifo size
   //.AxiProt         ( AxiProt  ),
   .axi_req_t       ( axi_req_t  ),
@@ -77,7 +79,7 @@ axi_lite_from_mem #(
 );
 
 axi_lite_to_axi #(
-  .AxiDataWidth(32'd0),
+  .AxiDataWidth(32'd32),
   
   .req_lite_t(axi_req_t),
   .resp_lite_t(axi_rsp_t),
@@ -101,8 +103,8 @@ axi_lite_to_axi #(
 axi_to_mem #(
   .axi_req_t(axi_req_t),
   .axi_resp_t(axi_rsp_t),
-  .AddrWidth(32),
-  .DataWidth(32),
+  .AddrWidth(AddrWidth),
+  .DataWidth(DataWidth),
   //.IdWidth(),
   .NumBanks(1),
   //.BufDepth(),

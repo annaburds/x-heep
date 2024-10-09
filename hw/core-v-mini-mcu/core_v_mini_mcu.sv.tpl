@@ -636,7 +636,10 @@ fifo_serial_link_wrapper #(
     .obi_req_t(obi_req_t),
     .obi_resp_t(obi_resp_t),
     .NumChannels(1),
-    .NumLanes(4)
+    .NumLanes(4),
+    .MaxClkDiv(32),
+    .AddrWidth(32),
+    .DataWidth(32)
   ) serial_link_xheep_wrapper_i (
     .clk_i(clk_i),
     .fast_clock(clk_i),

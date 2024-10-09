@@ -13,7 +13,7 @@
 
 
 #define DMA_DATA_LARGE 8
-#define TEST_DATA_LARGE 30
+#define TEST_DATA_LARGE 8
 
 static uint32_t to_be_sent_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
@@ -27,8 +27,8 @@ void dma_intr_handler_trans_done(uint8_t channel){}
 int main(int argc, char *argv[]){
     
     volatile int32_t *addr_p = 0x50000040;
-    volatile int32_t *addr_p_external = 0xF0010000;
-    volatile int32_t *addr_p_recreg = 0x51000000;
+    // volatile int32_t *addr_p_external = 0xF0010000;
+    // volatile int32_t *addr_p_recreg = 0x51000000;
     // unsigned int cycles1,cycles2,cycles3;
     WRITE_SL_CONFIG();
     
@@ -43,25 +43,15 @@ int main(int argc, char *argv[]){
     uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
     uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
     for (uint32_t i = 0; i < chunks; i++) {
-        SL_DMA_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
+        SL_DMA_SEND(to_be_sent_4B + i * DMA_DATA_LARGE, addr_p, DMA_DATA_LARGE);
     }
-    if (remainder > 0) {
-        SL_DMA_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
-    }
-
-    printf("data saved:\n");
-    for (int i = 0; i < TEST_DATA_LARGE; i++) {
-        printf("%x\n", copied_data_4B[i]);
-    }
-
-
 
     printf("DONE\n");  
     return EXIT_SUCCESS;
 }
 
 // parameter "large" should equal to or less than FIFO size (default 8)
-void __attribute__ ((optimize("00"))) SL_DMA_TRANS(uint32_t *src, uint32_t *dst, uint32_t large){
+void __attribute__ ((optimize("00"))) SL_DMA_SEND(uint32_t *src, uint32_t *dst, uint32_t large){
     volatile static dma_config_flags_t res;
     volatile static dma_target_t tgt_src;
     volatile static dma_target_t tgt_dst;
@@ -75,7 +65,7 @@ void __attribute__ ((optimize("00"))) SL_DMA_TRANS(uint32_t *src, uint32_t *dst,
         tgt_src.trig = DMA_TRIG_MEMORY;
         tgt_src.type = DMA_DATA_TYPE_WORD;
 
-        tgt_dst.ptr = (uint32_t *)0xF0010000;
+        tgt_dst.ptr = (uint32_t *)dst;
         tgt_dst.inc_du = 0;
         tgt_dst.size_du = large;
         tgt_dst.trig = DMA_TRIG_MEMORY;
@@ -101,68 +91,12 @@ void __attribute__ ((optimize("00"))) SL_DMA_TRANS(uint32_t *src, uint32_t *dst,
             CSR_SET_BITS(CSR_REG_MSTATUS, 0x8);
         }  
         printf("done.\n\r");
-
-
-        dma_init(NULL);
-        tgt_src.ptr = (uint32_t *)0x51000000;
-        tgt_src.inc_du = 0;
-        tgt_src.size_du = large;
-        tgt_src.trig = DMA_TRIG_MEMORY;
-        tgt_src.type = DMA_DATA_TYPE_WORD;
-
-        tgt_dst.ptr = (uint32_t *)dst;
-        tgt_dst.inc_du = 1;
-        tgt_dst.size_du = large;
-        tgt_dst.trig = DMA_TRIG_MEMORY;
-        tgt_dst.type = DMA_DATA_TYPE_WORD;
-
-        trans.src = &tgt_src;
-        trans.dst = &tgt_dst;
-        trans.mode = DMA_TRANS_MODE_SINGLE;
-        trans.win_du = 0;
-        trans.sign_ext = 0;
-        trans.end = DMA_TRANS_END_INTR;
-
-        // CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
-        // CSR_WRITE(CSR_REG_MCYCLE, 0);
-        res |= dma_validate_transaction(&trans, false, false);
-        res |= dma_load_transaction(&trans);
-        res |= dma_launch(&trans);
-        printf("DMA launched: save.\n");
-
-        if(!dma_is_ready(0)) {
-            CSR_CLEAR_BITS(CSR_REG_MSTATUS, 0x8);
-                    if (!dma_is_ready(0)) {
-                        wait_for_interrupt();
-                    }
-            CSR_SET_BITS(CSR_REG_MSTATUS, 0x8);
-        }  
-        // CSR_READ(CSR_REG_MCYCLE, &cycles1);
-        // printf("DMA reading takes  %d cycles\n\r", cycles1);
-        printf("done.\n\r");
 }
 
 void __attribute__ ((optimize("00"))) WRITE_SL_CONFIG(void){
-
-    // int32_t NUM_TO_CHECK = 429496729;
-    // volatile int32_t *addr_p = 0x50000040;
-    // volatile int32_t *addr_p_external = 0xF0010000;
-    // volatile int32_t *addr_p_recreg = 0x51000000;
     REG_CONFIG();
     AXI_ISOLATE();
-    EXTERNAL_BUS_SL_CONFIG();
-    // unsigned int cycles1;
-    // CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
-    // CSR_WRITE(CSR_REG_MCYCLE, 0);
-    //     *addr_p_external = NUM_TO_CHECK;
-
-    // while(1){
-    // if (*addr_p_recreg ==NUM_TO_CHECK){
-    //     CSR_READ(CSR_REG_MCYCLE, &cycles1);
-    //     break;
-    //    }
-    // }
-    // printf("sending full axi package through external SL 32 bits takes  %d cycles\n\r", cycles1);
+    // EXTERNAL_BUS_SL_CONFIG();
 }
 
 
