@@ -36,8 +36,6 @@ module fifo_serial_link_wrapper #(
 );
 
   logic push, pop, full, empty;
-  logic writer_rvalid_n;
-  logic reader_rvalid_n;
   logic [DATA_WIDTH-1:0] reader_rdata_n;
 
   assign writer_rdata_o = 0;
@@ -49,17 +47,14 @@ module fifo_serial_link_wrapper #(
   assign push = (~full) & writer_req_i & (writer_we_i);
   assign pop = (~empty) & reader_req_i & (~reader_we_i);
 
-  assign writer_rvalid_n = push;
-  assign reader_rvalid_n = pop;
-
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       writer_rvalid_o <= 0;
       reader_rvalid_o <= 0;
       reader_rdata_o  <= 0;
     end else begin
-      writer_rvalid_o <= writer_rvalid_n;
-      reader_rvalid_o <= reader_rvalid_n;
+      writer_rvalid_o <= push;
+      reader_rvalid_o <= pop;
       reader_rdata_o  <= reader_rdata_n;
     end
   end
@@ -70,7 +65,7 @@ module fifo_serial_link_wrapper #(
   ) fifo_i (
       .clk_i     (clk_i),           // Clock
       .rst_ni    (rst_ni),          // Asynchronous reset active low
-      .flush_i   (),                // flush the queue
+      .flush_i   (0),               // flush the queue
       .testmode_i(),                // test_mode to bypass clock gating
       // status flags
       .full_o    (full),            // queue is full

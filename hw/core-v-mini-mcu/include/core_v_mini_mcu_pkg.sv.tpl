@@ -260,4 +260,9 @@ package core_v_mini_mcu_pkg;
     LEFT
   } pad_side_e;
 
+  typedef logic sl_min_axi_addr_t;
+  `AXI_TYPEDEF_AW_CHAN_T(sl_min_axi_aw_t, sl_min_axi_addr_t, axi_id_t, axi_user_t)
+  `AXI_TYPEDEF_AR_CHAN_T(sl_min_axi_ar_t, sl_min_axi_addr_t, axi_id_t, axi_user_t)
+  `AXI_TYPEDEF_REQ_T(sl_min_axi_req_t, sl_min_axi_aw_t, axi_w_t, sl_min_axi_ar_t)
+
 endpackage

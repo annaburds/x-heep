@@ -644,18 +644,23 @@ module testharness #(
 
       // SERIAL LINK
       serial_link_xheep_wrapper #(
-          .axi_req_t(core_v_mini_mcu_pkg::axi_req_t),
-          .axi_rsp_t(core_v_mini_mcu_pkg::axi_resp_t),
+        .axi_req_t(core_v_mini_mcu_pkg::sl_min_axi_req_t),
+        .axi_rsp_t(core_v_mini_mcu_pkg::axi_resp_t),
 
-          .aw_chan_t (core_v_mini_mcu_pkg::axi_aw_t),
-          .ar_chan_t (core_v_mini_mcu_pkg::axi_ar_t),
-          .r_chan_t  (core_v_mini_mcu_pkg::axi_r_t),
-          .w_chan_t  (core_v_mini_mcu_pkg::axi_w_t),
-          .b_chan_t  (core_v_mini_mcu_pkg::axi_b_t),
-          .cfg_rsp_t (reg_rsp_t),
-          .cfg_req_t (reg_req_t),
-          .obi_req_t (obi_req_t),
-          .obi_resp_t(obi_resp_t)
+        .aw_chan_t (core_v_mini_mcu_pkg::sl_min_axi_aw_t),
+        .ar_chan_t (core_v_mini_mcu_pkg::sl_min_axi_ar_t),
+        .r_chan_t  (core_v_mini_mcu_pkg::axi_r_t),
+        .w_chan_t  (core_v_mini_mcu_pkg::axi_w_t),
+        .b_chan_t  (core_v_mini_mcu_pkg::axi_b_t),
+          .cfg_rsp_t(reg_rsp_t),
+          .cfg_req_t(reg_req_t),
+          .obi_req_t(obi_req_t),
+          .obi_resp_t(obi_resp_t),
+          .NumChannels(1),
+          .NumLanes(4),
+          .MaxClkDiv(32),
+          .AddrWidth(1),
+          .DataWidth(32)
       ) serial_link_xheep_wrapper_i (
           .clk_i     (clk_i),
           .fast_clock(clk_i),
