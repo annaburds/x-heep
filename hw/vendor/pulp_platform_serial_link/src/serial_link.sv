@@ -38,9 +38,9 @@ import serial_link_pkg::*;
   parameter int NumLanes = serial_link_pkg::NumLanes,
   parameter int MaxClkDiv = serial_link_pkg::MaxClkDiv,
   parameter bit NoRegCdc = 1'b0,
-  localparam int Log2NumChannels = (NumChannels > 1)? $clog2(NumChannels) : 1
+  localparam int Log2NumChannels = (NumChannels > 1)? $clog2(NumChannels) : 1,
 
-
+  parameter int MaxAxiChannelBits = 83
 
 
   
@@ -84,7 +84,7 @@ import serial_link_pkg::*;
 
   import serial_link_pkg::*;
 
-  localparam int MaxAxiChannelBits = 83;//manually computed!!! Badly designed? - yes
+  // localparam int MaxAxiChannelBits = 83;//manually computed!!! Badly designed? - yes
 
   // The payload that is converted into an AXI stream consists of
   // 1) AXI Beat

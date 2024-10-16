@@ -260,9 +260,16 @@ package core_v_mini_mcu_pkg;
     LEFT
   } pad_side_e;
 
-  typedef logic sl_min_axi_addr_t;
+  parameter int unsigned SL_MIN_AXI_ADDR_WIDTH = 1;
+  typedef logic [SL_MIN_AXI_ADDR_WIDTH-1:0] sl_min_axi_addr_t;
   `AXI_TYPEDEF_AW_CHAN_T(sl_min_axi_aw_t, sl_min_axi_addr_t, axi_id_t, axi_user_t)
   `AXI_TYPEDEF_AR_CHAN_T(sl_min_axi_ar_t, sl_min_axi_addr_t, axi_id_t, axi_user_t)
   `AXI_TYPEDEF_REQ_T(sl_min_axi_req_t, sl_min_axi_aw_t, axi_w_t, sl_min_axi_ar_t)
+
+  parameter int unsigned AW_CH_SIZE = 35 + SL_MIN_AXI_ADDR_WIDTH + 8 + 8;   // 35 + addr_t + id_t + user_t
+  parameter int unsigned W_CH_SIZE = 1 + AXI_DATA_WIDTH + AxiStrbWidth + 8; // 1 + data_t + strb_t + user_t
+  parameter int unsigned B_CH_SIZE = 2 + 8 + 8;                             // 2 + id_t + user_t
+  parameter int unsigned AR_CH_SIZE = 29 + SL_MIN_AXI_ADDR_WIDTH + 8 + 8;   // 29 + addr_t + id_t + user_t
+  parameter int unsigned R_CH_SIZE = 3 + AXI_DATA_WIDTH + 8 + 8;            // 3 + data_t + id_t + user_t
 
 endpackage

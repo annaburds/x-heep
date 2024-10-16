@@ -19,7 +19,12 @@ module serial_link_xheep_wrapper
   parameter int NumLanes = 4,//8,
   parameter int MaxClkDiv = 32,
   parameter int AddrWidth = 32,
-  parameter int DataWidth = 32
+  parameter int DataWidth = 32,
+  parameter int AW_CH_SIZE = 1,
+  parameter int W_CH_SIZE = 1,
+  parameter int B_CH_SIZE = 1,
+  parameter int AR_CH_SIZE = 1,
+  parameter int R_CH_SIZE = 1
 ) (
   input  logic                      clk_i,
   input  logic                      fast_clock,
@@ -58,7 +63,7 @@ axi_lite_from_mem #(
   .MemAddrWidth    ( AddrWidth ),
   .AxiAddrWidth    ( AddrWidth ),
   .DataWidth       ( DataWidth ),
-  .MaxRequests     ( 32'd2     ),  // fifo size
+  .MaxRequests     ( DataWidth ),  // fifo size
   //.AxiProt         ( AxiProt  ),
   .axi_req_t       ( axi_req_t  ),
   .axi_rsp_t       ( axi_rsp_t )
@@ -185,7 +190,21 @@ axi_to_mem #(
 );
 
 
+    function automatic int max(int a, int b);
+        return (a > b) ? a : b;
+    endfunction
 
+    function automatic int calc_max_axi_channel_bit(
+        int aw_width,
+        int w_width,
+        int b_width,
+        int ar_width,
+        int r_width
+    );
+        return max(max(max(aw_width, w_width), max(b_width, ar_width)), r_width);
+    endfunction
+  
+  parameter int MaxAxiChannelBits = calc_max_axi_channel_bit(AW_CH_SIZE, W_CH_SIZE, B_CH_SIZE, AR_CH_SIZE, R_CH_SIZE);
 
   if (NumChannels > 1) begin : gen_multi_channel_serial_link
     serial_link #(
@@ -202,7 +221,8 @@ axi_to_mem #(
       .reg2hw_t         ( serial_link_reg_pkg::serial_link_reg2hw_t ),
       .NumChannels      ( NumChannels ),
       .NumLanes         ( NumLanes    ),
-      .MaxClkDiv        ( MaxClkDiv   )
+      .MaxClkDiv        ( MaxClkDiv   ),
+      .MaxAxiChannelBits(MaxAxiChannelBits)
     ) i_serial_link (
       .clk_i          ( clk_i             ),
       .rst_ni         ( rst_ni            ),
@@ -244,7 +264,8 @@ axi_to_mem #(
       .reg2hw_t         ( serial_link_single_channel_reg_pkg::serial_link_single_channel_reg2hw_t ),
       .NumChannels      ( NumChannels ),
       .NumLanes         ( NumLanes    ),
-      .MaxClkDiv        ( MaxClkDiv   )
+      .MaxClkDiv        ( MaxClkDiv   ),
+      .MaxAxiChannelBits(MaxAxiChannelBits)
     ) i_serial_link (
       .clk_i          ( clk_i             ),
       .rst_ni         ( rst_ni            ),

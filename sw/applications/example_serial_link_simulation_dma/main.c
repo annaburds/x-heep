@@ -12,8 +12,8 @@
 //#include "timer_sdk.h"
 
 
-#define DMA_DATA_LARGE 8
-#define TEST_DATA_LARGE 30
+#define DMA_DATA_LARGE 1
+#define TEST_DATA_LARGE 1
 
 static uint32_t to_be_sent_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
     volatile int32_t *addr_p = 0x50000040;
     volatile int32_t *addr_p_external = 0xF0010000;
     volatile int32_t *addr_p_recreg = 0x51000000;
-    // unsigned int cycles1,cycles2,cycles3;
+    unsigned int cycles1,cycles2,cycles3;
     WRITE_SL_CONFIG();
     
     for (int i = 0; i < TEST_DATA_LARGE; i++) {
@@ -43,7 +43,13 @@ int main(int argc, char *argv[]){
     uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
     uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
     for (uint32_t i = 0; i < chunks; i++) {
+        CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
+        CSR_WRITE(CSR_REG_MCYCLE, 0);
+
         SL_DMA_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
+
+        CSR_READ(CSR_REG_MCYCLE, &cycles1);
+        printf("DMA transaction %d cycles\n\r", cycles1);
     }
     if (remainder > 0) {
         SL_DMA_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
