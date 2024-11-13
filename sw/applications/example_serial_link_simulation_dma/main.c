@@ -20,6 +20,7 @@ static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0
 
 
 void WRITE_SL_CONFIG(void);
+void SL_CPU_TRANS(uint32_t *src, uint32_t *dst, uint32_t large);
 void SL_DMA_TRANS(uint32_t *src, uint32_t *dst, uint32_t large);
 void wait_for_interrupt(void);
 void dma_intr_handler_trans_done(uint8_t channel){}
@@ -43,10 +44,12 @@ int main(int argc, char *argv[]){
     uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
     uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
     for (uint32_t i = 0; i < chunks; i++) {
-        SL_DMA_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
+        SL_CPU_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
+        // SL_DMA_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
     }
     if (remainder > 0) {
-        SL_DMA_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
+        SL_CPU_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
+        // SL_DMA_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
     }
 
     printf("data saved:\n");
@@ -56,6 +59,22 @@ int main(int argc, char *argv[]){
 
     printf("DONE\n");  
     return EXIT_SUCCESS;
+}
+
+void __attribute__ ((optimize("00"))) SL_CPU_TRANS(uint32_t *src, uint32_t *dst, uint32_t large){
+    volatile int32_t *addr_p_external = 0xF0010000;
+    volatile int32_t *addr_p_recreg = 0x51000000;
+    printf("CPU is sending..\n");
+    for (int i = 0; i < large; i++) {
+        *addr_p_external = *(src + i);
+    }
+    printf("done.\n\r");
+
+    printf("CPU is receiving..\n");
+    for (int i = 0; i < large; i++) {
+        *(dst + i) = *addr_p_recreg;
+    }
+    printf("done.\n\r");
 }
 
 // parameter "large" should equal to or less than FIFO size (default 8)

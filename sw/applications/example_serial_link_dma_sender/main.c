@@ -12,15 +12,16 @@
 //#include "timer_sdk.h"
 
 
-#define DMA_DATA_LARGE 4
-#define TEST_DATA_LARGE 4
+#define DMA_DATA_LARGE 1
+#define TEST_DATA_LARGE 1
 
 static uint32_t to_be_sent_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 
 
 void WRITE_SL_CONFIG(void);
-void SL_DMA_TRANS(uint32_t *src, uint32_t *dst, uint32_t large);
+void SL_CPU_SEND(uint32_t *src, uint32_t *dst, uint32_t large);
+void SL_DMA_SEND(uint32_t *src, uint32_t *dst, uint32_t large);
 void wait_for_interrupt(void);
 void dma_intr_handler_trans_done(uint8_t channel){}
 
@@ -43,11 +44,20 @@ int main(int argc, char *argv[]){
     uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
     uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
     for (uint32_t i = 0; i < chunks; i++) {
-        SL_DMA_SEND(to_be_sent_4B + i * DMA_DATA_LARGE, addr_p, DMA_DATA_LARGE);
+        SL_CPU_SEND(to_be_sent_4B + i * DMA_DATA_LARGE, addr_p, DMA_DATA_LARGE);
+        // SL_DMA_SEND(to_be_sent_4B + i * DMA_DATA_LARGE, addr_p, DMA_DATA_LARGE);
     }
 
     printf("DONE\n");  
     return EXIT_SUCCESS;
+}
+
+void __attribute__ ((optimize("00"))) SL_CPU_SEND(uint32_t *src, uint32_t *dst, uint32_t large){
+    printf("CPU is sending..\n");
+    for (int i = 0; i < large; i++) {
+        *dst = *(src + i);
+    }
+    printf("done.\n\r");
 }
 
 // parameter "large" should equal to or less than FIFO size (default 8)

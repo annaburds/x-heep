@@ -873,21 +873,21 @@ fifo_serial_link_wrapper #(
 
 
   serial_link_xheep_wrapper #(
-    // .axi_req_t(core_v_mini_mcu_pkg::axi_req_t),
-    // .axi_rsp_t(core_v_mini_mcu_pkg::axi_resp_t),
-    // .aw_chan_t(core_v_mini_mcu_pkg::axi_aw_t),
-    // .ar_chan_t(core_v_mini_mcu_pkg::axi_ar_t),
-    // .r_chan_t(core_v_mini_mcu_pkg::axi_r_t),
-    // .w_chan_t(core_v_mini_mcu_pkg::axi_w_t),
-    // .b_chan_t(core_v_mini_mcu_pkg::axi_b_t),
+    .axi_req_t(core_v_mini_mcu_pkg::axi_req_t),
+    .axi_rsp_t(core_v_mini_mcu_pkg::axi_resp_t),
+    .aw_chan_t(core_v_mini_mcu_pkg::axi_aw_t),
+    .ar_chan_t(core_v_mini_mcu_pkg::axi_ar_t),
+    .r_chan_t(core_v_mini_mcu_pkg::axi_r_t),
+    .w_chan_t(core_v_mini_mcu_pkg::axi_w_t),
+    .b_chan_t(core_v_mini_mcu_pkg::axi_b_t),
 
-    .axi_req_t(serial_link_minimum_axi_pkg::axi_req_t),
-    .axi_rsp_t(serial_link_minimum_axi_pkg::axi_resp_t),
-    .aw_chan_t(serial_link_minimum_axi_pkg::axi_aw_t),
-    .ar_chan_t(serial_link_minimum_axi_pkg::axi_ar_t),
-    .r_chan_t(serial_link_minimum_axi_pkg::axi_r_t),
-    .w_chan_t(serial_link_minimum_axi_pkg::axi_w_t),
-    .b_chan_t(serial_link_minimum_axi_pkg::axi_b_t),
+    // .axi_req_t(serial_link_minimum_axi_pkg::axi_req_t),
+    // .axi_rsp_t(serial_link_minimum_axi_pkg::axi_resp_t),
+    // .aw_chan_t(serial_link_minimum_axi_pkg::axi_aw_t),
+    // .ar_chan_t(serial_link_minimum_axi_pkg::axi_ar_t),
+    // .r_chan_t(serial_link_minimum_axi_pkg::axi_r_t),
+    // .w_chan_t(serial_link_minimum_axi_pkg::axi_w_t),
+    // .b_chan_t(serial_link_minimum_axi_pkg::axi_b_t),
 
     .cfg_rsp_t(reg_rsp_t),
     .cfg_req_t(reg_req_t),
@@ -898,16 +898,16 @@ fifo_serial_link_wrapper #(
     .MaxClkDiv(32),
     .AddrWidth(1),
     .DataWidth(32),
-    // .AW_CH_SIZE(core_v_mini_mcu_pkg::AW_CH_SIZE),
-    // .W_CH_SIZE(core_v_mini_mcu_pkg::W_CH_SIZE),
-    // .B_CH_SIZE(core_v_mini_mcu_pkg::B_CH_SIZE),
-    // .AR_CH_SIZE(core_v_mini_mcu_pkg::AR_CH_SIZE),
-    // .R_CH_SIZE(core_v_mini_mcu_pkg::R_CH_SIZE)
-    .AW_CH_SIZE(serial_link_minimum_axi_pkg::AW_CH_SIZE),
-    .W_CH_SIZE(serial_link_minimum_axi_pkg::W_CH_SIZE),
-    .B_CH_SIZE(serial_link_minimum_axi_pkg::B_CH_SIZE),
-    .AR_CH_SIZE(serial_link_minimum_axi_pkg::AR_CH_SIZE),
-    .R_CH_SIZE(serial_link_minimum_axi_pkg::R_CH_SIZE)
+    .AW_CH_SIZE(core_v_mini_mcu_pkg::AW_CH_SIZE),
+    .W_CH_SIZE(core_v_mini_mcu_pkg::W_CH_SIZE),
+    .B_CH_SIZE(core_v_mini_mcu_pkg::B_CH_SIZE),
+    .AR_CH_SIZE(core_v_mini_mcu_pkg::AR_CH_SIZE),
+    .R_CH_SIZE(core_v_mini_mcu_pkg::R_CH_SIZE)
+    // .AW_CH_SIZE(serial_link_minimum_axi_pkg::AW_CH_SIZE),
+    // .W_CH_SIZE(serial_link_minimum_axi_pkg::W_CH_SIZE),
+    // .B_CH_SIZE(serial_link_minimum_axi_pkg::B_CH_SIZE),
+    // .AR_CH_SIZE(serial_link_minimum_axi_pkg::AR_CH_SIZE),
+    // .R_CH_SIZE(serial_link_minimum_axi_pkg::R_CH_SIZE)
   ) serial_link_xheep_wrapper_i (
     .clk_i(clk_i),
     .fast_clock(clk_i),
