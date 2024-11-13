@@ -235,6 +235,9 @@ axi_to_mem #(
       .axi_in_rsp_o   ( axi_in_rsp_o      ),//axi_in_rsp_o      ),
       .axi_out_req_o  ( fast_sl_req_O     ),
       .axi_out_rsp_i  ( fast_sl_rsp_O     ),
+      // .axi_out_req_o  ( axi_out_req_o     ),
+      // .axi_out_rsp_i  ( axi_out_rsp_i     ),
+
       .cfg_req_i      ( cfg_req_i         ),
       .cfg_rsp_o      ( cfg_rsp_o         ),//cfg_rsp_o         ),
       .ddr_rcv_clk_i  ( ddr_rcv_clk_i     ),
@@ -278,6 +281,8 @@ axi_to_mem #(
       .axi_in_rsp_o   ( axi_in_rsp_o      ),//axi_in_rsp_o      ),
       .axi_out_req_o  ( fast_sl_req_O     ),
       .axi_out_rsp_i  ( fast_sl_rsp_O     ),
+      // .axi_out_req_o  ( axi_out_req_o     ),
+      // .axi_out_rsp_i  ( axi_out_rsp_i     ),
       .cfg_req_i      ( cfg_req_i         ),
       .cfg_rsp_o      ( cfg_rsp_o         ),//cfg_rsp_o         ),
       .ddr_rcv_clk_i  ( ddr_rcv_clk_i     ),

@@ -65,8 +65,8 @@ module fifo_serial_link_wrapper #(
   ) fifo_i (
       .clk_i     (clk_i),           // Clock
       .rst_ni    (rst_ni),          // Asynchronous reset active low
-      .flush_i   (0),               // flush the queue
-      .testmode_i(),                // test_mode to bypass clock gating
+      .flush_i   ('0),               // flush the queue
+      .testmode_i('0),                // test_mode to bypass clock gating
       // status flags
       .full_o    (full),            // queue is full
       .empty_o   (empty),           // queue is empty

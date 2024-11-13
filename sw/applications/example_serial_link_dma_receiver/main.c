@@ -31,10 +31,13 @@ int main(int argc, char *argv[]){
     volatile int32_t *addr_p_recreg = 0x51000000;
     // unsigned int cycles1,cycles2,cycles3;
     WRITE_SL_CONFIG();
+
+    printf("Receiver ready.\n");
     
     uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
     uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
     for (uint32_t i = 0; i < chunks; i++) {
+        // printf("received: %d", *addr_p_recreg);
         SL_DMA_RECEIVE(addr_p_recreg, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
     }
 
@@ -79,9 +82,11 @@ void __attribute__ ((optimize("00"))) SL_DMA_RECEIVE(uint32_t *src, uint32_t *ds
         // CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
         // CSR_WRITE(CSR_REG_MCYCLE, 0);
         res |= dma_validate_transaction(&trans, false, false);
+        printf("tran: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
         res |= dma_load_transaction(&trans);
+        printf("load: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
         res |= dma_launch(&trans);
-        printf("DMA launched: save.\n");
+        printf("laun: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
 
         if(!dma_is_ready(0)) {
             CSR_CLEAR_BITS(CSR_REG_MSTATUS, 0x8);

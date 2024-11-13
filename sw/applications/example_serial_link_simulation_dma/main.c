@@ -12,8 +12,8 @@
 //#include "timer_sdk.h"
 
 
-#define DMA_DATA_LARGE 1
-#define TEST_DATA_LARGE 1
+#define DMA_DATA_LARGE 8
+#define TEST_DATA_LARGE 30
 
 static uint32_t to_be_sent_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
@@ -35,21 +35,15 @@ int main(int argc, char *argv[]){
     for (int i = 0; i < TEST_DATA_LARGE; i++) {
         to_be_sent_4B[i] = i+1;
     }
-    printf("data to be sent:\n");
-    for (int i = 0; i < TEST_DATA_LARGE; i++) {
-        printf("%x\n",to_be_sent_4B[i]);
-    }
+    // printf("data to be sent:\n");
+    // for (int i = 0; i < TEST_DATA_LARGE; i++) {
+    //     printf("%x\n",to_be_sent_4B[i]);
+    // }
 
     uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
     uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
     for (uint32_t i = 0; i < chunks; i++) {
-        CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
-        CSR_WRITE(CSR_REG_MCYCLE, 0);
-
         SL_DMA_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
-
-        CSR_READ(CSR_REG_MCYCLE, &cycles1);
-        printf("DMA transaction %d cycles\n\r", cycles1);
     }
     if (remainder > 0) {
         SL_DMA_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
@@ -59,8 +53,6 @@ int main(int argc, char *argv[]){
     for (int i = 0; i < TEST_DATA_LARGE; i++) {
         printf("%x\n", copied_data_4B[i]);
     }
-
-
 
     printf("DONE\n");  
     return EXIT_SUCCESS;
@@ -98,14 +90,15 @@ void __attribute__ ((optimize("00"))) SL_DMA_TRANS(uint32_t *src, uint32_t *dst,
         res |= dma_load_transaction(&trans);
         res |= dma_launch(&trans);
         printf("DMA launched: send.\n");
-
+        
         if(!dma_is_ready(0)) {
             CSR_CLEAR_BITS(CSR_REG_MSTATUS, 0x8);
                     if (!dma_is_ready(0)) {
                         wait_for_interrupt();
                     }
             CSR_SET_BITS(CSR_REG_MSTATUS, 0x8);
-        }  
+        }
+
         printf("done.\n\r");
 
 
@@ -129,8 +122,6 @@ void __attribute__ ((optimize("00"))) SL_DMA_TRANS(uint32_t *src, uint32_t *dst,
         trans.sign_ext = 0;
         trans.end = DMA_TRANS_END_INTR;
 
-        // CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
-        // CSR_WRITE(CSR_REG_MCYCLE, 0);
         res |= dma_validate_transaction(&trans, false, false);
         res |= dma_load_transaction(&trans);
         res |= dma_launch(&trans);
@@ -142,33 +133,33 @@ void __attribute__ ((optimize("00"))) SL_DMA_TRANS(uint32_t *src, uint32_t *dst,
                         wait_for_interrupt();
                     }
             CSR_SET_BITS(CSR_REG_MSTATUS, 0x8);
-        }  
-        // CSR_READ(CSR_REG_MCYCLE, &cycles1);
-        // printf("DMA reading takes  %d cycles\n\r", cycles1);
+        }
         printf("done.\n\r");
 }
 
 void __attribute__ ((optimize("00"))) WRITE_SL_CONFIG(void){
 
-    // int32_t NUM_TO_CHECK = 429496729;
+    int32_t NUM_TO_CHECK = 429496729;
     // volatile int32_t *addr_p = 0x50000040;
-    // volatile int32_t *addr_p_external = 0xF0010000;
-    // volatile int32_t *addr_p_recreg = 0x51000000;
+    volatile int32_t *addr_p_external = 0xF0010000;
+    volatile int32_t *addr_p_recreg = 0x51000000;
+
     REG_CONFIG();
     AXI_ISOLATE();
     EXTERNAL_BUS_SL_CONFIG();
-    // unsigned int cycles1;
-    // CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
-    // CSR_WRITE(CSR_REG_MCYCLE, 0);
-    //     *addr_p_external = NUM_TO_CHECK;
 
-    // while(1){
-    // if (*addr_p_recreg ==NUM_TO_CHECK){
-    //     CSR_READ(CSR_REG_MCYCLE, &cycles1);
-    //     break;
-    //    }
-    // }
-    // printf("sending full axi package through external SL 32 bits takes  %d cycles\n\r", cycles1);
+    unsigned int cycles1;
+    CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
+    CSR_WRITE(CSR_REG_MCYCLE, 0);
+        *addr_p_external = NUM_TO_CHECK;
+
+    while(1){
+    if (*addr_p_recreg ==NUM_TO_CHECK){
+        CSR_READ(CSR_REG_MCYCLE, &cycles1);
+        break;
+       }
+    }
+    printf("Sending one axi package through external SL 32 bits takes %d cycles\n\r", cycles1);
 }
 
 
