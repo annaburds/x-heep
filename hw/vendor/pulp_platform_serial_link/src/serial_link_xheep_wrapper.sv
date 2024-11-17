@@ -35,8 +35,10 @@ module serial_link_xheep_wrapper
 
   input  obi_req_t                  obi_req_i,
   output obi_resp_t                 obi_rsp_i,
-  output obi_req_t                  obi_req_o,
-  input  obi_resp_t                 obi_rsp_o,
+  // output obi_req_t                  obi_req_o, //fifo writing
+  // input  obi_resp_t                 obi_rsp_o,
+  input  obi_req_t                  reader_req_i,
+  output obi_resp_t                 reader_resp_o,
 
   input  cfg_req_t                  cfg_req_i,
   output cfg_rsp_t                  cfg_rsp_o,
@@ -57,6 +59,9 @@ module serial_link_xheep_wrapper
   axi_rsp_t                  fast_sl_rsp_i,fast_sl_rsp_O,axi_in_rsp_o,axi_out_rsp_i,  axi_lite_rsp;
   cfg_req_t                  fast_cfg_req_i;
   cfg_rsp_t                  fast_cfg_rsp_o;
+  
+  obi_req_t                  obi_req_o; //fifo writing
+  obi_resp_t                 obi_rsp_o;
 
 
 axi_lite_from_mem #(
@@ -103,7 +108,33 @@ axi_lite_to_axi #(
 
 
 
+fifo_serial_link_wrapper #(
+  .FIFO_DEPTH(8)
+) fifo_serial_link_wrapper_i(
+    .testmode('0),
+  
+    .reader_gnt_o             (reader_resp_o.gnt),
+    .reader_req_i             (reader_req_i.req),
+    .reader_rvalid_o          (reader_resp_o.rvalid),
+    .reader_addr_i            (reader_req_i.addr),
+    .reader_we_i              (reader_req_i.we),
+    .reader_be_i              (reader_req_i.be),
+    .reader_rdata_o           (reader_resp_o.rdata),
+    .reader_wdata_i           (reader_req_i.wdata),
+    
+    // TODO: fast_sl_rsp_O     fast_sl_rsp_O
+    .writer_req_i             (obi_req_o.req),
+    .writer_gnt_o             (obi_rsp_o.gnt),
+    .writer_rvalid_o          (obi_rsp_o.rvalid),
+    .writer_addr_i            (obi_req_o.addr),
+    .writer_we_i              (obi_req_o.we),
+    .writer_be_i              (obi_req_o.be),
+    .writer_rdata_o           (obi_rsp_o.rdata),
+    .writer_wdata_i           (obi_req_o.wdata),
 
+    .clk_i (clk_i),
+    .rst_ni(rst_ni)
+);
 
 axi_to_mem #(
   .axi_req_t(axi_req_t),

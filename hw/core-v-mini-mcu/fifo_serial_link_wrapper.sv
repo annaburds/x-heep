@@ -12,6 +12,8 @@ module fifo_serial_link_wrapper #(
     //output  obi_rsp_t                       writer_rsp,
     //input   obi_req_t                       reader_req,
     //output  obi_rsp_t                       reader_rsp,
+    
+    input  logic                  testmode,
 
     input  logic                  reader_req_i,
     output logic                  reader_gnt_o,
