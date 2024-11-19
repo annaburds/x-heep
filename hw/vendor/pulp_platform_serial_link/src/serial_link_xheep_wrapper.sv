@@ -122,46 +122,58 @@ fifo_serial_link_wrapper #(
     .reader_rdata_o           (reader_resp_o.rdata),
     .reader_wdata_i           (reader_req_i.wdata),
     
-    // TODO: fast_sl_rsp_O     fast_sl_rsp_O
-    .writer_req_i             (obi_req_o.req),
-    .writer_gnt_o             (obi_rsp_o.gnt),
-    .writer_rvalid_o          (obi_rsp_o.rvalid),
-    .writer_addr_i            (obi_req_o.addr),
-    .writer_we_i              (obi_req_o.we),
-    .writer_be_i              (obi_req_o.be),
-    .writer_rdata_o           (obi_rsp_o.rdata),
-    .writer_wdata_i           (obi_req_o.wdata),
+    // TODO: fast_sl_req_O     fast_sl_rsp_O
+    // .writer_req_i             (obi_req_o.req),
+    // .writer_gnt_o             (obi_rsp_o.gnt),
+    // .writer_rvalid_o          (obi_rsp_o.rvalid),
+    // .writer_addr_i            (obi_req_o.addr),
+    // .writer_we_i              (obi_req_o.we),
+    // .writer_be_i              (obi_req_o.be),
+    // .writer_rdata_o           (obi_rsp_o.rdata),
+    // .writer_wdata_i           (obi_req_o.wdata),
+    .writer_req_i             (fast_sl_req_O.w_valid),
+    .writer_gnt_o             (),
+    .writer_rvalid_o          (fast_sl_rsp_O.b_valid),
+    .writer_addr_i            (fast_sl_req_O.ar.addr),
+    .writer_we_i              (1),
+    .writer_be_i              ('0),
+    .writer_rdata_o           (fast_sl_rsp_O.r.data),
+    .writer_wdata_i           (fast_sl_req_O.w.data),
 
     .clk_i (clk_i),
     .rst_ni(rst_ni)
 );
 
-axi_to_mem #(
-  .axi_req_t(axi_req_t),
-  .axi_resp_t(axi_rsp_t),
-  .AddrWidth(AddrWidth),
-  .DataWidth(DataWidth),
-  //.IdWidth(),
-  .NumBanks(1),
-  //.BufDepth(),
-  //.HideStrb(),
-  .OutFifoDepth(1)
-  ) axi_to_mem_i(
-  .clk_i,
-  .rst_ni,
-  .busy_o(),
-  .axi_req_i(axi_out_req_o),
-  .axi_resp_o(axi_out_rsp_i),
-  .mem_req_o(obi_req_o.req),
-  .mem_gnt_i(obi_rsp_o.gnt),
-  .mem_addr_o(obi_req_o.addr),
-  .mem_wdata_o(obi_req_o.wdata),
-  .mem_strb_o(),
-  .mem_atop_o(),
-  .mem_we_o(obi_req_o.we),
-  .mem_rvalid_i(obi_rsp_o.rvalid),
-  .mem_rdata_i(obi_rsp_o.rdata)
-);
+assign fast_sl_rsp_O.ar_ready = 1;
+assign fast_sl_rsp_O.aw_ready = 1;
+assign fast_sl_rsp_O.w_ready = 1;
+
+// axi_to_mem #(
+//   .axi_req_t(axi_req_t),
+//   .axi_resp_t(axi_rsp_t),
+//   .AddrWidth(AddrWidth),
+//   .DataWidth(DataWidth),
+//   //.IdWidth(),
+//   .NumBanks(1),
+//   //.BufDepth(),
+//   //.HideStrb(),
+//   .OutFifoDepth(1)
+//   ) axi_to_mem_i(
+//   .clk_i,
+//   .rst_ni,
+//   .busy_o(),
+//   .axi_req_i(axi_out_req_o),
+//   .axi_resp_o(axi_out_rsp_i),
+//   .mem_req_o(obi_req_o.req),
+//   .mem_gnt_i(obi_rsp_o.gnt),
+//   .mem_addr_o(obi_req_o.addr),
+//   .mem_wdata_o(obi_req_o.wdata),
+//   .mem_strb_o(),
+//   .mem_atop_o(),
+//   .mem_we_o(obi_req_o.we),
+//   .mem_rvalid_i(obi_rsp_o.rvalid),
+//   .mem_rdata_i(obi_rsp_o.rdata)
+// );
 
 
 
@@ -197,28 +209,28 @@ axi_to_mem #(
 //
 
 
-  axi_cdc #(
-      .axi_req_t        ( axi_req_t   ),
-      .axi_resp_t       ( axi_rsp_t   ),
-      .aw_chan_t        ( aw_chan_t   ),
-      .w_chan_t         ( w_chan_t    ),
-      .b_chan_t         ( b_chan_t    ),
-      .ar_chan_t        ( ar_chan_t   ),
-      .r_chan_t         ( r_chan_t    ),
-  /// Depth of the FIFO crossing the clock domain, given as 2**LOG_DEPTH.
-      .LogDepth(2)
-)axi_cdc_O (
-  // slave side - clocked by `src_clk_i`
-  .src_clk_i(fast_clock),
-  .src_rst_ni(rst_ni),
-  .src_req_i(fast_sl_req_O),
-  .src_resp_o(fast_sl_rsp_O),
-  // master side - clocked by `dst_clk_i`
-  .dst_clk_i(clk_i),
-  .dst_rst_ni(rst_ni),
-  .dst_req_o(axi_out_req_o),
-  .dst_resp_i(axi_out_rsp_i)
-);
+//   axi_cdc #(
+//       .axi_req_t        ( axi_req_t   ),
+//       .axi_resp_t       ( axi_rsp_t   ),
+//       .aw_chan_t        ( aw_chan_t   ),
+//       .w_chan_t         ( w_chan_t    ),
+//       .b_chan_t         ( b_chan_t    ),
+//       .ar_chan_t        ( ar_chan_t   ),
+//       .r_chan_t         ( r_chan_t    ),
+//   /// Depth of the FIFO crossing the clock domain, given as 2**LOG_DEPTH.
+//       .LogDepth(2)
+// )axi_cdc_O (
+//   // slave side - clocked by `src_clk_i`
+//   .src_clk_i(fast_clock),
+//   .src_rst_ni(rst_ni),
+//   .src_req_i(fast_sl_req_O),
+//   .src_resp_o(fast_sl_rsp_O),
+//   // master side - clocked by `dst_clk_i`
+//   .dst_clk_i(clk_i),
+//   .dst_rst_ni(rst_ni),
+//   .dst_req_o(axi_out_req_o),
+//   .dst_resp_i(axi_out_rsp_i)
+// );
 
 
     function automatic int max(int a, int b);
