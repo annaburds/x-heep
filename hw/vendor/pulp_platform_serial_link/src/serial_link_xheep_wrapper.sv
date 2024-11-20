@@ -111,7 +111,7 @@ axi_lite_to_axi #(
 fifo_serial_link_wrapper #(
   .FIFO_DEPTH(8)
 ) fifo_serial_link_wrapper_i(
-    .testmode('0),
+    .testmode_i('1),
   
     .reader_gnt_o             (reader_resp_o.gnt),
     .reader_req_i             (reader_req_i.req),
@@ -122,7 +122,6 @@ fifo_serial_link_wrapper #(
     .reader_rdata_o           (reader_resp_o.rdata),
     .reader_wdata_i           (reader_req_i.wdata),
     
-    // TODO: fast_sl_req_O     fast_sl_rsp_O
     // .writer_req_i             (obi_req_o.req),
     // .writer_gnt_o             (obi_rsp_o.gnt),
     // .writer_rvalid_o          (obi_rsp_o.rvalid),

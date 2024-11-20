@@ -13,7 +13,7 @@ module fifo_serial_link_wrapper #(
     //input   obi_req_t                       reader_req,
     //output  obi_rsp_t                       reader_rsp,
     
-    input  logic                  testmode,
+    input  logic                  testmode_i,
 
     input  logic                  reader_req_i,
     output logic                  reader_gnt_o,
@@ -61,6 +61,90 @@ module fifo_serial_link_wrapper #(
     end
   end
 
+
+  // fifo_v3 #(
+  //     .DATA_WIDTH(DATA_WIDTH),
+  //     .DEPTH(FIFO_DEPTH)
+  // ) fifo_i (
+  //     .clk_i     (clk_i),           // Clock
+  //     .rst_ni    (rst_ni),          // Asynchronous reset active low
+  //     .flush_i   ('0),               // flush the queue
+  //     .testmode_i('0),                // test_mode to bypass clock gating
+  //     // status flags
+  //     .full_o    (full),            // queue is full
+  //     .empty_o   (empty),           // queue is empty
+  //     .usage_o   (),                // fill pointer
+  //     // as long as the queue is not full we can push new data
+  //     .data_i    (writer_wdata_i),  // data to push into the queue
+  //     .push_i    (push),            // data is valid and can be pushed to the queue
+  //     // as long as the queue is not empty we can pop new elements
+  //     .data_o    (reader_rdata_n),  // output data
+  //     .pop_i     (pop)              // pop head from queue
+  // );
+
+
+  enum logic [2:0] {
+    IDLE,
+    DATA1,
+    PUSH1,
+    DATA2,
+    PUSH2,
+    WAIT1,
+    WAIT2    
+  }
+  CS, NS;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin : FSM
+    if (!rst_ni) begin
+      CS <= IDLE;
+    end else begin
+      CS <= NS;
+    end
+  end
+
+  logic [3:0]count;
+  always_ff @(posedge clk_i or negedge rst_ni) begin : COUNTER
+    if(!rst_ni) begin
+      count <= 4'b0;
+    end else begin
+      if(CS == PUSH1 || CS == PUSH2) count <= 0;
+      else count <= count + 1;
+    end
+  end
+
+  always_comb begin
+    case(CS)
+      IDLE : NS = (count == 4'b1111) ? DATA1 : IDLE;
+      DATA1: NS = (count == 4'b1111) ? PUSH1 : DATA1;
+      PUSH1: NS = DATA2;
+      DATA2: NS = (count == 4'b1111) ? PUSH2 : DATA2;
+      PUSH2: NS = WAIT1;
+      WAIT1: NS = (pop == 1) ? WAIT2 : WAIT1;
+      WAIT2: NS = (pop == 1) ? IDLE : WAIT2;
+      default : NS = IDLE;
+    endcase
+  end
+
+  logic push_fsm; 
+  logic [31:0] wdata_fsm;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if(!rst_ni) begin
+      push_fsm <= 0;
+      wdata_fsm <= 32'b0;
+    end else begin
+      push_fsm <= (NS == PUSH1 || NS == PUSH2) ? 1 : 0;
+      wdata_fsm <= ((CS == IDLE && NS == DATA1) || (CS == PUSH1 && NS == DATA2)) ? (wdata_fsm + 1) : wdata_fsm;
+    end
+  end
+
+
+  logic push_fifo;
+  logic [31:0] wdata_fifo;
+
+  assign push_fifo = (testmode_i == 1) ? push_fsm : push;
+  assign wdata_fifo = (testmode_i == 1) ? wdata_fsm : writer_wdata_i;
+
   fifo_v3 #(
       .DATA_WIDTH(DATA_WIDTH),
       .DEPTH(FIFO_DEPTH)
@@ -74,13 +158,12 @@ module fifo_serial_link_wrapper #(
       .empty_o   (empty),           // queue is empty
       .usage_o   (),                // fill pointer
       // as long as the queue is not full we can push new data
-      .data_i    (writer_wdata_i),  // data to push into the queue
-      .push_i    (push),            // data is valid and can be pushed to the queue
+      .data_i    (wdata_fifo),  // data to push into the queue
+      .push_i    (push_fifo),            // data is valid and can be pushed to the queue
       // as long as the queue is not empty we can pop new elements
       .data_o    (reader_rdata_n),  // output data
       .pop_i     (pop)              // pop head from queue
   );
-
 
 endmodule
 
