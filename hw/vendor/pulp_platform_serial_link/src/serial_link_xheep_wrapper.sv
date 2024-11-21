@@ -111,7 +111,7 @@ axi_lite_to_axi #(
 fifo_serial_link_wrapper #(
   .FIFO_DEPTH(8)
 ) fifo_serial_link_wrapper_i(
-    .testmode_i('1),
+    .testmode_i(0),
   
     .reader_gnt_o             (reader_resp_o.gnt),
     .reader_req_i             (reader_req_i.req),
