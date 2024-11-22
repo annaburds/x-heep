@@ -138,6 +138,10 @@ module testharness #(
   logic [EXT_DOMAINS_RND-1:0] external_subsystem_clkgate_en_n;
 
   import serial_link_pkg::*;
+
+  logic fifo_empty_o;
+  logic fifo_full_o;
+
   logic [NumChannels-1:0][NumLanes-1:0] ddr_i_xheep;  // check NumLanes parameter 
   logic [NumChannels-1:0][NumLanes-1:0] ddr_o_xheep;
   logic [NumChannels-1:0]               clk_sl_int2ext;
@@ -281,6 +285,8 @@ module testharness #(
       .ext_dma_slot_tx_i(ext_dma_slot_tx),
       .ext_dma_slot_rx_i(ext_dma_slot_rx),
       .ext_dma_stop_i('0),
+      .fifo_empty_o,
+      .fifo_full_o,
       .ddr_i(ddr_i_xheep),
       .ddr_o(ddr_o_xheep),
       .ddr_rcv_clk_i(clk_sl_ext2int),
@@ -788,6 +794,9 @@ module testharness #(
 
           .cfg_req_i(cfg_req_ext),  //register configuration
           .cfg_rsp_o(cfg_rsp_ext),
+
+          .fifo_empty_o,
+          .fifo_full_o,
 
 
           .ddr_i(ddr_o_xheep),  //Double-Data-Rate (DDR) input data

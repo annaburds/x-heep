@@ -42,6 +42,10 @@ module serial_link_xheep_wrapper
 
   input  cfg_req_t                  cfg_req_i,
   output cfg_rsp_t                  cfg_rsp_o,
+
+  output logic fifo_empty_o,
+  output logic fifo_full_o,
+
   input  logic [NumChannels-1:0]    ddr_rcv_clk_i,
   output logic [NumChannels-1:0]    ddr_rcv_clk_o,
   input  logic [NumChannels-1:0][NumLanes-1:0] ddr_i,
@@ -138,6 +142,9 @@ fifo_serial_link_wrapper #(
     .writer_be_i              ('0),
     .writer_rdata_o           (fast_sl_rsp_O.r.data),
     .writer_wdata_i           (fast_sl_req_O.w.data),
+
+    .fifo_empty_o,
+    .fifo_full_o,
 
     .clk_i (clk_i),
     .rst_ni(rst_ni)

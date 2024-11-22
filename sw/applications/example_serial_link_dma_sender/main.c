@@ -11,7 +11,6 @@
 #include "fast_intr_ctrl.h"
 //#include "timer_sdk.h"
 
-
 #define DMA_DATA_LARGE 1
 #define TEST_DATA_LARGE 1
 

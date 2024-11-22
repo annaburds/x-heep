@@ -19,6 +19,8 @@ module x_heep_system
 
 ) (
 
+    output logic fifo_empty_o,
+    output logic fifo_full_o,
     input  logic [NumChannels-1:0]                ddr_rcv_clk_i,
     output logic [NumChannels-1:0]                ddr_rcv_clk_o,
     input  logic [NumChannels-1:0][NumLanes-1:0]  ddr_i,
@@ -170,6 +172,8 @@ ${pad.core_v_mini_mcu_bonding}
     .exit_value_o,
     .ext_dma_slot_tx_i,
     .ext_dma_slot_rx_i,
+    .fifo_empty_o,
+    .fifo_full_o,
     .ddr_i,
     .ddr_rcv_clk_i,
     .ddr_o,

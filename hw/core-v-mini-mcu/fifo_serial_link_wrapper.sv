@@ -24,14 +24,18 @@ module fifo_serial_link_wrapper #(
     output logic [DATA_WIDTH-1:0] reader_rdata_o,
     input  logic [DATA_WIDTH-1:0] reader_wdata_i,
 
-    input  logic                  writer_req_i,     // request from the serial link
-    output logic                  writer_gnt_o,
-    output logic                  writer_rvalid_o,
-    input  logic [ADDR_WIDTH-1:0] writer_addr_i,    //
-    input  logic                  writer_we_i,
-    input  logic [           3:0] writer_be_i,
-    output logic [DATA_WIDTH-1:0] writer_rdata_o,
-    input  logic [DATA_WIDTH-1:0] writer_wdata_i,
+    // request from the serial link
+    input  logic                  writer_req_i,     // req.w_valid
+    output logic                  writer_gnt_o,     
+    output logic                  writer_rvalid_o,  // rsp.b_valid
+    input  logic [ADDR_WIDTH-1:0] writer_addr_i,    // req.ar.addr
+    input  logic                  writer_we_i,      // 1
+    input  logic [           3:0] writer_be_i,      // 0
+    output logic [DATA_WIDTH-1:0] writer_rdata_o,   // rsp.r.data
+    input  logic [DATA_WIDTH-1:0] writer_wdata_i,   // req.w.data
+  
+    output logic fifo_empty_o,
+    output logic fifo_full_o,
 
     input logic clk_i,
     input logic rst_ni
@@ -60,6 +64,10 @@ module fifo_serial_link_wrapper #(
       reader_rdata_o  <= reader_rdata_n;
     end
   end
+
+//   assign fast_sl_rsp_O.ar_ready = 1;
+// assign fast_sl_rsp_O.aw_ready = 1;
+// assign fast_sl_rsp_O.w_ready = 1;
 
 
   // fifo_v3 #(
@@ -164,6 +172,9 @@ module fifo_serial_link_wrapper #(
       .data_o    (reader_rdata_n),  // output data
       .pop_i     (pop)              // pop head from queue
   );
+
+  assign fifo_empty_o = empty;
+  assign fifo_full_o = full;
 
 endmodule
 

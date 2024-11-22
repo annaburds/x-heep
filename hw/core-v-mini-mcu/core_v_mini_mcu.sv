@@ -331,6 +331,8 @@ module core_v_mini_mcu
     input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx_i,
     input logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx_i,
 
+    output logic fifo_empty_o,
+    output logic fifo_full_o,
     input  logic [NumChannels-1:0]    ddr_rcv_clk_i,  // adapt for multi channel
     output logic [NumChannels-1:0]    ddr_rcv_clk_o,
     input  logic [NumChannels-1:0][NumLanes-1:0] ddr_i,
@@ -931,6 +933,9 @@ module core_v_mini_mcu
 
     .cfg_req_i(cfg_req_sl),   //register configuration
     .cfg_rsp_o(cfg_rsp_sl),
+
+    .fifo_empty_o,
+    .fifo_full_o,
 
     .ddr_rcv_clk_i,           //Source-synchronous input clock to sample data. One clock per channel
     .ddr_i,                   //Double-Data-Rate (DDR) input data

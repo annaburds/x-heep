@@ -63,6 +63,8 @@ module xilinx_core_v_mini_mcu_wrapper
     inout logic i2s_ws_io,
     inout logic i2s_sd_io,
 
+    inout logic fifo_empty_o,
+    inout logic fifo_full_o,
     inout logic [3:0] ddr_i,
     inout logic [3:0] ddr_o,
     inout logic ddr_rcv_clk_i,
@@ -212,11 +214,13 @@ module xilinx_core_v_mini_mcu_wrapper
       .i2s_sd_io(i2s_sd_io),
       .ext_dma_slot_tx_i('0),
       .ext_dma_slot_rx_i('0),
+      .fifo_empty_o,
+      .fifo_full_o,
       .ddr_i,
       .ddr_o,
       .ddr_rcv_clk_i,
       .ddr_rcv_clk_o  //,
-      //.fast_clock(clk_gen)
+      //.fast_clock(clk_gen)  
   );
 
   assign exit_value_o = exit_value[0];
