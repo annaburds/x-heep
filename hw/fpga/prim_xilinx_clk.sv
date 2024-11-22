@@ -38,12 +38,7 @@ module xilinx_clk_mux2 (
     output logic clk_o
 );
 
-  BUFGMUX i_BUFGMUX (
-      .S (clk_sel_i),
-      .I0(clk0_i),
-      .I1(clk1_i),
-      .O (clk_o)
-  );
+    assign clk_o = clk_sel_i ? clk1_i : clk0_i;
 
 endmodule
 

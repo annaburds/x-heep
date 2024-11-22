@@ -11,8 +11,8 @@
 #include "fast_intr_ctrl.h"
 //#include "timer_sdk.h"
 
-#define DMA_DATA_LARGE 1
-#define TEST_DATA_LARGE 1
+#define DMA_DATA_LARGE 2
+#define TEST_DATA_LARGE 2
 
 static uint32_t to_be_sent_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};

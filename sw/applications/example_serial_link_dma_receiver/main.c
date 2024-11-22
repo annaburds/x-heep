@@ -35,16 +35,18 @@ int main(int argc, char *argv[]){
 
     printf("Receiver ready.\n");
     
-    uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
-    uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
-    for (uint32_t i = 0; i < chunks; i++) {
-        // SL_CPU_RECEIVE(addr_p_recreg, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
-        SL_DMA_RECEIVE(addr_p_recreg, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
-    }
+    for(int ii = 0; ii< 2; ii++) {
+        uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
+        uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
+        for (uint32_t i = 0; i < chunks; i++) {
+            // SL_CPU_RECEIVE(addr_p_recreg, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
+            SL_DMA_RECEIVE(addr_p_recreg, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
+        }
 
-    printf("data saved:\n");
-    for (int i = 0; i < TEST_DATA_LARGE; i++) {
-        printf("%x\n", copied_data_4B[i]);
+        printf("data saved:\n");
+        for (int i = 0; i < TEST_DATA_LARGE; i++) {
+            printf("%x\n", copied_data_4B[i]);
+        }
     }
 
     printf("DONE\n");  
