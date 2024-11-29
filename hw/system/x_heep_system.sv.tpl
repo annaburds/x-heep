@@ -227,5 +227,13 @@ ${pad_mux_process}
     .init_no()
   );
 
+debug_ila_wrapper debug_ila_wrapper_i 
+(
+.clk_0(clk_i),
+.ddr_i(ddr_i),
+.ddr_o(ddr_o),
+.ddr_rcv_clk_i(ddr_rcv_clk_i),
+.ddr_rcv_clk_o(ddr_rcv_clk_o) 
+);
 
 endmodule  // x_heep_system

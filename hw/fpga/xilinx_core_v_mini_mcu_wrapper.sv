@@ -77,6 +77,11 @@ module xilinx_core_v_mini_mcu_wrapper
   wire                               rst_n;
   logic [CLK_LED_COUNT_LENGTH - 1:0] clk_count;
 
+      logic [3:0] ddr_in;
+      logic [3:0] ddr_out;
+      logic ddr_rcv_clk_in;
+      logic ddr_rcv_clk_out;
+
   // low active reset
 `ifdef FPGA_NEXYS
   assign rst_n = rst_i;
@@ -216,14 +221,28 @@ module xilinx_core_v_mini_mcu_wrapper
       .ext_dma_slot_rx_i('0),
       .fifo_empty_o,
       .fifo_full_o,
-      .ddr_i,
-      .ddr_o,
-      .ddr_rcv_clk_i,
-      .ddr_rcv_clk_o  //,
+      .ddr_i(ddr_in),
+      .ddr_o(ddr_out),
+      .ddr_rcv_clk_i(ddr_rcv_clk_in),
+      .ddr_rcv_clk_o(ddr_rcv_clk_out)  //,
       //.fast_clock(clk_gen)  
   );
 
   assign exit_value_o = exit_value[0];
 
+
+//debug_ila_wrapper debug_ila_wrapper_i 
+//(
+//.clk_0(clk_gen),
+//.ddr_i(ddr_in),
+//.ddr_o(ddr_out),
+//.ddr_rcv_clk_i(ddr_rcv_clk_in),
+//.ddr_rcv_clk_o(ddr_rcv_clk_out) 
+//);
+
+    assign ddr_in = ddr_i;
+    assign ddr_o = ddr_out;
+    assign ddr_rcv_clk_in = ddr_rcv_clk_i;
+    assign ddr_rcv_clk_o = ddr_rcv_clk_out;
 
 endmodule
