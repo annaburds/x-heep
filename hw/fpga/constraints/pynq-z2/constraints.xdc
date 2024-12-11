@@ -2,7 +2,7 @@
 create_clock -add -name sys_clk_pin -period 8.00 -waveform {0 4} [get_ports {clk_i}]
 
 # 
-create_clock -name clk_gen -period 66.667 -waveform {0 33.333} [get_pins xilinx_clk_wizard_wrapper_i/clk_out1_0]
+# create_clock -name clk_gen -period 66.667 -waveform {0 33.333} [get_pins xilinx_clk_wizard_wrapper_i/clk_out1_0]
 
 # Derived clock period and phase settings
 set T_CLK 66.667              ;# Period of clk_i in ns
@@ -41,9 +41,13 @@ set_false_path -hold  -rise_from [get_clocks clk_slow] -fall_to [get_clocks clk_
 set_false_path -hold  -fall_from [get_clocks clk_slow] -rise_to [get_clocks clk_ddr_out]
 
 set_false_path -from [get_clocks sys_clk_pin] -to [get_clocks clk_ddr_out]
-set_false_path -from [get_clocks clk_gen] -to [get_clocks clk_ddr_out]
-# set_false_path -from [get_clocks clk_out1_xilinx_clk_wizard_clk_wiz_0_0] -to [get_clocks clk_ddr_out]
-# set_false_path -from [get_clocks clk_out1_xilinx_clk_wizard_clk_wiz_0_0_1] -to [get_clocks clk_ddr_out]
+# set_false_path -from [get_clocks clk_gen] -to [get_clocks clk_ddr_out]
+set_false_path -from [get_clocks clk_out1_xilinx_clk_wizard_clk_wiz_0_0] -to [get_clocks clk_ddr_out]
+set_false_path -from [get_clocks clk_out1_xilinx_clk_wizard_clk_wiz_0_0_1] -to [get_clocks clk_ddr_out]
+
+set_false_path -from [get_clocks sys_clk_pin] -to [get_clocks clk_ddr_in]
+set_false_path -from [get_clocks clk_out1_xilinx_clk_wizard_clk_wiz_0_0] -to [get_clocks clk_ddr_in]
+set_false_path -from [get_clocks clk_out1_xilinx_clk_wizard_clk_wiz_0_0_1] -to [get_clocks clk_ddr_in]
 
 # Window has a margin on both side of 5% of a quarter of the clock period
 set MARGIN              [expr $T_FWD_CLK / 4 * 0.05]
