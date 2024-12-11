@@ -38,7 +38,7 @@ module xilinx_clk_mux2 (
     output logic clk_o
 );
 
-    assign clk_o = clk_sel_i ? clk1_i : clk0_i;
+  assign clk_o = clk_sel_i ? clk1_i : clk0_i;
 
 endmodule
 

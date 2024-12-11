@@ -137,7 +137,7 @@ fifo_serial_link_wrapper #(
     .writer_req_i             (fast_sl_req_O.w_valid),
     .writer_gnt_o             (),
     .writer_rvalid_o          (fast_sl_rsp_O.b_valid),
-    .writer_addr_i            (fast_sl_req_O.ar.addr),
+    .writer_addr_i            (fast_sl_req_O.aw.addr),
     .writer_we_i              (1),
     .writer_be_i              ('0),
     .writer_rdata_o           (fast_sl_rsp_O.r.data),
