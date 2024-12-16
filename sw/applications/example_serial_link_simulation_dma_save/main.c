@@ -52,16 +52,16 @@ int main(int argc, char *argv[])
         //uint32_t *test_addr_4B_PTR = &test_data_large[0];
         dma_init(NULL);
         tgt_src.ptr = (uint32_t *)     0x51000000;
-        tgt_src.inc_du = 0;
-        tgt_src.size_du = TEST_DATA_LARGE;
+        tgt_src.inc_d1_du = 0;
+        //tgt_src.size_du = TEST_DATA_LARGE;
         tgt_src.trig = DMA_TRIG_MEMORY;
         tgt_src.type = DMA_DATA_TYPE_WORD;
 
 
 
         tgt_dst.ptr = (uint32_t *)copied_data_4B;
-        tgt_dst.inc_du = 1;
-        tgt_dst.size_du = TEST_DATA_LARGE;
+        tgt_dst.inc_d1_du = 1;
+        //tgt_dst.size_du = TEST_DATA_LARGE;
         tgt_dst.trig = DMA_TRIG_MEMORY;
         tgt_dst.type = DMA_DATA_TYPE_WORD;
 

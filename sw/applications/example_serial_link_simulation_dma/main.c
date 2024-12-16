@@ -12,7 +12,7 @@
 //#include "timer_sdk.h"
 
 
-#define DMA_DATA_LARGE 8
+#define DMA_DATA_LARGE 4
 #define TEST_DATA_LARGE 30
 
 static uint32_t to_be_sent_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
@@ -26,7 +26,7 @@ void wait_for_interrupt(void);
 void dma_intr_handler_trans_done(uint8_t channel){}
 
 int main(int argc, char *argv[]){
-    
+    printf("AAAAAAAA:\n");
     volatile int32_t *addr_p = 0x50000040;
     volatile int32_t *addr_p_external = 0xF0010000;
     volatile int32_t *addr_p_recreg = 0x51000000;
@@ -35,20 +35,18 @@ int main(int argc, char *argv[]){
     
     for (int i = 0; i < TEST_DATA_LARGE; i++) {
         to_be_sent_4B[i] = i+1;
+        printf("to_be_sent_4B %x\n", to_be_sent_4B[i]);
     }
-    // printf("data to be sent:\n");
-    // for (int i = 0; i < TEST_DATA_LARGE; i++) {
-    //     printf("%x\n",to_be_sent_4B[i]);
-    // }
+    
 
     uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
     uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
     for (uint32_t i = 0; i < chunks; i++) {
-        // SL_CPU_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
+        //SL_CPU_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
         SL_DMA_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
     }
     if (remainder > 0) {
-        // SL_CPU_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
+        //SL_CPU_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
         SL_DMA_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
     }
 
@@ -87,19 +85,20 @@ void __attribute__ ((optimize("00"))) SL_DMA_TRANS(uint32_t *src, uint32_t *dst,
 
         dma_init(NULL);
         tgt_src.ptr = (uint32_t *)src;
-        tgt_src.inc_du = 1;
-        tgt_src.size_du = large;
+        tgt_src.inc_d1_du = 1;
+        //tgt_src.size_du = large;
         tgt_src.trig = DMA_TRIG_MEMORY;
         tgt_src.type = DMA_DATA_TYPE_WORD;
 
         tgt_dst.ptr = (uint32_t *)0xF0010000;
-        tgt_dst.inc_du = 0;
-        tgt_dst.size_du = large;
+        tgt_dst.inc_d1_du = 0;
+        //tgt_dst.size_du = large;
         tgt_dst.trig = DMA_TRIG_MEMORY;
         tgt_dst.type = DMA_DATA_TYPE_WORD;
 
         trans.src = &tgt_src;
         trans.dst = &tgt_dst;
+        trans.size_d1_du = large;
         trans.mode = DMA_TRANS_MODE_SINGLE;
         trans.win_du = 0;
         trans.sign_ext = 0;
@@ -123,20 +122,21 @@ void __attribute__ ((optimize("00"))) SL_DMA_TRANS(uint32_t *src, uint32_t *dst,
 
         dma_init(NULL);
         tgt_src.ptr = (uint32_t *)0x51000000;
-        tgt_src.inc_du = 0;
-        tgt_src.size_du = large;
+        tgt_src.inc_d1_du = 0;
+        //tgt_src.size_d1_du = large;
         tgt_src.trig = DMA_TRIG_MEMORY;
         tgt_src.type = DMA_DATA_TYPE_WORD;
 
         tgt_dst.ptr = (uint32_t *)dst;
-        tgt_dst.inc_du = 1;
-        tgt_dst.size_du = large;
+        tgt_dst.inc_d1_du = 1;
+        //tgt_dst.size_d1_du = large;
         tgt_dst.trig = DMA_TRIG_MEMORY;
         tgt_dst.type = DMA_DATA_TYPE_WORD;
 
         trans.src = &tgt_src;
         trans.dst = &tgt_dst;
         trans.mode = DMA_TRANS_MODE_SINGLE;
+        trans.size_d1_du = large;
         trans.win_du = 0;
         trans.sign_ext = 0;
         trans.end = DMA_TRANS_END_INTR;

@@ -38,13 +38,13 @@ package core_v_mini_mcu_pkg;
   localparam logic [31:0] CORE_INSTR_IDX = 0;
   localparam logic [31:0] CORE_DATA_IDX = 1;
   localparam logic [31:0] DEBUG_MASTER_IDX = 2;
-  localparam logic [31:0] DMA_READ_CH0_IDX = 3;
-  localparam logic [31:0] DMA_WRITE_CH0_IDX = 4;
-  localparam logic [31:0] DMA_ADDR_CH0_IDX = 5;
+  localparam logic [31:0] DMA_READ_P0_IDX = 3;
+  localparam logic [31:0] DMA_WRITE_P0_IDX= 4;
+  localparam logic [31:0] DMA_ADDR_P0_IDX = 5;
   localparam logic [31:0] AXI_SL_M_IDX = 6;
   localparam logic [31:0] SL_RECREG_M_IDX = 7;
 
-  localparam SYSTEM_XBAR_NMASTER = ${4 + int(num_dma_master_ports)*3}; // MB TO PUT 8
+  localparam SYSTEM_XBAR_NMASTER = ${5 + int(num_dma_master_ports)*3}; // MB TO PUT 4
 
 
   // Internal slave memory map and index

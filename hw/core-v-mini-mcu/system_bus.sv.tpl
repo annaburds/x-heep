@@ -220,7 +220,7 @@ module system_bus
   always_ff @(posedge clk_i, negedge rst_ni) begin : check_out_of_bound
     if (rst_ni) begin
       if (error_slave_req.req) begin
-        $display("%t Out of bound memory access 0x%08x", $time, error_slave_req.addr);
+        $display("%t Out of bound memory access 0x%08x error id %d", $time, error_slave_req.addr,ERROR_IDX);
         $stop;
       end
     end

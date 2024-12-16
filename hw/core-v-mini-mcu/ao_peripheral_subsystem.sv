@@ -113,7 +113,7 @@ module ao_peripheral_subsystem
     input  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_tx_i,
     input  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_slot_rx_i,
     input  logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] ext_dma_stop_i,
-    output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_done_o
+    output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_done_o,
 
     // CFG SERIAL LINK
     output reg_req_t cfg_req_sl,
@@ -207,18 +207,12 @@ module ao_peripheral_subsystem
   /* Module instantiation */
 
   /* System bus to AO OBI FIFO */
-`ifdef REMOVE_OBI_FIFO
 
-  assign slave_fifo_req_sel = slave_req_i;
-  assign slave_resp_o       = slave_fifo_resp_sel;
+  //obi_pkg::obi_req_t  slave_fifoin_req;
+  //obi_pkg::obi_resp_t slave_fifoin_resp;
 
-`else
-
-  obi_pkg::obi_req_t  slave_fifoin_req;
-  obi_pkg::obi_resp_t slave_fifoin_resp;
-
-  obi_pkg::obi_req_t  slave_fifoout_req;
-  obi_pkg::obi_resp_t slave_fifoout_resp;
+  //obi_pkg::obi_req_t  slave_fifoout_req;
+  //obi_pkg::obi_resp_t slave_fifoout_resp;
 
   obi_fifo obi_fifo_i (
       .clk_i,
@@ -229,10 +223,10 @@ module ao_peripheral_subsystem
       .consumer_resp_i(slave_fifoout_resp)
   );
 
-  assign slave_fifo_req_sel = slave_fifoout_req;
-  assign slave_fifoout_resp = slave_fifo_resp_sel;
-  assign slave_fifoin_req   = slave_req_i;
-  assign slave_resp_o       = slave_fifoin_resp;
+  //assign slave_fifo_req_sel = slave_fifoout_req;
+  //assign slave_fifoout_resp = slave_fifo_resp_sel;
+ // assign slave_fifoin_req   = slave_req_i;
+  //assign slave_resp_o       = slave_fifoin_resp;
 
   /* Peripheral to register interface converter*/
   periph_to_reg #(
