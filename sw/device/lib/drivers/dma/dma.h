@@ -107,6 +107,8 @@ extern "C" {
  */
 #define DMA_DATA_TYPE_2_SIZE(type) (0b00000100 >> (type) )
 
+#define DMA_SELECTION_OFFSET_START 0
+
 /****************************************************************************/
 /**                                                                        **/
 /**                       TYPEDEFS AND STRUCTURES                          **/
@@ -322,15 +324,11 @@ typedef struct
     if the target is a peripheral. */
     uint8_t*                ptr;     /*!< Pointer to the start address from/to
     where data will be copied/pasted. */
-    uint8_t                inc_du;  /*!< How much the pointer will increase
+    uint8_t                inc_d1_du;  /*!< How much the pointer will increase
     every time a read/write operation is done. It is a multiple of the data units.
     Can be left blank if the target is a peripheral. */
     uint32_t                inc_d2_du; /*!< How much the D2 pointer will increase
     every time the DMA finishes to read a #D1 of data units. */
-    uint16_t                size_du; /*!< The size (in data units) of the data to
-    be copied. Can be left blank if the target will only be used as destination.*/
-    uint16_t                size_d2_du; /*!< The size (in data units) of the data
-    to be copied along D2.*/
     dma_data_type_t         type;    /*!< The type of data to be transferred.
     Can be left blank if the target will only be used as destination. */
     dma_trigger_slot_mask_t trig;    /*!< If the target is a peripheral, a
@@ -354,10 +352,8 @@ typedef struct
     copied. - only valid in address mode */
     uint16_t            inc_b;  /*!< A common increment in case both targets
     need to use one same increment. */
-    uint32_t            size_b; /*!< The size of the transfer along D1, in bytes (in
-    contrast, the size stored in the targets is in data units). */
-    uint32_t            size_d2_b; /*!< The size of the transfer along D2, in bytes (in
-    contrast, the size stored in the targets is in data units). */
+    uint32_t            size_d1_du; /*!< The size of the transfer along D1, in data units */
+    uint32_t            size_d2_du; /*!< The size of the transfer along D2, in data units */
     dma_dim_t           dim; /*!< Sets the dimensionality of the
     DMA, either 1D or 2D. */
     uint8_t             pad_top_du; /*!< Padding at the top of the 2D transfer. */
@@ -403,6 +399,46 @@ __attribute__((optimize("O0"))) void handler_irq_dma( uint32_t id );
  * fast_intr_ctrl.c
  */
 __attribute__((optimize("O0"))) void fic_irq_dma(void);
+
+/**
+ * @brief Writes a given value into the specified register. Its operation
+ * mimics that of bitfield_field32_write(), but does not require the use of
+ * a field structure, that is not always provided in the _regs.h file.
+ * @param p_val The value to be written.
+ * @param p_offset The register's offset from the peripheral's base address
+ *  where the target register is located.
+ * @param p_mask The variable's mask to only modify its bits inside the whole
+ * register.
+ * @param p_sel The selection index (i.e. From which bit inside the register
+ * the value is to be written).
+ * @param p_peri The peripheral where the register is located.
+ */
+/* @ToDo: Consider changing the "mask" parameter for a bitfield definition
+(see dma_regs.h) */
+static inline void write_register( uint32_t  p_val,
+                                  uint32_t  p_offset,
+                                  uint32_t  p_mask,
+                                  uint8_t   p_sel,
+                                  dma*      p_dma)
+{
+    /*
+     * The index is computed to avoid needing to access the structure
+     * as a structure.
+     */
+    uint8_t index = p_offset / sizeof(uint32_t);
+    /*
+     * An intermediate variable "value" is used to prevent writing twice into
+     * the register.
+     */
+    uint32_t value  =  (( uint32_t * ) p_dma ) [ index ];
+    value           &= ~( p_mask << p_sel );
+    value           |= (p_val & p_mask) << p_sel;
+    (( uint32_t * ) p_dma ) [ index ] = value;
+
+// @ToDo: mmio_region_write32(dma->base_addr, (ptrdiff_t)(DMA_SLOT_REG_OFFSET), (tx_slot_mask << DMA_SLOT_TX_TRIGGER_SLOT_OFFSET) + rx_slot_mask)
+
+}
+
 
 /**
  *@brief Takes all DMA configurations to a state where no accidental

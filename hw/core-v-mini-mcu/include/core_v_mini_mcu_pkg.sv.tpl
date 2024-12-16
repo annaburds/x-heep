@@ -44,7 +44,8 @@ package core_v_mini_mcu_pkg;
   localparam logic [31:0] AXI_SL_M_IDX = 6;
   localparam logic [31:0] SL_RECREG_M_IDX = 7;
 
-  localparam SYSTEM_XBAR_NMASTER = 8;
+  localparam SYSTEM_XBAR_NMASTER = ${4 + int(num_dma_master_ports)*3}; // MB TO PUT 8
+
 
   // Internal slave memory map and index
   // -----------------------------------
@@ -156,7 +157,14 @@ package core_v_mini_mcu_pkg;
   // ---------------------
   localparam AO_PERIPHERALS = ${ao_peripherals_count};
   localparam DMA_CH_NUM = ${dma_ch_count};
-
+  localparam DMA_CH_SIZE = 32'h${dma_ch_size};
+  localparam DMA_NUM_MASTER_PORTS = ${num_dma_master_ports};
+% if int(num_dma_master_ports) > 1:
+  localparam int DMA_XBAR_MASTERS [DMA_NUM_MASTER_PORTS] = '{${dma_xbar_masters_array[::-1]}};
+% else:
+  localparam int DMA_XBAR_MASTERS [DMA_NUM_MASTER_PORTS] = '{${dma_xbar_masters_array}};
+% endif
+  
 % for peripheral, addr in ao_peripherals.items():
   localparam logic [31:0] ${peripheral.upper()}_START_ADDRESS = AO_PERIPHERAL_START_ADDRESS + 32'h${addr["offset"]};
   localparam logic [31:0] ${peripheral.upper()}_SIZE = 32'h${addr["length"]};

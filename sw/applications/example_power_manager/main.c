@@ -49,7 +49,7 @@ static power_manager_t power_manager;
 
 #define TEST_WORD
 //this data has to be big to allow the CPU to power gate
-#define TEST_DATA_SIZE 500
+#define TEST_DATA_SIZE 450
 
 // Source and destination addresses have to be aligned on a 4 bytes address
 uint32_t test_data_4B[TEST_DATA_SIZE] __attribute__ ((aligned (4))) = { 0 };
@@ -179,37 +179,29 @@ int main(int argc, char *argv[])
     }
 
     dma_init(NULL);
-    dma_config_flags_t res;
-    dma_target_t tgt_src;
-    dma_target_t tgt_dst;
-    dma_target_t tgt_addr = {
-        .ptr = NULL,
-        .inc_du = 1,
-        .size_du = 0,
-        .trig = DMA_TRIG_MEMORY,
-    };
-    dma_trans_t trans;
+    static dma_config_flags_t res;
+    static dma_target_t tgt_src;
+    static dma_target_t tgt_dst;
+    static dma_trans_t trans;
 
     // Initialize the DMA for the next tests
     tgt_src.ptr = (uint8_t *)test_data_4B;
-    tgt_src.inc_du = 1;
-    tgt_src.size_du = TEST_DATA_SIZE;
+    tgt_src.inc_d1_du = 1;
     tgt_src.trig = DMA_TRIG_MEMORY;
     tgt_src.type = DMA_DATA_TYPE_WORD;
     tgt_src.env = NULL;
     tgt_src.inc_d2_du = 0;
 
     tgt_dst.ptr = (uint8_t *)copied_data_4B;
-    tgt_dst.inc_du = 1;
-    tgt_dst.size_du = TEST_DATA_SIZE;
+    tgt_dst.inc_d1_du = 1;
     tgt_dst.trig = DMA_TRIG_MEMORY;
     tgt_dst.type = DMA_DATA_TYPE_WORD;
     tgt_dst.env = NULL;
     tgt_dst.inc_d2_du = 0;
 
+    trans.size_d1_du = TEST_DATA_SIZE;
     trans.src = &tgt_src;
     trans.dst = &tgt_dst;
-    trans.src_addr = &tgt_addr;
     trans.src_type = DMA_DATA_TYPE_WORD;
     trans.dst_type = DMA_DATA_TYPE_WORD;
     trans.mode = DMA_TRANS_MODE_SINGLE;
@@ -217,6 +209,9 @@ int main(int argc, char *argv[])
     trans.sign_ext = 0;
     trans.end = DMA_TRANS_END_INTR;
     trans.dim = DMA_DIM_CONF_1D;
+    trans.dim_inv = 0;
+    trans.channel = 0;
+
     trans.pad_top_du = 0;
     trans.pad_bottom_du = 0;
     trans.pad_left_du = 0;
@@ -231,7 +226,7 @@ int main(int argc, char *argv[])
     {
         CSR_CLEAR_BITS(CSR_REG_MSTATUS, 0x8);
         if (dma_is_ready(0) == 0)
-        {             
+        {
                 if (power_gate_core(&power_manager, kDma_pm_e, &power_manager_counters) != kPowerManagerOk_e)
                 {
                     PRINTF("Error: power manager fail.\n\r");

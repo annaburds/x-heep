@@ -4,6 +4,7 @@
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Author: Tommaso Terzano <tommaso.terzano@epfl.ch>
+ *                         <tommaso.terzano@gmail.com>
  *  
  *  Info: Example application of matrix manipulation by exploiting the multichannel feature of the DMA subsystem.
  *        This code is capable of testing the following features:
@@ -32,7 +33,7 @@
  * 
  *  DISCLAIMER:
  *  When using the default memory configuration (64kB), pay attention to the dimensions of the output matrices.
- *  When executing TEST_ID_4 on QuestaSim, make sure to enable the SPI FLASH.
+ *  When executing TEST_ID_3 on QuestaSim, make sure to enable the SPI FLASH.
  * 
  *  Enable one or more of the following tests by defining the correct TEST_ID_* macro:
  *  
@@ -136,7 +137,7 @@
 
 #if TARGET_SIM && PRINTF_IN_SIM
         #define PRINTF(fmt, ...)    printf(fmt, ## __VA_ARGS__)
-#elif TARGET_IS_FPGA && PRINTF_IN_FPGA
+#elif TARGET_PYNQ_Z2 && PRINTF_IN_FPGA
     #define PRINTF(fmt, ...)    printf(fmt, ## __VA_ARGS__)
 #else
     #define PRINTF(...)
@@ -209,29 +210,6 @@ uint8_t transaction_flag[DMA_CH_NUM];
 uint8_t window_flag[DMA_CH_NUM];
 char passed = 1;
 char flag = 0;
-
-/* Function used to simplify the register operations */
-static inline volatile void write_register( uint32_t  p_val,
-                                uint32_t  p_offset,
-                                uint32_t  p_mask,
-                                uint8_t   p_sel,
-                                dma* peri_chx ) 
-{
-    /*
-     * The index is computed to avoid needing to access the structure
-     * as a structure.
-     */
-    uint8_t index = p_offset / sizeof(int);
-
-    /*
-     * An intermediate variable "value" is used to prevent writing twice into
-     * the register.
-     */
-    uint32_t value  =  (( uint32_t * ) peri_chx ) [ index ];
-    value           &= ~( p_mask << p_sel );
-    value           |= (p_val & p_mask) << p_sel;
-    (( uint32_t * ) peri_chx ) [ index ] = value;
-};
 
 /* Strong transaction ISR implementation */
 void dma_intr_handler_trans_done(uint8_t channel)
@@ -356,25 +334,25 @@ int main()
                         dma_peri(i) );
         
         /* Padding configuration */
-        write_register( TOP_PAD * DMA_DATA_TYPE_2_SIZE( DMA_DATA_TYPE),
+        write_register( TOP_PAD,
                         DMA_PAD_TOP_REG_OFFSET,
                         DMA_PAD_TOP_PAD_MASK,
                         DMA_PAD_TOP_PAD_OFFSET,
                         dma_peri(i) );
         
-        write_register( RIGHT_PAD * DMA_DATA_TYPE_2_SIZE( DMA_DATA_TYPE),
+        write_register( RIGHT_PAD,
                         DMA_PAD_RIGHT_REG_OFFSET,
                         DMA_PAD_RIGHT_PAD_MASK,
                         DMA_PAD_RIGHT_PAD_OFFSET,
                         dma_peri(i) );
         
-        write_register( LEFT_PAD * DMA_DATA_TYPE_2_SIZE( DMA_DATA_TYPE),
+        write_register( LEFT_PAD,
                         DMA_PAD_LEFT_REG_OFFSET,
                         DMA_PAD_LEFT_PAD_MASK,
                         DMA_PAD_LEFT_PAD_OFFSET,
                         dma_peri(i) );
         
-        write_register( BOTTOM_PAD * DMA_DATA_TYPE_2_SIZE( DMA_DATA_TYPE),
+        write_register( BOTTOM_PAD,
                         DMA_PAD_BOTTOM_REG_OFFSET,
                         DMA_PAD_BOTTOM_PAD_MASK,
                         DMA_PAD_BOTTOM_PAD_OFFSET,
@@ -391,13 +369,13 @@ int main()
     for (int i=0; i<DMA_CH_NUM; i++)
     {
         /* Set the sizes to start the transaction */
-        write_register( SIZE_EXTR_D2 * DMA_DATA_TYPE_2_SIZE( DMA_DATA_TYPE),
+        write_register( SIZE_EXTR_D2,
                         DMA_SIZE_D2_REG_OFFSET,
                         DMA_SIZE_D2_SIZE_MASK,
                         DMA_SIZE_D2_SIZE_OFFSET,
                         dma_peri(i) );
         
-        write_register( SIZE_EXTR_D1 * DMA_DATA_TYPE_2_SIZE( DMA_DATA_TYPE),
+        write_register( SIZE_EXTR_D1,
                         DMA_SIZE_D1_REG_OFFSET,
                         DMA_SIZE_D1_SIZE_MASK,
                         DMA_SIZE_D1_SIZE_OFFSET,
@@ -566,22 +544,22 @@ int main()
     dma_init(NULL);
 
     tgt_src.ptr            = (uint8_t *) test_data;
-    tgt_src.inc_du         = SRC_INC_D1;
+    tgt_src.inc_d1_du         = SRC_INC_D1;
     tgt_src.inc_d2_du      = SRC_INC_D2;
-    tgt_src.size_du        = SIZE_EXTR_D1;
-    tgt_src.size_d2_du     = SIZE_EXTR_D2;
     tgt_src.trig           = DMA_TRIG_MEMORY;
     tgt_src.type           = DMA_DATA_TYPE;
 
     for (int c=0; c<DMA_CH_NUM; c++)
     { 
         tgt_dst[c].ptr            = (uint8_t *) copied_data_2D_DMA[c];
-        tgt_dst[c].inc_du         = DST_INC_D1;
+        tgt_dst[c].inc_d1_du         = DST_INC_D1;
         tgt_dst[c].inc_d2_du      = DST_INC_D2;
         tgt_dst[c].trig           = DMA_TRIG_MEMORY;
 
         trans[c].src            = &tgt_src;
         trans[c].dst            = &tgt_dst[c];
+        trans[c].size_d1_du     = SIZE_EXTR_D1;
+        trans[c].size_d2_du     = SIZE_EXTR_D2;
         trans[c].mode           = DMA_TRANS_MODE_SINGLE;
         trans[c].dim            = DMA_DIM_CONF_2D;
         trans[c].pad_top_du     = TOP_PAD;
@@ -777,18 +755,14 @@ int main()
     #endif
 
     tgt_src.ptr            = (uint8_t *) test_data;
-    tgt_src.inc_du         = SRC_INC_D1;
+    tgt_src.inc_d1_du         = SRC_INC_D1;
     tgt_src.inc_d2_du      = SRC_INC_D2;
-    tgt_src.size_du        = SIZE_EXTR_D1;
-    tgt_src.size_d2_du     = SIZE_EXTR_D2;
     tgt_src.trig           = DMA_TRIG_MEMORY;
     tgt_src.type           = DMA_DATA_TYPE;
 
     tgt_src_trsp.ptr            = (uint8_t *) test_data;
-    tgt_src_trsp.inc_du         = SRC_INC_TRSP_D1;
+    tgt_src_trsp.inc_d1_du         = SRC_INC_TRSP_D1;
     tgt_src_trsp.inc_d2_du      = SRC_INC_TRSP_D2;
-    tgt_src_trsp.size_du        = SIZE_EXTR_D1;
-    tgt_src_trsp.size_d2_du     = SIZE_EXTR_D2;
     tgt_src_trsp.trig           = DMA_TRIG_MEMORY;
     tgt_src_trsp.type           = DMA_DATA_TYPE;
 
@@ -800,7 +774,7 @@ int main()
     for (int c=0; c<DMA_CH_NUM; c++)
     { 
         tgt_dst[c].ptr            = (uint8_t *) copied_data_2D_DMA[c];
-        tgt_dst[c].inc_du         = DST_INC_D1;
+        tgt_dst[c].inc_d1_du         = DST_INC_D1;
         tgt_dst[c].inc_d2_du      = DST_INC_D2;
         tgt_dst[c].trig           = DMA_TRIG_MEMORY;
 
@@ -808,6 +782,8 @@ int main()
         {
             trans[c].src            = &tgt_src;
             trans[c].dst            = &tgt_dst[c];
+            trans[c].size_d1_du     = SIZE_EXTR_D1;
+            trans[c].size_d2_du     = SIZE_EXTR_D2;
             trans[c].mode           = DMA_TRANS_MODE_SINGLE;
             trans[c].dim            = DMA_DIM_CONF_2D;
             trans[c].pad_top_du     = TOP_PAD;
@@ -823,6 +799,8 @@ int main()
         {
             trans[c].src            = &tgt_src_trsp;
             trans[c].dst            = &tgt_dst[c];
+            trans[c].size_d1_du     = SIZE_EXTR_D1;
+            trans[c].size_d2_du     = SIZE_EXTR_D2;
             trans[c].mode           = DMA_TRANS_MODE_SINGLE;
             trans[c].dim            = DMA_DIM_CONF_2D;
             trans[c].pad_top_du     = TOP_PAD;
@@ -1081,20 +1059,20 @@ int main()
     dma_init(NULL);
 
     tgt_src.ptr            = (uint8_t *) test_data;
-    tgt_src.inc_du         = SRC_INC_D1;
+    tgt_src.inc_d1_du         = SRC_INC_D1;
     tgt_src.inc_d2_du      = SRC_INC_D2;
-    tgt_src.size_du        = SIZE_EXTR_D1;
-    tgt_src.size_d2_du     = SIZE_EXTR_D2;
     tgt_src.trig           = DMA_TRIG_MEMORY;
     tgt_src.type           = DMA_DATA_TYPE;
 
     tgt_dst[1].ptr            = (uint8_t *) copied_data_2D_DMA[1];
-    tgt_dst[1].inc_du         = DST_INC_D1;
+    tgt_dst[1].inc_d1_du         = DST_INC_D1;
     tgt_dst[1].inc_d2_du      = DST_INC_D2;
     tgt_dst[1].trig           = DMA_TRIG_MEMORY;
 
     trans[1].src            = &tgt_src;
     trans[1].dst            = &tgt_dst[1];
+    trans[1].size_d1_du     = SIZE_EXTR_D1;
+    trans[1].size_d2_du     = SIZE_EXTR_D2;
     trans[1].mode           = DMA_TRANS_MODE_SINGLE;
     trans[1].dim            = DMA_DIM_CONF_2D;
     trans[1].pad_top_du     = TOP_PAD;
@@ -1154,14 +1132,14 @@ int main()
     PRINTF("laun: %u \t%s\n\r", res_launch, res_launch == DMA_CONFIG_OK ?  "Ok!" : "Error!");
     #endif
 
-    /* Wait for CH1 to end */
-    while(!dma_is_ready(1)) {
+    /* Wait for CH0 to end, since the SPI will be slower than the DMA */
+    while(!dma_is_ready(0)) {
         #if !EN_PERF
         /* Disable_interrupts */
         /* This does not prevent waking up the core as this is controlled by the MIP register */
         
         CSR_CLEAR_BITS(CSR_REG_MSTATUS, 0x8);
-        if ( dma_is_ready(1) == 0 ) {
+        if ( dma_is_ready(0) == 0 ) {
             wait_for_interrupt();
             /* From here the core wakes up even if we did not jump to the ISR */
         }

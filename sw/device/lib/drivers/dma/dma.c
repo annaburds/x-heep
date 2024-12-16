@@ -31,6 +31,11 @@
 /**                                                                        **/
 /****************************************************************************/
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif // __cplusplus
+
 #include "dma.h"
 
 /* To manage addresses. */
@@ -56,11 +61,6 @@
  * Returns the mask to enable/disable DMA interrupts.
  */
 #define DMA_CSR_REG_MIE_MASK (( 1 << 19 ) | (1 << 11 ) ) // @ToDo Add definitions for this 19 and 11
-
-/**
- * Size of a register of 32 bits.
- */
-#define DMA_REGISTER_SIZE_BYTES sizeof(int)
 
 /**
  * Mask to determine if an address is multiple of 4 (Word aligned).
@@ -125,7 +125,7 @@ typedef enum
  * @return A configuration flags mask. Each individual flag can be accessed with
  * a bitwise AND ( ret & DMA_CONFIG_* ).
  */
-dma_config_flags_t validate_target( dma_target_t *p_tgt );
+dma_config_flags_t validate_target( dma_target_t *p_tgt, dma_trans_t *p_trans );
 
 /**
  * @brief Creates an environment where targets can be added. An environment
@@ -159,17 +159,17 @@ static inline uint8_t get_misalignment_b(   uint8_t         *p_ptr,
  * @param p_start Pointer to the beginning of the region.
  * @param p_end Pointer to the last byte of the environment.
  * @param p_type The data type to be transferred.
- * @param p_size_du The number of data units to be transferred. Must be
+ * @param p_size_d1_du The number of data units to be transferred. Must be
  * non-zero.
- * @param p_inc_du The size in data units of each increment.
+ * @param p_inc_d1_du The size in data units of each increment.
  * @retval 1 There is an outbound.
  * @retval 0 There is NOT an outbound.
  */
 static inline uint8_t is_region_outbound_1D(   uint8_t  *p_start,
                                             uint8_t  *p_end,
                                             uint32_t p_type,
-                                            uint32_t p_size_du,
-                                            uint32_t p_inc_du );
+                                            uint32_t p_size_d1_du,
+                                            uint32_t p_inc_d1_du );
 
 /**
  * @brief Determines whether a given region will fit before the end of an
@@ -177,9 +177,9 @@ static inline uint8_t is_region_outbound_1D(   uint8_t  *p_start,
  * @param p_start Pointer to the beginning of the region.
  * @param p_end Pointer to the last byte of the environment.
  * @param p_type The data type to be transferred.
- * @param p_size_du The number of data units to be transferred. Must be
+ * @param p_size_d1_du The number of data units to be transferred. Must be
  * non-zero.
- * @param p_inc_du The size in data units of each increment.
+ * @param p_inc_d1_du The size in data units of each increment.
  * @retval 1 There is an outbound.
  * @retval 0 There is NOT an outbound.
  */
@@ -190,26 +190,6 @@ static inline uint8_t is_region_outbound_2D(   uint8_t  *p_start,
                                             uint32_t p_size_d2_du,
                                             uint32_t p_inc_d1_du,
                                             uint32_t p_inc_d2_du );
-
-/**
- * @brief Writes a given value into the specified register. Its operation
- * mimics that of bitfield_field32_write(), but does not require the use of
- * a field structure, that is not always provided in the _regs.h file.
- * @param p_val The value to be written.
- * @param p_offset The register's offset from the peripheral's base address
- *  where the target register is located.
- * @param p_mask The variable's mask to only modify its bits inside the whole
- * register.
- * @param p_sel The selection index (i.e. From which bit inside the register
- * the value is to be written).
- * @param p_peri The peripheral where the register is located.
- */
-static inline void write_register(  uint32_t p_val,
-                                    uint32_t p_offset,
-                                    uint32_t p_mask,
-                                    uint8_t  p_sel, 
-                                    dma*     p_peri );
-
 
 /**
  * @brief Analyzes a target to determine the size of its D1 increment (in bytes).
@@ -451,8 +431,8 @@ dma_config_flags_t dma_validate_transaction(    dma_trans_t        *p_trans,
      * A successful target validation has to be done before loading it to the
      * DMA.
      */
-    uint8_t errorSrc = validate_target( p_trans->src );
-    uint8_t errorDst = validate_target( p_trans->dst );
+    uint8_t errorSrc = validate_target( p_trans->src, p_trans);
+    uint8_t errorDst = validate_target( p_trans->dst, p_trans);
 
     /*
      * If there are any errors or warnings in the valdiation of the targets,
@@ -558,12 +538,6 @@ dma_config_flags_t dma_validate_transaction(    dma_trans_t        *p_trans,
     /* The flags are cleaned in case the structure was used before.*/
     p_trans->flags = DMA_CONFIG_OK;
 
-    /* The copy size of the source (in data units -of the source-) is
-    transformed to bytes, to be used as default size.*/
-    uint8_t dataSize_b = DMA_DATA_TYPE_2_SIZE(p_trans->dst->type);
-    p_trans->size_b = p_trans->src->size_du * dataSize_b;
-    p_trans->size_d2_b = p_trans->src->size_d2_du * dataSize_b;
-
     p_trans->src_type = p_trans->src->type;
     p_trans->dst_type = p_trans->dst->type;
 
@@ -665,8 +639,8 @@ dma_config_flags_t dma_validate_transaction(    dma_trans_t        *p_trans,
              * No further operations are done to prevent corrupting
              * information that could be useful for debugging purposes.
              */
-            if(    ( p_trans->src->inc_du > 1 )
-                || ( p_trans->dst->inc_du > 1 ) )
+            if(    ( p_trans->src->inc_d1_du > 1 )
+                || ( p_trans->dst->inc_d1_du > 1 ) )
             {
                 p_trans->flags |= DMA_CONFIG_DISCONTINUOUS;
                 p_trans->flags |= DMA_CONFIG_CRITICAL_ERROR;
@@ -681,9 +655,10 @@ dma_config_flags_t dma_validate_transaction(    dma_trans_t        *p_trans,
              * If realignment is allowed and there are no discontinuities,
              * a more granular data type is used according to the detected
              * misalignment in order to overcome it.
-             */
-            p_trans->dst_type += misalignment;
-            /*
+             */ 
+            p_trans->dst_type = p_trans->dst_type + misalignment;
+
+           /*
              * Source and destination increment should now be of the size
              * of the data.
              * As increments are given in bytes, in both cases should be the
@@ -701,7 +676,7 @@ dma_config_flags_t dma_validate_transaction(    dma_trans_t        *p_trans,
          * No further operations are done to prevent corrupting information
          * that could be useful for debugging purposes.
          */
-        if(p_trans->src->size_du == 0 || (p_trans->dim == DMA_DIM_CONF_2D && p_trans->src->size_d2_du == 0))
+        if(p_trans->size_d1_du == 0 || (p_trans->dim == DMA_DIM_CONF_2D && p_trans->size_d2_du == 0))
         {
             p_trans->flags |= DMA_CONFIG_SRC;
             p_trans->flags |= DMA_CONFIG_CRITICAL_ERROR;
@@ -743,8 +718,8 @@ dma_config_flags_t dma_validate_transaction(    dma_trans_t        *p_trans,
                                         p_trans->dst->ptr,
                                         p_trans->dst->env->end,
                                         p_trans->dst_type,
-                                        p_trans->src->size_du,
-                                        p_trans->dst->inc_du );
+                                        p_trans->size_d1_du,
+                                        p_trans->dst->inc_d1_du );
             if( isOutb )
             {
                 p_trans->flags |= DMA_CONFIG_DST;
@@ -768,7 +743,7 @@ dma_config_flags_t dma_validate_transaction(    dma_trans_t        *p_trans,
          * this would not cause any error, the transaction is rejected because
          * it is likely a mistake.
          */
-        if( p_trans->win_du > p_trans->size_b )
+        if( p_trans->win_du > p_trans->size_d1_du )
         {
             p_trans->flags |= DMA_CONFIG_WINDOW_SIZE;
             p_trans->flags |= DMA_CONFIG_CRITICAL_ERROR;
@@ -786,7 +761,7 @@ dma_config_flags_t dma_validate_transaction(    dma_trans_t        *p_trans,
          * certainty that an real error will occur.
          */
         uint32_t threshold = dma_window_ratio_warning_threshold();
-        uint32_t ratio = p_trans->size_b / p_trans->win_du;
+        uint32_t ratio = p_trans->size_d1_du / p_trans->win_du;
         if(     p_trans->win_du
             &&  threshold
             &&  ( ratio > threshold) )
@@ -889,16 +864,17 @@ dma_config_flags_t dma_load_transaction( dma_trans_t *p_trans)
     if (p_trans->dim == DMA_DIM_CONF_1D && (p_trans->pad_left_du != 0 || p_trans->pad_right_du != 0))
     {
         p_trans->dim = DMA_DIM_CONF_2D;
-        p_trans->size_d2_b = DMA_DATA_TYPE_2_SIZE( p_trans->dst_type );
+        /* Set the d2 size and increment to just the minimum */
+        p_trans->size_d2_du = 1;
         p_trans->src->inc_d2_du = DMA_DATA_TYPE_2_SIZE( p_trans->dst_type );
         
-        write_register( dma_subsys_per[channel].trans->pad_left_du * DMA_DATA_TYPE_2_SIZE( p_trans->src_type ),
+        write_register( dma_subsys_per[channel].trans->pad_left_du,
                         DMA_PAD_LEFT_REG_OFFSET,
                         DMA_PAD_LEFT_PAD_MASK,
                         DMA_PAD_LEFT_PAD_OFFSET,
                         dma_subsys_per[channel].peri);
 
-        write_register( dma_subsys_per[channel].trans->pad_right_du * DMA_DATA_TYPE_2_SIZE( p_trans->src_type ),
+        write_register( dma_subsys_per[channel].trans->pad_right_du,
                         DMA_PAD_RIGHT_REG_OFFSET,
                         DMA_PAD_RIGHT_PAD_MASK,
                         DMA_PAD_RIGHT_PAD_OFFSET,
@@ -906,31 +882,30 @@ dma_config_flags_t dma_load_transaction( dma_trans_t *p_trans)
     }
     else if (p_trans->dim == DMA_DIM_CONF_2D)
     {
-        write_register( dma_subsys_per[channel].trans->pad_top_du * DMA_DATA_TYPE_2_SIZE( p_trans->src_type ),
+        write_register( dma_subsys_per[channel].trans->pad_top_du,
                         DMA_PAD_TOP_REG_OFFSET,
                         DMA_PAD_TOP_PAD_MASK,
                         DMA_PAD_TOP_PAD_OFFSET,
                         dma_subsys_per[channel].peri);
 
-        write_register( dma_subsys_per[channel].trans->pad_bottom_du * DMA_DATA_TYPE_2_SIZE( p_trans->src_type ),
+        write_register( dma_subsys_per[channel].trans->pad_bottom_du,
                         DMA_PAD_BOTTOM_REG_OFFSET,
                         DMA_PAD_BOTTOM_PAD_MASK,
                         DMA_PAD_BOTTOM_PAD_OFFSET,
                         dma_subsys_per[channel].peri);
 
-        write_register( dma_subsys_per[channel].trans->pad_left_du * DMA_DATA_TYPE_2_SIZE( p_trans->src_type ),
+        write_register( dma_subsys_per[channel].trans->pad_left_du,
                         DMA_PAD_LEFT_REG_OFFSET,
                         DMA_PAD_LEFT_PAD_MASK,
                         DMA_PAD_LEFT_PAD_OFFSET,
                         dma_subsys_per[channel].peri);
 
-        write_register( dma_subsys_per[channel].trans->pad_right_du * DMA_DATA_TYPE_2_SIZE( p_trans->src_type ),
+        write_register( dma_subsys_per[channel].trans->pad_right_du,
                         DMA_PAD_RIGHT_REG_OFFSET,
                         DMA_PAD_RIGHT_PAD_MASK,
                         DMA_PAD_RIGHT_PAD_OFFSET,
                         dma_subsys_per[channel].peri);
     }
-
     /*
      * SET THE POINTERS
      */
@@ -1018,7 +993,7 @@ dma_config_flags_t dma_load_transaction( dma_trans_t *p_trans)
 
     dma_subsys_per[channel].peri->WINDOW_SIZE =   dma_subsys_per[channel].trans->win_du
                             ? dma_subsys_per[channel].trans->win_du
-                            : dma_subsys_per[channel].trans->size_b;
+                            : dma_subsys_per[channel].trans->size_d1_du;
 
     /* 
      * SET THE DIMENSIONALITY
@@ -1120,7 +1095,7 @@ dma_config_flags_t dma_launch( dma_trans_t *p_trans)
 
     if(dma_subsys_per[channel].trans->dim == DMA_DIM_CONF_2D)
     {
-        write_register( dma_subsys_per[channel].trans->size_d2_b,
+        write_register( dma_subsys_per[channel].trans->size_d2_du,
                         DMA_SIZE_D2_REG_OFFSET,
                         DMA_SIZE_D2_SIZE_MASK,
                         DMA_SIZE_D2_SIZE_OFFSET,
@@ -1128,7 +1103,7 @@ dma_config_flags_t dma_launch( dma_trans_t *p_trans)
                       );
     }
 
-    write_register( dma_subsys_per[channel].trans->size_b,
+    write_register( dma_subsys_per[channel].trans->size_d1_du,
                     DMA_SIZE_D1_REG_OFFSET,
                     DMA_SIZE_D1_SIZE_MASK,
                     DMA_SIZE_D1_SIZE_OFFSET,
@@ -1221,7 +1196,7 @@ __attribute__((weak, optimize("O0"))) uint8_t dma_window_ratio_warning_threshold
 /**                                                                        **/
 /****************************************************************************/
 
-dma_config_flags_t validate_target( dma_target_t *p_tgt )
+dma_config_flags_t validate_target( dma_target_t *p_tgt, dma_trans_t *p_trans )
 {
     /* Flags variable to pass encountered errors. */
     dma_config_flags_t flags = DMA_CONFIG_OK;
@@ -1230,14 +1205,14 @@ dma_config_flags_t validate_target( dma_target_t *p_tgt )
      */
 
     /* Increment can be 0 when a trigger is used. */
-    DMA_STATIC_ASSERT( p_tgt->inc_du   >= 0  &&  p_tgt->inc_du < 64 , "Increment not valid");
+    DMA_STATIC_ASSERT( p_tgt->inc_d1_du   >= 0  &&  p_tgt->inc_d1_du < 64 , "Increment not valid");
     /* Increment on D2 has to be 0 for 1D operations */
     DMA_STATIC_ASSERT( p_tgt->inc_d2_du  >= 0  &&  p_tgt->inc_d2_du < 4194304 , "Increment d2 not valid");
     /* The size could be 0 if the target is only going to be used as a
     destination. */
-    DMA_STATIC_ASSERT( p_tgt->size_du  >= 0 && p_tgt->size_du  < 65536 , "Size not valid");
+    DMA_STATIC_ASSERT( p_tgt->size_d1_du  >= 0 && p_tgt->size_d1_du  < 65536 , "Size not valid");
     /* The size can be 0 or 1 if the target is involved in a 1D padded transaction */
-    DMA_STATIC_ASSERT( p_tgt->size_d2_du >= 0 && p_tgt->size_du  < 65536  , "Size d2 not valid");
+    DMA_STATIC_ASSERT( p_tgt->size_d2_du >= 0 && p_tgt->size_d1_du  < 65536  , "Size d2 not valid");
     /* The data type must be a valid type */
     DMA_STATIC_ASSERT( p_tgt->type     < DMA_DATA_TYPE__size , "Source type not valid");
     /* The trigger must be among the valid trigger values. */
@@ -1258,32 +1233,29 @@ dma_config_flags_t validate_target( dma_target_t *p_tgt )
         /* Check if the environment was properly formed.*/
         flags |= validate_environment( p_tgt->env );
         /*
-         * Check if the target selected size goes beyond the boundaries of
+         * Check if the transaction size goes beyond the boundaries of
          * the environment.
-         * This is only analyzed if a size was defined.
          */
-        if( p_tgt->size_du != 0 )
-        {
-            uint8_t isOutb = is_region_outbound_1D(  p_tgt->ptr,
-                                          p_tgt->env->end,
-                                          p_tgt->type,
-                                          p_tgt->size_du,
-                                          p_tgt->inc_du );
-            if( isOutb )
-            {
-                flags |= DMA_CONFIG_OUTBOUNDS;
-            }
-        }
-        /* Do the same but for 2D case */
-        if( p_tgt->size_d2_du != 0 )
+        
+        if( p_trans->size_d2_du != 0 )
         {
             uint8_t isOutb = is_region_outbound_2D(  p_tgt->ptr,
                                           p_tgt->env->end,
                                           p_tgt->type,
-                                          p_tgt->size_du,
-                                          p_tgt->size_d2_du,
-                                          p_tgt->inc_du,
+                                          p_trans->size_d1_du,
+                                          p_trans->size_d2_du,
+                                          p_tgt->inc_d1_du,
                                           p_tgt->inc_d2_du);
+            if( isOutb )
+            {
+                flags |= DMA_CONFIG_OUTBOUNDS;
+            }
+        } else {
+            uint8_t isOutb = is_region_outbound_1D(  p_tgt->ptr,
+                                          p_tgt->env->end,
+                                          p_tgt->type,
+                                          p_trans->size_d1_du,
+                                          p_tgt->inc_d1_du );
             if( isOutb )
             {
                 flags |= DMA_CONFIG_OUTBOUNDS;
@@ -1309,7 +1281,7 @@ dma_config_flags_t validate_target( dma_target_t *p_tgt )
 
     if( p_tgt->trig == DMA_TRIG_MEMORY ){ /* If it is a memory region. */
         /* It should have an increment. */
-        if( ( p_tgt->inc_du == 0 ) ){
+        if( ( p_tgt->inc_d1_du == 0 ) ){
             flags |= DMA_CONFIG_INCOMPATIBLE;
         }
     }
@@ -1317,7 +1289,7 @@ dma_config_flags_t validate_target( dma_target_t *p_tgt )
     {
         /* It should not have neither an environment nor an increment. */
         if( (     (p_tgt->env != NULL)
-              ||  ( p_tgt->inc_du != 0 ) ) )
+              ||  ( p_tgt->inc_d1_du != 0 ) ) )
         {
             flags |= DMA_CONFIG_INCOMPATIBLE;
         }
@@ -1422,8 +1394,8 @@ static inline uint8_t get_misalignment_b(   uint8_t         *p_ptr,
 static inline uint8_t is_region_outbound_1D(   uint8_t  *p_start,
                                             uint8_t  *p_end,
                                             uint32_t p_type,
-                                            uint32_t p_size_du,
-                                            uint32_t p_inc_du )
+                                            uint32_t p_size_d1_du,
+                                            uint32_t p_inc_d1_du )
 {
   /* 000 = A data unit to be copied
    * xxx = A data unit to be skipped
@@ -1439,7 +1411,7 @@ static inline uint8_t is_region_outbound_1D(   uint8_t  *p_start,
    * If the environment ends before the last affected byte, then there is
    * outbound writing and the function returns 1.
    */
-    uint32_t affectedUnits      = ( p_size_du - 1 ) * p_inc_du + 1;
+    uint32_t affectedUnits      = ( p_size_d1_du - 1 ) * p_inc_d1_du + 1;
     uint32_t rangeSize          = DMA_DATA_TYPE_2_SIZE(p_type) * affectedUnits;
     uint32_t lastByteInsideRange = (uint32_t)p_start + rangeSize -1;
     return ( p_end < lastByteInsideRange );
@@ -1467,32 +1439,6 @@ static inline uint8_t is_region_outbound_2D(   uint8_t  *p_start,
     // Size is be guaranteed to be non-zero before calling this function.
 }
 
-/* @ToDo: Consider changing the "mask" parameter for a bitfield definition
-(see dma_regs.h) */
-static inline void write_register( uint32_t  p_val,
-                                  uint32_t  p_offset,
-                                  uint32_t  p_mask,
-                                  uint8_t   p_sel,
-                                  dma*      p_dma)
-{
-    /*
-     * The index is computed to avoid needing to access the structure
-     * as a structure.
-     */
-    uint8_t index = p_offset / DMA_REGISTER_SIZE_BYTES;
-    /*
-     * An intermediate variable "value" is used to prevent writing twice into
-     * the register.
-     */
-    uint32_t value  =  (( uint32_t * ) p_dma ) [ index ];
-    value           &= ~( p_mask << p_sel );
-    value           |= (p_val & p_mask) << p_sel;
-    (( uint32_t * ) p_dma ) [ index ] = value;
-
-// @ToDo: mmio_region_write32(dma->base_addr, (ptrdiff_t)(DMA_SLOT_REG_OFFSET), (tx_slot_mask << DMA_SLOT_TX_TRIGGER_SLOT_OFFSET) + rx_slot_mask)
-
-}
-
 static inline uint32_t get_increment_b_1D( dma_target_t * p_tgt,
                                            uint8_t        channel)
 {
@@ -1512,8 +1458,8 @@ static inline uint32_t get_increment_b_1D( dma_target_t * p_tgt,
         */
         if( inc_b == 0 )
         {
-            uint8_t dataSize_b = DMA_DATA_TYPE_2_SIZE( p_tgt->type );
-            inc_b = ( p_tgt->inc_du * dataSize_b );
+            uint8_t dataSize_d1_du = DMA_DATA_TYPE_2_SIZE( p_tgt->type );
+            inc_b = ( p_tgt->inc_d1_du * dataSize_d1_du );
         }
     }
     return inc_b;
@@ -1538,12 +1484,17 @@ static inline uint32_t get_increment_b_2D( dma_target_t * p_tgt,
         */
         if( inc_b == 0 )
         {
-            uint8_t dataSize_b = DMA_DATA_TYPE_2_SIZE( p_tgt->type );
-            inc_b = ( p_tgt->inc_d2_du * dataSize_b );
+            uint8_t dataSize_d1_du = DMA_DATA_TYPE_2_SIZE( p_tgt->type );
+            inc_b = ( p_tgt->inc_d2_du * dataSize_d1_du );
         }
     }
     return inc_b;
 }
+
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 /****************************************************************************/
 /**                                                                        **/
