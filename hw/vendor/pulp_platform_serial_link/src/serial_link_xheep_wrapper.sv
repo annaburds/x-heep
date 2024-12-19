@@ -113,6 +113,8 @@ axi_lite_to_axi #(
 
 
 fifo_serial_link_wrapper #(
+  .axi_req_t       ( axi_req_t  ),
+  .axi_rsp_t       ( axi_rsp_t ),
   .FIFO_DEPTH(8)
 ) fifo_serial_link_wrapper_i(
     .testmode_i(0),
@@ -134,14 +136,16 @@ fifo_serial_link_wrapper #(
     // .writer_be_i              (obi_req_o.be),
     // .writer_rdata_o           (obi_rsp_o.rdata),
     // .writer_wdata_i           (obi_req_o.wdata),
-    .writer_req_i             (fast_sl_req_O.w_valid),
-    .writer_gnt_o             (),
-    .writer_rvalid_o          (fast_sl_rsp_O.b_valid),
-    .writer_addr_i            (fast_sl_req_O.aw.addr),
-    .writer_we_i              (1),
-    .writer_be_i              ('0),
-    .writer_rdata_o           (fast_sl_rsp_O.r.data),
-    .writer_wdata_i           (fast_sl_req_O.w.data),
+    // .writer_req_i             (fast_sl_req_O.w_valid),
+    // .writer_gnt_o             (),
+    // .writer_rvalid_o          (fast_sl_rsp_O.b_valid),
+    // .writer_addr_i            (fast_sl_req_O.aw.addr),
+    // .writer_we_i              (1),
+    // .writer_be_i              ('0),
+    // .writer_rdata_o           (fast_sl_rsp_O.r.data),
+    // .writer_wdata_i           (fast_sl_req_O.w.data),
+    .writer_axi_req (fast_sl_req_O),
+    .writer_axi_rsp (fast_sl_rsp_O),
 
     .fifo_empty_o,
     .fifo_full_o,
@@ -150,9 +154,9 @@ fifo_serial_link_wrapper #(
     .rst_ni(rst_ni)
 );
 
-assign fast_sl_rsp_O.ar_ready = 1;
-assign fast_sl_rsp_O.aw_ready = 1;
-assign fast_sl_rsp_O.w_ready = 1;
+// assign fast_sl_rsp_O.ar_ready = 1;
+// assign fast_sl_rsp_O.aw_ready = 1;
+// assign fast_sl_rsp_O.w_ready = 1;
 
 // axi_to_mem #(
 //   .axi_req_t(axi_req_t),
