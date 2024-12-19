@@ -10,7 +10,7 @@ package serial_link_single_channel_reg_pkg;
   parameter int NumChannels = 1;
   parameter int Log2NumChannels = 1;
   parameter int NumBits = 8;
-  parameter int Log2MaxClkDiv = 10;
+  parameter int Log2MaxClkDiv = 6;
   parameter int Log2RawModeTXFifoDepth = 3;
 
   // Address widths within the block
@@ -36,15 +36,15 @@ package serial_link_single_channel_reg_pkg;
   } serial_link_single_channel_reg2hw_ctrl_reg_t;
 
   typedef struct packed {
-    logic [10:0] q;
+    logic [5:0]  q;
   } serial_link_single_channel_reg2hw_tx_phy_clk_div_mreg_t;
 
   typedef struct packed {
-    logic [10:0] q;
+    logic [5:0]  q;
   } serial_link_single_channel_reg2hw_tx_phy_clk_start_mreg_t;
 
   typedef struct packed {
-    logic [10:0] q;
+    logic [5:0]  q;
   } serial_link_single_channel_reg2hw_tx_phy_clk_end_mreg_t;
 
   typedef struct packed {
@@ -113,10 +113,10 @@ package serial_link_single_channel_reg_pkg;
 
   // Register -> HW type
   typedef struct packed {
-    serial_link_single_channel_reg2hw_ctrl_reg_t ctrl; // [62:59]
-    serial_link_single_channel_reg2hw_tx_phy_clk_div_mreg_t [0:0] tx_phy_clk_div; // [58:48]
-    serial_link_single_channel_reg2hw_tx_phy_clk_start_mreg_t [0:0] tx_phy_clk_start; // [47:37]
-    serial_link_single_channel_reg2hw_tx_phy_clk_end_mreg_t [0:0] tx_phy_clk_end; // [36:26]
+    serial_link_single_channel_reg2hw_ctrl_reg_t ctrl; // [47:44]
+    serial_link_single_channel_reg2hw_tx_phy_clk_div_mreg_t [0:0] tx_phy_clk_div; // [43:38]
+    serial_link_single_channel_reg2hw_tx_phy_clk_start_mreg_t [0:0] tx_phy_clk_start; // [37:32]
+    serial_link_single_channel_reg2hw_tx_phy_clk_end_mreg_t [0:0] tx_phy_clk_end; // [31:26]
     serial_link_single_channel_reg2hw_raw_mode_en_reg_t raw_mode_en; // [25:25]
     serial_link_single_channel_reg2hw_raw_mode_in_ch_sel_reg_t raw_mode_in_ch_sel; // [24:24]
     serial_link_single_channel_reg2hw_raw_mode_in_data_reg_t raw_mode_in_data; // [23:15]
@@ -185,9 +185,9 @@ package serial_link_single_channel_reg_pkg;
   parameter logic [3:0] SERIAL_LINK_SINGLE_CHANNEL_PERMIT [14] = '{
     4'b 0011, // index[ 0] SERIAL_LINK_SINGLE_CHANNEL_CTRL
     4'b 0001, // index[ 1] SERIAL_LINK_SINGLE_CHANNEL_ISOLATED
-    4'b 0011, // index[ 2] SERIAL_LINK_SINGLE_CHANNEL_TX_PHY_CLK_DIV
-    4'b 0011, // index[ 3] SERIAL_LINK_SINGLE_CHANNEL_TX_PHY_CLK_START
-    4'b 0011, // index[ 4] SERIAL_LINK_SINGLE_CHANNEL_TX_PHY_CLK_END
+    4'b 0001, // index[ 2] SERIAL_LINK_SINGLE_CHANNEL_TX_PHY_CLK_DIV
+    4'b 0001, // index[ 3] SERIAL_LINK_SINGLE_CHANNEL_TX_PHY_CLK_START
+    4'b 0001, // index[ 4] SERIAL_LINK_SINGLE_CHANNEL_TX_PHY_CLK_END
     4'b 0001, // index[ 5] SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_EN
     4'b 0001, // index[ 6] SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_IN_CH_SEL
     4'b 0001, // index[ 7] SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_IN_DATA_VALID

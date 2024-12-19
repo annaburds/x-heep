@@ -117,7 +117,7 @@ fifo_serial_link_wrapper #(
   .axi_rsp_t       ( axi_rsp_t ),
   .FIFO_DEPTH(8)
 ) fifo_serial_link_wrapper_i(
-    .testmode_i(0),
+    .testmode_i('0),
   
     .reader_gnt_o             (reader_resp_o.gnt),
     .reader_req_i             (reader_req_i.req),
@@ -257,7 +257,7 @@ fifo_serial_link_wrapper #(
         return max(max(max(aw_width, w_width), max(b_width, ar_width)), r_width);
     endfunction
   
-  parameter int MaxAxiChannelBits = calc_max_axi_channel_bit(AW_CH_SIZE, W_CH_SIZE, B_CH_SIZE, AR_CH_SIZE, R_CH_SIZE);
+  localparam int MaxAxiChannelBits = calc_max_axi_channel_bit(AW_CH_SIZE, W_CH_SIZE, B_CH_SIZE, AR_CH_SIZE, R_CH_SIZE);
 
   if (NumChannels > 1) begin : gen_multi_channel_serial_link
     serial_link #(
