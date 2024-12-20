@@ -157,7 +157,7 @@ module system_bus
   assign dma_write_resp_o[${i}] = int_master_resp[${4+i*3}];
   assign dma_addr_resp_o[${i}] = int_master_resp[${5+i*3}];
   % endfor
-  assign axi_sl_m_resp_o = int_master_resp[core_v_mini_mcu_pkg::AXI_SL_M_IDX];
+  
   // External master responses
   if (EXT_XBAR_NMASTER == 0) begin
     assign ext_xbar_master_resp_o = '0;
@@ -220,7 +220,7 @@ module system_bus
   always_ff @(posedge clk_i, negedge rst_ni) begin : check_out_of_bound
     if (rst_ni) begin
       if (error_slave_req.req) begin
-        $display("%t Out of bound memory access 0x%08x error id %d", $time, error_slave_req.addr,ERROR_IDX);
+        $display("%t Out of bound memory access 0x%08x", $time, error_slave_req.addr);
         $stop;
       end
     end

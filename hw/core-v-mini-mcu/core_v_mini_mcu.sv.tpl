@@ -558,70 +558,7 @@ ${pad.core_v_mini_mcu_interface}
 
 
 
-// double_access_reg #(
-//     //parameter type         obi_req_t  = logic,
-//     //parameter type         obi_rsp_t = logic,
-// ) double_access_reg_i(
 
-//     //.reader_gnt_o             (sl_recreg_resp_i.gnt),
-//     //.reader_req_i             (sl_recreg_req_o.req),
-//     //.reader_rvalid_o          (sl_recreg_resp_i.rvalid),
-//     //.reader_addr_i            (sl_recreg_req_o.addr),
-//     //.reader_we_i              (sl_recreg_req_o.we),
-//     //.reader_be_i              (sl_recreg_req_o.be),
-//     //.reader_rdata_o           (sl_recreg_resp_i.rdata),
-//     //.reader_wdata_i           (sl_recreg_req_o.wdata),
-
-//     .reader_gnt_o             (sl_recreg_resp_i.gnt),
-//     .reader_req_i             (sl_recreg_req_o.req),
-//     .reader_rvalid_o          (sl_recreg_resp_i.rvalid),
-//     .reader_addr_i            (sl_recreg_req_o.addr),
-//     .reader_we_i              (sl_recreg_req_o.we),
-//     .reader_be_i              (sl_recreg_req_o.be),
-//     .reader_rdata_o           (sl_recreg_resp_i.rdata),
-//     .reader_wdata_i           (sl_recreg_req_o.wdata),
-    
-//     .writer_req_i             (obi_sl_req.req),
-//     .writer_gnt_o             (obi_sl_rsp.gnt),
-//     .writer_rvalid_o          (obi_sl_rsp.rvalid),
-//     .writer_addr_i            (obi_sl_req.addr),
-//     .writer_we_i              (obi_sl_req.we),
-//     .writer_be_i              (obi_sl_req.be),
-//     .writer_rdata_o           (obi_sl_rsp.rdata),
-//     .writer_wdata_i           (obi_sl_req.wdata),
-
-//     .clk_i (clk_i),
-//     .rst_ni(rst_ni)
-
-// );
-
-// fifo_serial_link_wrapper #(
-//   .FIFO_DEPTH(8)
-// ) fifo_serial_link_wrapper_i(
-//     .testmode('0),
-  
-//     .reader_gnt_o             (sl_recreg_resp_i.gnt),
-//     .reader_req_i             (sl_recreg_req_o.req),
-//     .reader_rvalid_o          (sl_recreg_resp_i.rvalid),
-//     .reader_addr_i            (sl_recreg_req_o.addr),
-//     .reader_we_i              (sl_recreg_req_o.we),
-//     .reader_be_i              (sl_recreg_req_o.be),
-//     .reader_rdata_o           (sl_recreg_resp_i.rdata),
-//     .reader_wdata_i           (sl_recreg_req_o.wdata),
-    
-//     .writer_req_i             (obi_sl_req.req),
-//     .writer_gnt_o             (obi_sl_rsp.gnt),
-//     .writer_rvalid_o          (obi_sl_rsp.rvalid),
-//     .writer_addr_i            (obi_sl_req.addr),
-//     .writer_we_i              (obi_sl_req.we),
-//     .writer_be_i              (obi_sl_req.be),
-//     .writer_rdata_o           (obi_sl_rsp.rdata),
-//     .writer_wdata_i           (obi_sl_req.wdata),
-
-//     .clk_i (clk_i),
-//     .rst_ni(rst_ni)
-
-// );
   
 
   serial_link_xheep_wrapper #(
@@ -648,7 +585,7 @@ ${pad.core_v_mini_mcu_interface}
     .NumChannels(1),
     .NumLanes(4),
     .MaxClkDiv(32),
-    .AddrWidth(1),
+    .AddrWidth(32),
     .DataWidth(32),
     .AW_CH_SIZE(core_v_mini_mcu_pkg::AW_CH_SIZE),
     .W_CH_SIZE(core_v_mini_mcu_pkg::W_CH_SIZE),
