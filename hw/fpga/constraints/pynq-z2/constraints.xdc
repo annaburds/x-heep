@@ -59,7 +59,7 @@ set_input_delay -add_delay -max -clock_fall -clock [get_clocks vir_clk_ddr_in] [
 set_input_delay -add_delay -min -clock_fall -clock [get_clocks vir_clk_ddr_in] [expr -$MARGIN] [get_ports ddr_i]
 
 # Output delays
-set_output_delay -max -clock [get_clocks clk_ddr_out] [expr -$T_FWD_CLK / 4 + $MARGIN] -reference_pin [get_ports ddr_rcv_clk_o] [get_ports ddr_o]
-set_output_delay -add_delay -min -clock [get_clocks clk_ddr_out] [expr -$T_FWD_CLK / 4 - $MARGIN] -reference_pin [get_ports ddr_rcv_clk_o] [get_ports ddr_o]
-set_output_delay -add_delay -max -clock_fall -clock [get_clocks clk_ddr_out] [expr -$T_FWD_CLK / 4 + $MARGIN] -reference_pin [get_ports ddr_rcv_clk_o] [get_ports ddr_o]
-set_output_delay -add_delay -min -clock_fall -clock [get_clocks clk_ddr_out] [expr -$T_FWD_CLK / 4 - $MARGIN] -reference_pin [get_ports ddr_rcv_clk_o] [get_ports ddr_o]
+set_output_delay -max -clock [get_clocks clk_ddr_out] [expr $MARGIN] -reference_pin [get_ports ddr_rcv_clk_o] [get_ports ddr_o]
+set_output_delay -add_delay -min -clock [get_clocks clk_ddr_out] [expr -$MARGIN] -reference_pin [get_ports ddr_rcv_clk_o] [get_ports ddr_o]
+set_output_delay -add_delay -max -clock_fall -clock [get_clocks clk_ddr_out] [expr $MARGIN] -reference_pin [get_ports ddr_rcv_clk_o] [get_ports ddr_o]
+set_output_delay -add_delay -min -clock_fall -clock [get_clocks clk_ddr_out] [expr -$MARGIN] -reference_pin [get_ports ddr_rcv_clk_o] [get_ports ddr_o]
