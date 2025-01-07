@@ -1,11 +1,11 @@
-# Base clock: clk_i
+# system clock from the onboard clock generator.
 create_clock -add -name sys_clk_pin -period 8.00 -waveform {0 4} [get_ports {clk_i}]
 
-# 
+# clk_gen is the operational clock for X-HEEP, derived from the clocking wizard module.
 # create_clock -name clk_gen -period 66.667 -waveform {0 33.333} [get_pins xilinx_clk_wizard_wrapper_i/clk_out1_0]
 
 # Derived clock period and phase settings
-set T_CLK 66.667              ;# Period of clk_i in ns
+set T_CLK 66.667              ;# Period of clk_gen in ns.
 set FWD_CLK_DIV 8             ;# Divider for forward clock
 set T_FWD_CLK [expr $T_CLK * $FWD_CLK_DIV] ;# Forward clock period
 
