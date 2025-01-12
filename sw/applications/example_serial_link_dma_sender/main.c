@@ -65,7 +65,7 @@ void __attribute__ ((optimize("00"))) SL_CPU_SEND(uint32_t *src, uint32_t *dst, 
     printf("done.\n\r");
 }
 
-// parameter "large" should equal to or less than FIFO size (default 8)
+// parameter "large" should be equal to or less than FIFO size (default 8)
 void __attribute__ ((optimize("00"))) SL_DMA_SEND(uint32_t *src, uint32_t *dst, uint32_t large){
     volatile static dma_config_flags_t res;
     volatile static dma_target_t tgt_src;
@@ -111,7 +111,6 @@ void __attribute__ ((optimize("00"))) SL_DMA_SEND(uint32_t *src, uint32_t *dst, 
 void __attribute__ ((optimize("00"))) WRITE_SL_CONFIG(void){
     REG_CONFIG();
     AXI_ISOLATE();
-    // EXTERNAL_BUS_SL_CONFIG();
 }
 
 

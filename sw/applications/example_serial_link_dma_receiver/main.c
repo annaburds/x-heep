@@ -35,24 +35,23 @@ int main(int argc, char *argv[]){
 
     printf("Receiver ready.\n");
     
-    for(int ii = 0; ii< 1; ii++) {
-        uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
-        uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
-        for (uint32_t i = 0; i < chunks; i++) {
-            // SL_CPU_RECEIVE(addr_p_recreg, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
-            SL_DMA_RECEIVE(addr_p_recreg, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
-        }
-        if (remainder > 0) {
-            // SL_CPU_RECEIVE(addr_p_recreg + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
-            SL_DMA_RECEIVE(addr_p_recreg + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
-        }
-
-        printf("data saved:\n");
-        for (int i = 0; i < TEST_DATA_LARGE; i++) {
-            printf("%x\t", copied_data_4B[i]);
-        }
+    uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
+    uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
+    for (uint32_t i = 0; i < chunks; i++) {
+        // SL_CPU_RECEIVE(addr_p_recreg, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
+        SL_DMA_RECEIVE(addr_p_recreg, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
     }
-    printf("\n");  
+    if (remainder > 0) {
+        // SL_CPU_RECEIVE(addr_p_recreg + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
+        SL_DMA_RECEIVE(addr_p_recreg + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
+    }
+
+    printf("data saved:\n");
+    for (int i = 0; i < TEST_DATA_LARGE; i++) {
+        printf("%x\t", copied_data_4B[i]);
+    }
+
+    printf("\n");
     printf("DONE\n");  
     return EXIT_SUCCESS;
 }
@@ -65,7 +64,7 @@ void __attribute__ ((optimize("00"))) SL_CPU_RECEIVE(uint32_t *src, uint32_t *ds
     printf("done.\n\r");
 }
 
-// parameter "large" should equal to or less than FIFO size (default 8)
+// parameter "large" should be equal to or less than FIFO size (default 8)
 void __attribute__ ((optimize("00"))) SL_DMA_RECEIVE(uint32_t *src, uint32_t *dst, uint32_t large){
     volatile static dma_config_flags_t res;
     volatile static dma_target_t tgt_src;
@@ -93,8 +92,6 @@ void __attribute__ ((optimize("00"))) SL_DMA_RECEIVE(uint32_t *src, uint32_t *ds
         trans.sign_ext = 0;
         trans.end = DMA_TRANS_END_INTR;
 
-        // CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
-        // CSR_WRITE(CSR_REG_MCYCLE, 0);
         res |= dma_validate_transaction(&trans, false, false);
         // printf("tran: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
         res |= dma_load_transaction(&trans);
@@ -111,8 +108,6 @@ void __attribute__ ((optimize("00"))) SL_DMA_RECEIVE(uint32_t *src, uint32_t *ds
                     }
             CSR_SET_BITS(CSR_REG_MSTATUS, 0x8);
         }  
-        // CSR_READ(CSR_REG_MCYCLE, &cycles1);
-        // printf("DMA reading takes  %d cycles\n\r", cycles1);
         printf("done.\n\r");
 }
 

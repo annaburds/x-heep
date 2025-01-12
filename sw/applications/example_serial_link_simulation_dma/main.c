@@ -38,8 +38,9 @@ int main(int argc, char *argv[]){
     }
     // printf("data to be sent:\n");
     // for (int i = 0; i < TEST_DATA_LARGE; i++) {
-    //     printf("%x\n",to_be_sent_4B[i]);
+    //     printf("%x\t",to_be_sent_4B[i]);
     // }
+    // printf("\n");
 
     uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
     uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
@@ -54,9 +55,9 @@ int main(int argc, char *argv[]){
 
     printf("data saved:\n");
     for (int i = 0; i < TEST_DATA_LARGE; i++) {
-        printf("%x\n", copied_data_4B[i]);
+        printf("%x\t", copied_data_4B[i]);
     }
-
+    printf("\n");
     printf("DONE\n");  
     return EXIT_SUCCESS;
 }
@@ -77,7 +78,7 @@ void __attribute__ ((optimize("00"))) SL_CPU_TRANS(uint32_t *src, uint32_t *dst,
     printf("done.\n\r");
 }
 
-// parameter "large" should equal to or less than FIFO size (default 8)
+// parameter "large" should be equal to or less than FIFO size (default 8)
 void __attribute__ ((optimize("00"))) SL_DMA_TRANS(uint32_t *src, uint32_t *dst, uint32_t large){
     volatile static dma_config_flags_t res;
     volatile static dma_target_t tgt_src;
