@@ -13,7 +13,7 @@
 
 
 #define DMA_DATA_LARGE 8
-#define TEST_DATA_LARGE 8
+#define TEST_DATA_LARGE 300
 
 static uint32_t to_be_sent_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
@@ -35,20 +35,24 @@ int main(int argc, char *argv[]){
 
     printf("Receiver ready.\n");
     
-    for(int ii = 0; ii< 2; ii++) {
+    for(int ii = 0; ii< 1; ii++) {
         uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
         uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
         for (uint32_t i = 0; i < chunks; i++) {
             // SL_CPU_RECEIVE(addr_p_recreg, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
             SL_DMA_RECEIVE(addr_p_recreg, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
         }
+        if (remainder > 0) {
+            // SL_CPU_RECEIVE(addr_p_recreg + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
+            SL_DMA_RECEIVE(addr_p_recreg + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
+        }
 
         printf("data saved:\n");
         for (int i = 0; i < TEST_DATA_LARGE; i++) {
-            printf("%x\n", copied_data_4B[i]);
+            printf("%x\t", copied_data_4B[i]);
         }
     }
-
+    printf("\n");  
     printf("DONE\n");  
     return EXIT_SUCCESS;
 }
@@ -92,11 +96,13 @@ void __attribute__ ((optimize("00"))) SL_DMA_RECEIVE(uint32_t *src, uint32_t *ds
         // CSR_CLEAR_BITS(CSR_REG_MCOUNTINHIBIT, 0x1);
         // CSR_WRITE(CSR_REG_MCYCLE, 0);
         res |= dma_validate_transaction(&trans, false, false);
-        printf("tran: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
+        // printf("tran: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
         res |= dma_load_transaction(&trans);
-        printf("load: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
+        // printf("load: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
         res |= dma_launch(&trans);
-        printf("laun: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
+        // printf("laun: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
+
+        printf("DMA launched: save.\n");
 
         if(!dma_is_ready(0)) {
             CSR_CLEAR_BITS(CSR_REG_MSTATUS, 0x8);

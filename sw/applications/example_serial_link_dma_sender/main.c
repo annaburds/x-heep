@@ -11,8 +11,9 @@
 #include "fast_intr_ctrl.h"
 //#include "timer_sdk.h"
 
+
 #define DMA_DATA_LARGE 8
-#define TEST_DATA_LARGE 8
+#define TEST_DATA_LARGE 300
 
 static uint32_t to_be_sent_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
@@ -37,14 +38,19 @@ int main(int argc, char *argv[]){
     }
     printf("data to be sent:\n");
     for (int i = 0; i < TEST_DATA_LARGE; i++) {
-        printf("%x\n",to_be_sent_4B[i]);
+        printf("%x\t",to_be_sent_4B[i]);
     }
+    printf("\n");
 
     uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
     uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
     for (uint32_t i = 0; i < chunks; i++) {
         // SL_CPU_SEND(to_be_sent_4B + i * DMA_DATA_LARGE, addr_p, DMA_DATA_LARGE);
         SL_DMA_SEND(to_be_sent_4B + i * DMA_DATA_LARGE, addr_p, DMA_DATA_LARGE);
+    }
+    if (remainder > 0) {
+        // SL_CPU_SEND(to_be_sent_4B + chunks * DMA_DATA_LARGE, addr_p + chunks * DMA_DATA_LARGE, remainder);
+        SL_DMA_SEND(to_be_sent_4B + chunks * DMA_DATA_LARGE, addr_p + chunks * DMA_DATA_LARGE, remainder);
     }
 
     printf("DONE\n");  
