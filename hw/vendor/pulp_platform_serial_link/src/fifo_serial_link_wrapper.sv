@@ -12,6 +12,7 @@ module fifo_serial_link_wrapper #(
 ) (
     input logic testmode_i,
 
+    // read request from the OBI bus
     input  logic                  reader_req_i,
     output logic                  reader_gnt_o,
     output logic                  reader_rvalid_o,
@@ -21,7 +22,7 @@ module fifo_serial_link_wrapper #(
     output logic [DATA_WIDTH-1:0] reader_rdata_o,
     input  logic [DATA_WIDTH-1:0] reader_wdata_i,
 
-    // request from the serial link
+    // write request from serial link
     input  axi_req_t writer_axi_req,
     output axi_rsp_t writer_axi_rsp,
 

@@ -9,13 +9,11 @@
 #include "dma.h"
 #include "dma_regs.h"
 #include "fast_intr_ctrl.h"
-//#include "timer_sdk.h"
 
+#define DMA_DATA_LARGE 8    // Maximum size for each DMA transfer chunk
+#define TEST_DATA_LARGE 300  // Total size of test data
 
-#define DMA_DATA_LARGE 8
-#define TEST_DATA_LARGE 300
-
-static uint32_t to_be_sent_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
+// static uint32_t to_be_sent_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 
 
@@ -26,11 +24,10 @@ void wait_for_interrupt(void);
 void dma_intr_handler_trans_done(uint8_t channel){}
 
 int main(int argc, char *argv[]){
-    
-    // volatile int32_t *addr_p = 0x50000040;
-    // volatile int32_t *addr_p_external = 0xF0010000;
-    volatile int32_t *addr_p_recreg = 0x51000000;
-    // unsigned int cycles1,cycles2,cycles3;
+    // volatile int32_t *addr_p = 0x50000040;          // Serial Link
+    // volatile int32_t *addr_p_external = 0xF0010000; // External SL (simulation only)
+    volatile int32_t *addr_p_recreg = 0x51000000;   // FIFO for data reception
+
     WRITE_SL_CONFIG();
 
     printf("Receiver ready.\n");
@@ -93,12 +90,8 @@ void __attribute__ ((optimize("00"))) SL_DMA_RECEIVE(uint32_t *src, uint32_t *ds
         trans.end = DMA_TRANS_END_INTR;
 
         res |= dma_validate_transaction(&trans, false, false);
-        // printf("tran: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
         res |= dma_load_transaction(&trans);
-        // printf("load: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
         res |= dma_launch(&trans);
-        // printf("laun: %u \t%s\n\r", res, res == DMA_CONFIG_OK ? "Ok!" : "Error!");
-
         printf("DMA launched: save.\n");
 
         if(!dma_is_ready(0)) {
@@ -132,49 +125,10 @@ void __attribute__ ((optimize("00"))) REG_CONFIG_MULTI(void){
     *addr_p_reg = (*addr_p_reg)| 0x00000002; // rst oFF
 }
 
-void __attribute__ ((optimize("00"))) RAW_MODE_EN(void){
-    int32_t *addr_p_reg_RAW_MODE =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_EN_REG_OFFSET); 
-    *addr_p_reg_RAW_MODE = (*addr_p_reg_RAW_MODE)| 0x00000001; // raw mode en
-
-    int32_t *addr_p_RAW_MODE_IN_CH_SEL_REG =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_IN_CH_SEL_REG_OFFSET); 
-
-    int32_t *addr_p_RAW_MODE_OUT_CH_MASK_REG =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_OUT_CH_MASK_REG_OFFSET); 
-    *addr_p_RAW_MODE_OUT_CH_MASK_REG= (*addr_p_RAW_MODE_OUT_CH_MASK_REG)| 0x00000008; // raw mode mask
-
-    int32_t *addr_p_RAW_MODE_OUT_DATA_FIFO_REG =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_OUT_DATA_FIFO_REG_OFFSET); 
-    *addr_p_RAW_MODE_OUT_DATA_FIFO_REG = (*addr_p_RAW_MODE_OUT_DATA_FIFO_REG)| 0x00000001;
-
-    int32_t *addr_p_RAW_MODE_OUT_DATA_FIFO_CTRL_REG =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_OUT_DATA_FIFO_CTRL_REG_OFFSET); 
-    *addr_p_RAW_MODE_OUT_DATA_FIFO_CTRL_REG = (*addr_p_RAW_MODE_OUT_DATA_FIFO_CTRL_REG)| 0x00000001;
-
-    int32_t *addr_p_RAW_MODE_OUT_EN_REG =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_OUT_EN_REG_OFFSET); 
-    *addr_p_RAW_MODE_OUT_EN_REG = (*addr_p_RAW_MODE_OUT_EN_REG)| 0x00000001; 
-
-    int32_t *addr_p_RAW_MODE_IN_DATA_REG =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_IN_DATA_REG_OFFSET); 
-    *addr_p_RAW_MODE_IN_DATA_REG = (*addr_p_RAW_MODE_IN_DATA_REG)| 0x00000001; 
-}
 
 void __attribute__ ((optimize("00"))) AXI_ISOLATE(void){
     int32_t *addr_p_reg_ISOLATE_IN =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET); 
     *addr_p_reg_ISOLATE_IN &= ~(1<<8);
     int32_t *addr_p_reg_ISOLATE_OUT =(int32_t *)(SERIAL_LINK_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET);
     *addr_p_reg_ISOLATE_OUT &= ~(1<<9); // axi_out_isolate
-    }
-
-void __attribute__ ((optimize("00"))) EXTERNAL_BUS_SL_CONFIG(void){
-    // /*                     -------                     */
-    // /*  SL TESTHARNESS EXTERNAL BUS X-heep system      */
-    // /*  REG CONFIG                   */
-    // /*  CTRL register                */
-    volatile int32_t *addr_p_reg_ext =(int32_t *)(EXT_PERIPHERAL_START_ADDRESS + 0x04000 + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET); //0x04000000 
-    *addr_p_reg_ext = (*addr_p_reg_ext)| 0x00000001; // ctrl clock enable external
-
-    *addr_p_reg_ext = (*addr_p_reg_ext)& 0xFFFFFFFD; // rst on
-    *addr_p_reg_ext = (*addr_p_reg_ext)| 0x00000002; // rst oFF
-    // /*  AXI ISOLATE                   */ 
-    // all channels are isolated by default 
-    int32_t *addr_p_reg_ISOLATE_IN_ext =(int32_t *)(EXT_PERIPHERAL_START_ADDRESS + 0x04000 + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET); 
-    *addr_p_reg_ISOLATE_IN_ext &= ~(1<<8);
-    int32_t *addr_p_reg_ISOLATE_OUT_ext =(int32_t *)(EXT_PERIPHERAL_START_ADDRESS + 0x04000 + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET);
-    *addr_p_reg_ISOLATE_OUT_ext &= ~(1<<9);
-    }
+}

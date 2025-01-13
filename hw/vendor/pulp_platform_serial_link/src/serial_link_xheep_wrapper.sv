@@ -24,7 +24,8 @@ module serial_link_xheep_wrapper
   parameter int W_CH_SIZE = 1,
   parameter int B_CH_SIZE = 1,
   parameter int AR_CH_SIZE = 1,
-  parameter int R_CH_SIZE = 1
+  parameter int R_CH_SIZE = 1,
+  parameter int FIFO_DEPTH = 8
 ) (
   input  logic                      clk_i,
   input  logic                      fast_clock,
@@ -114,7 +115,7 @@ axi_lite_to_axi #(
 fifo_serial_link_wrapper #(
   .axi_req_t       ( axi_req_t  ),
   .axi_rsp_t       ( axi_rsp_t ),
-  .FIFO_DEPTH(8)
+  .FIFO_DEPTH      (FIFO_DEPTH)
 ) fifo_serial_link_wrapper_i(
     .testmode_i('0),
   

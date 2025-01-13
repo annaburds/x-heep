@@ -597,16 +597,10 @@ module testharness #(
       );
 
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      obi_req_t sl_obi2axi_req;
-      assign sl_obi2axi_req = ext_master_req[testharness_pkg::EXT_MASTER4_IDX];//ext_master_req[testharness_pkg::EXT_MASTER4_IDX];
-      obi_resp_t sl_obi2axi_resp;
-      assign ext_master_resp[testharness_pkg::EXT_MASTER4_IDX] = sl_obi2axi_resp ;//ext_master_resp[testharness_pkg::EXT_MASTER4_IDX];
       obi_req_t sl_axi2obi_req;
       assign sl_axi2obi_req =ext_slave_req[testharness_pkg::SL_EXT_IDX];// ext_master_req[testharness_pkg::SL_EXT_IDX];
       obi_resp_t sl_axi2obi_resp;
       assign ext_slave_resp[testharness_pkg::SL_EXT_IDX]=sl_axi2obi_resp ;// ext_master_resp[testharness_pkg::SL_EXT_IDX];
-      core_v_mini_mcu_pkg::axi_req_t axi_in_req_i, axi_out_req_o;
-      core_v_mini_mcu_pkg::axi_resp_t axi_in_rsp_o, axi_out_rsp_i;
 
       reg_req_t cfg_req_ext;
       assign cfg_req_ext = ext_periph_slv_req[testharness_pkg::SL_REG_IDX];
@@ -639,8 +633,8 @@ module testharness #(
           .NumChannels(1),
           .NumLanes(4),
           .MaxClkDiv(32),
-        //   .AddrWidth(1),
-          .AddrWidth(32),
+          .AddrWidth(1),
+        //   .AddrWidth(32),
           .DataWidth(32),
         //   .AW_CH_SIZE(core_v_mini_mcu_pkg::AW_CH_SIZE),
         //   .W_CH_SIZE(core_v_mini_mcu_pkg::W_CH_SIZE),
@@ -651,7 +645,8 @@ module testharness #(
           .W_CH_SIZE(serial_link_minimum_axi_pkg::W_CH_SIZE),
           .B_CH_SIZE(serial_link_minimum_axi_pkg::B_CH_SIZE),
           .AR_CH_SIZE(serial_link_minimum_axi_pkg::AR_CH_SIZE),
-          .R_CH_SIZE(serial_link_minimum_axi_pkg::R_CH_SIZE)
+          .R_CH_SIZE(serial_link_minimum_axi_pkg::R_CH_SIZE),
+          .FIFO_DEPTH(8)
       ) serial_link_xheep_wrapper_i (
           .clk_i     (clk_i),
           .fast_clock(clk_i),
@@ -660,27 +655,12 @@ module testharness #(
           .rst_reg_ni(rst_ni),  //intended for SW reset purposes
 
           .testmode_i('0),
-          //.axi_in_req_i(axi_out_req_o),
-          //.axi_in_rsp_o(axi_out_rsp_i),
-          //.axi_out_req_o(axi_in_req_i),
-          //.axi_out_rsp_i(axi_in_rsp_o),
 
-
-          //.obi_req_i(sl_obi2axi_req),
-          //.obi_rsp_i(sl_obi2axi_resp),
-          //
-          //.obi_req_o(sl_axi2obi_req),  //axi_in_req_i
-          //.obi_rsp_o(sl_axi2obi_resp),
-
-          //.obi_req_o(sl_obi2axi_req),
-          //.obi_rsp_o(sl_obi2axi_resp),
-
-          .obi_req_i(sl_axi2obi_req),  //sl_axi2obi_req),  //axi_in_req_i
-          .obi_rsp_i(sl_axi2obi_resp), //sl_axi2obi_resp),
+          .obi_req_i(sl_axi2obi_req),
+          .obi_rsp_i(sl_axi2obi_resp),
 
           .reader_req_i (),
           .reader_resp_o(),
-
 
           .cfg_req_i(cfg_req_ext),  //register configuration
           .cfg_rsp_o(cfg_rsp_ext),

@@ -579,8 +579,8 @@ ${pad.core_v_mini_mcu_interface}
     .NumChannels(1),
     .NumLanes(4),
     .MaxClkDiv(32),
-    // .AddrWidth(1),
-    .AddrWidth(32),
+    .AddrWidth(1),
+    // .AddrWidth(32),
     .DataWidth(32),
     // .AW_CH_SIZE(core_v_mini_mcu_pkg::AW_CH_SIZE),
     // .W_CH_SIZE(core_v_mini_mcu_pkg::W_CH_SIZE),
@@ -591,7 +591,8 @@ ${pad.core_v_mini_mcu_interface}
     .W_CH_SIZE(serial_link_minimum_axi_pkg::W_CH_SIZE),
     .B_CH_SIZE(serial_link_minimum_axi_pkg::B_CH_SIZE),
     .AR_CH_SIZE(serial_link_minimum_axi_pkg::AR_CH_SIZE),
-    .R_CH_SIZE(serial_link_minimum_axi_pkg::R_CH_SIZE)
+    .R_CH_SIZE(serial_link_minimum_axi_pkg::R_CH_SIZE),
+    .FIFO_DEPTH(8)
   ) serial_link_xheep_wrapper_i (
     .clk_i(clk_i),
     .fast_clock(clk_i),
