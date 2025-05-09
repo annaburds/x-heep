@@ -90,7 +90,12 @@ module peripheral_subsystem
     // PDM2PCM Interface
     output logic pdm2pcm_clk_o,
     output logic pdm2pcm_clk_en_o,
-    input  logic pdm2pcm_pdm_i
+    input  logic pdm2pcm_pdm_i,
+
+    // DLC DMA connection fifo
+    input   hw_fifo_pkg::hw_fifo_req_t  [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_i,
+    output  hw_fifo_pkg::hw_fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_resp_o
+
 );
 
   import core_v_mini_mcu_pkg::*;
@@ -570,6 +575,21 @@ module peripheral_subsystem
   assign i2s_rx_valid_o   = 1'b0;
 % endif
 
+% if 'dlci' in peripherals and peripherals['dlci']['is_included'] == 'yes':
+  
+      dlc dlc_i (
+          .clk_i,
+          .rst_ni,
+          .dlc_xing_intr_o(),
+          .reg_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::DLCI_IDX]),
+          .reg_rsp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::DLCI_IDX]),
+          .hw_fifo_req_i,
+          .hw_fifo_resp_o
+      );
+  % else:
+  assign peripheral_slv_rsp[core_v_mini_mcu_pkg::DLCI_IDX] = '0;
 
+  //assign i2s_sck_oe_o     = 1'b0;
+% endif
   
 endmodule : peripheral_subsystem

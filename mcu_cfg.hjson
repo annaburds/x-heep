@@ -131,6 +131,11 @@
             is_included: "yes"
             path:    "./hw/ip/i2s/data/i2s.hjson"
         }
+        dlci: {
+            offset:  0x00080000
+            length:  0x00010000
+            is_included: "yes"
+        }
 
     }
 
