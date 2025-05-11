@@ -147,8 +147,8 @@ module testharness #(
 
   import serial_link_pkg::*;
 
-  logic fifo_empty_o;
-  logic fifo_full_o;
+  logic                                 fifo_empty_o;
+  logic                                 fifo_full_o;
 
   logic [NumChannels-1:0][NumLanes-1:0] ddr_i_xheep;  // check NumLanes parameter 
   logic [NumChannels-1:0][NumLanes-1:0] ddr_o_xheep;
@@ -237,9 +237,10 @@ module testharness #(
       .gpio_11_io(gpio[11]),
       .gpio_12_io(gpio[12]),
       .gpio_13_io(gpio[13]),
-      .gpio_14_io(gpio[14]),
-      .gpio_15_io(gpio[15]),
-      .gpio_16_io(gpio[16]),
+      .spi_slave_sck_io(spi_sck),
+      .spi_slave_cs_io(spi_csb[0]),
+      .spi_slave_miso_io(spi_sd_io[1]),
+      .spi_slave_mosi_io(spi_sd_io[0]),
       .spi_flash_sck_io(spi_flash_sck),
       .spi_flash_cs_0_io(spi_flash_csb[0]),
       .spi_flash_cs_1_io(spi_flash_csb[1]),
@@ -708,81 +709,81 @@ module testharness #(
       //);
 
 
-    //   // SERIAL LINK
-    //   serial_link_xheep_wrapper #(
-    //       .axi_req_t(core_v_mini_mcu_pkg::axi_req_t),
-    //       .axi_rsp_t(core_v_mini_mcu_pkg::axi_resp_t),
-    //       .aw_chan_t(core_v_mini_mcu_pkg::axi_aw_t),
-    //       .ar_chan_t(core_v_mini_mcu_pkg::axi_ar_t),
-    //       .r_chan_t(core_v_mini_mcu_pkg::axi_r_t),
-    //       .w_chan_t(core_v_mini_mcu_pkg::axi_w_t),
-    //       .b_chan_t(core_v_mini_mcu_pkg::axi_b_t),
-    //         // .axi_req_t(serial_link_minimum_axi_pkg::axi_req_t),
-    //         // .axi_rsp_t(serial_link_minimum_axi_pkg::axi_resp_t),
-    //         // .aw_chan_t(serial_link_minimum_axi_pkg::axi_aw_t),
-    //         // .ar_chan_t(serial_link_minimum_axi_pkg::axi_ar_t),
-    //         // .r_chan_t(serial_link_minimum_axi_pkg::axi_r_t),
-    //         // .w_chan_t(serial_link_minimum_axi_pkg::axi_w_t),
-    //         // .b_chan_t(serial_link_minimum_axi_pkg::axi_b_t),
+      //   // SERIAL LINK
+      //   serial_link_xheep_wrapper #(
+      //       .axi_req_t(core_v_mini_mcu_pkg::axi_req_t),
+      //       .axi_rsp_t(core_v_mini_mcu_pkg::axi_resp_t),
+      //       .aw_chan_t(core_v_mini_mcu_pkg::axi_aw_t),
+      //       .ar_chan_t(core_v_mini_mcu_pkg::axi_ar_t),
+      //       .r_chan_t(core_v_mini_mcu_pkg::axi_r_t),
+      //       .w_chan_t(core_v_mini_mcu_pkg::axi_w_t),
+      //       .b_chan_t(core_v_mini_mcu_pkg::axi_b_t),
+      //         // .axi_req_t(serial_link_minimum_axi_pkg::axi_req_t),
+      //         // .axi_rsp_t(serial_link_minimum_axi_pkg::axi_resp_t),
+      //         // .aw_chan_t(serial_link_minimum_axi_pkg::axi_aw_t),
+      //         // .ar_chan_t(serial_link_minimum_axi_pkg::axi_ar_t),
+      //         // .r_chan_t(serial_link_minimum_axi_pkg::axi_r_t),
+      //         // .w_chan_t(serial_link_minimum_axi_pkg::axi_w_t),
+      //         // .b_chan_t(serial_link_minimum_axi_pkg::axi_b_t),
 
-    //       .cfg_rsp_t(reg_rsp_t),
-    //       .cfg_req_t(reg_req_t),
-    //       .obi_req_t(obi_req_t),
-    //       .obi_resp_t(obi_resp_t),
-    //       .NumChannels(1),
-    //       .NumLanes(4),
-    //       .MaxClkDiv(32),
-    //       .AddrWidth(1),
-    //       .DataWidth(32),
-    //       .AW_CH_SIZE(core_v_mini_mcu_pkg::AW_CH_SIZE),
-    //       .W_CH_SIZE(core_v_mini_mcu_pkg::W_CH_SIZE),
-    //       .B_CH_SIZE(core_v_mini_mcu_pkg::B_CH_SIZE),
-    //       .AR_CH_SIZE(core_v_mini_mcu_pkg::AR_CH_SIZE),
-    //       .R_CH_SIZE(core_v_mini_mcu_pkg::R_CH_SIZE)
-    //         // .AW_CH_SIZE(serial_link_minimum_axi_pkg::AW_CH_SIZE),
-    //         // .W_CH_SIZE(serial_link_minimum_axi_pkg::W_CH_SIZE),
-    //         // .B_CH_SIZE(serial_link_minimum_axi_pkg::B_CH_SIZE),
-    //         // .AR_CH_SIZE(serial_link_minimum_axi_pkg::AR_CH_SIZE),
-    //         // .R_CH_SIZE(serial_link_minimum_axi_pkg::R_CH_SIZE)
-    //   ) serial_link_xheep_wrapper_i (
-    //       .clk_i     (clk_i),
-    //       .fast_clock(clk_i),
-    //       .rst_ni    (rst_ni),
-    //       .clk_reg_i (clk_i),   //intended for clock gating purposes
-    //       .rst_reg_ni(rst_ni),  //intended for SW reset purposes
+      //       .cfg_rsp_t(reg_rsp_t),
+      //       .cfg_req_t(reg_req_t),
+      //       .obi_req_t(obi_req_t),
+      //       .obi_resp_t(obi_resp_t),
+      //       .NumChannels(1),
+      //       .NumLanes(4),
+      //       .MaxClkDiv(32),
+      //       .AddrWidth(1),
+      //       .DataWidth(32),
+      //       .AW_CH_SIZE(core_v_mini_mcu_pkg::AW_CH_SIZE),
+      //       .W_CH_SIZE(core_v_mini_mcu_pkg::W_CH_SIZE),
+      //       .B_CH_SIZE(core_v_mini_mcu_pkg::B_CH_SIZE),
+      //       .AR_CH_SIZE(core_v_mini_mcu_pkg::AR_CH_SIZE),
+      //       .R_CH_SIZE(core_v_mini_mcu_pkg::R_CH_SIZE)
+      //         // .AW_CH_SIZE(serial_link_minimum_axi_pkg::AW_CH_SIZE),
+      //         // .W_CH_SIZE(serial_link_minimum_axi_pkg::W_CH_SIZE),
+      //         // .B_CH_SIZE(serial_link_minimum_axi_pkg::B_CH_SIZE),
+      //         // .AR_CH_SIZE(serial_link_minimum_axi_pkg::AR_CH_SIZE),
+      //         // .R_CH_SIZE(serial_link_minimum_axi_pkg::R_CH_SIZE)
+      //   ) serial_link_xheep_wrapper_i (
+      //       .clk_i     (clk_i),
+      //       .fast_clock(clk_i),
+      //       .rst_ni    (rst_ni),
+      //       .clk_reg_i (clk_i),   //intended for clock gating purposes
+      //       .rst_reg_ni(rst_ni),  //intended for SW reset purposes
 
-    //       .testmode_i('0),
-    //       //.axi_in_req_i(axi_out_req_o),
-    //       //.axi_in_rsp_o(axi_out_rsp_i),
-    //       //.axi_out_req_o(axi_in_req_i),
-    //       //.axi_out_rsp_i(axi_in_rsp_o),
-
-
-    //       //.obi_req_i(sl_obi2axi_req),
-    //       //.obi_rsp_i(sl_obi2axi_resp),
-    //       //
-    //       //.obi_req_o(sl_axi2obi_req),  //axi_in_req_i
-    //       //.obi_rsp_o(sl_axi2obi_resp),
-
-    //       //.obi_req_o(sl_obi2axi_req),
-    //       //.obi_rsp_o(sl_obi2axi_resp),
-    //       .obi_req_o(),  //obi_sl_req),
-    //       .obi_rsp_o(),  //obi_sl_rsp),
-
-    //       .obi_req_i(sl_axi2obi_req),  //sl_axi2obi_req),  //axi_in_req_i
-    //       .obi_rsp_i(sl_axi2obi_resp), //sl_axi2obi_resp),
+      //       .testmode_i('0),
+      //       //.axi_in_req_i(axi_out_req_o),
+      //       //.axi_in_rsp_o(axi_out_rsp_i),
+      //       //.axi_out_req_o(axi_in_req_i),
+      //       //.axi_out_rsp_i(axi_in_rsp_o),
 
 
+      //       //.obi_req_i(sl_obi2axi_req),
+      //       //.obi_rsp_i(sl_obi2axi_resp),
+      //       //
+      //       //.obi_req_o(sl_axi2obi_req),  //axi_in_req_i
+      //       //.obi_rsp_o(sl_axi2obi_resp),
 
-    //       .cfg_req_i(cfg_req_ext),  //register configuration
-    //       .cfg_rsp_o(cfg_rsp_ext),
+      //       //.obi_req_o(sl_obi2axi_req),
+      //       //.obi_rsp_o(sl_obi2axi_resp),
+      //       .obi_req_o(),  //obi_sl_req),
+      //       .obi_rsp_o(),  //obi_sl_rsp),
+
+      //       .obi_req_i(sl_axi2obi_req),  //sl_axi2obi_req),  //axi_in_req_i
+      //       .obi_rsp_i(sl_axi2obi_resp), //sl_axi2obi_resp),
 
 
-    //       .ddr_i(ddr_o_xheep),  //Double-Data-Rate (DDR) input data
-    //       .ddr_rcv_clk_i(clk_sl_int2ext),
-    //       .ddr_rcv_clk_o(clk_sl_ext2int),
-    //       .ddr_o(ddr_i_xheep)  //Double-Data-Rate (DDR) output data
-    //   );
+
+      //       .cfg_req_i(cfg_req_ext),  //register configuration
+      //       .cfg_rsp_o(cfg_rsp_ext),
+
+
+      //       .ddr_i(ddr_o_xheep),  //Double-Data-Rate (DDR) input data
+      //       .ddr_rcv_clk_i(clk_sl_int2ext),
+      //       .ddr_rcv_clk_o(clk_sl_ext2int),
+      //       .ddr_o(ddr_i_xheep)  //Double-Data-Rate (DDR) output data
+      //   );
 
       // SERIAL LINK
       serial_link_xheep_wrapper #(
@@ -790,16 +791,16 @@ module testharness #(
           .axi_rsp_t(core_v_mini_mcu_pkg::axi_resp_t),
           .aw_chan_t(core_v_mini_mcu_pkg::axi_aw_t),
           .ar_chan_t(core_v_mini_mcu_pkg::axi_ar_t),
-          .r_chan_t(core_v_mini_mcu_pkg::axi_r_t),
-          .w_chan_t(core_v_mini_mcu_pkg::axi_w_t),
-          .b_chan_t(core_v_mini_mcu_pkg::axi_b_t),
-            // .axi_req_t(serial_link_minimum_axi_pkg::axi_req_t),
-            // .axi_rsp_t(serial_link_minimum_axi_pkg::axi_resp_t),
-            // .aw_chan_t(serial_link_minimum_axi_pkg::axi_aw_t),
-            // .ar_chan_t(serial_link_minimum_axi_pkg::axi_ar_t),
-            // .r_chan_t(serial_link_minimum_axi_pkg::axi_r_t),
-            // .w_chan_t(serial_link_minimum_axi_pkg::axi_w_t),
-            // .b_chan_t(serial_link_minimum_axi_pkg::axi_b_t),
+          .r_chan_t (core_v_mini_mcu_pkg::axi_r_t),
+          .w_chan_t (core_v_mini_mcu_pkg::axi_w_t),
+          .b_chan_t (core_v_mini_mcu_pkg::axi_b_t),
+          // .axi_req_t(serial_link_minimum_axi_pkg::axi_req_t),
+          // .axi_rsp_t(serial_link_minimum_axi_pkg::axi_resp_t),
+          // .aw_chan_t(serial_link_minimum_axi_pkg::axi_aw_t),
+          // .ar_chan_t(serial_link_minimum_axi_pkg::axi_ar_t),
+          // .r_chan_t(serial_link_minimum_axi_pkg::axi_r_t),
+          // .w_chan_t(serial_link_minimum_axi_pkg::axi_w_t),
+          // .b_chan_t(serial_link_minimum_axi_pkg::axi_b_t),
 
           .cfg_rsp_t(reg_rsp_t),
           .cfg_req_t(reg_req_t),
@@ -815,11 +816,11 @@ module testharness #(
           .B_CH_SIZE(core_v_mini_mcu_pkg::B_CH_SIZE),
           .AR_CH_SIZE(core_v_mini_mcu_pkg::AR_CH_SIZE),
           .R_CH_SIZE(core_v_mini_mcu_pkg::R_CH_SIZE)
-            // .AW_CH_SIZE(serial_link_minimum_axi_pkg::AW_CH_SIZE),
-            // .W_CH_SIZE(serial_link_minimum_axi_pkg::W_CH_SIZE),
-            // .B_CH_SIZE(serial_link_minimum_axi_pkg::B_CH_SIZE),
-            // .AR_CH_SIZE(serial_link_minimum_axi_pkg::AR_CH_SIZE),
-            // .R_CH_SIZE(serial_link_minimum_axi_pkg::R_CH_SIZE)
+          // .AW_CH_SIZE(serial_link_minimum_axi_pkg::AW_CH_SIZE),
+          // .W_CH_SIZE(serial_link_minimum_axi_pkg::W_CH_SIZE),
+          // .B_CH_SIZE(serial_link_minimum_axi_pkg::B_CH_SIZE),
+          // .AR_CH_SIZE(serial_link_minimum_axi_pkg::AR_CH_SIZE),
+          // .R_CH_SIZE(serial_link_minimum_axi_pkg::R_CH_SIZE)
       ) serial_link_xheep_wrapper_i (
           .clk_i     (clk_i),
           .fast_clock(clk_i),
@@ -842,14 +843,14 @@ module testharness #(
 
           //.obi_req_o(sl_obi2axi_req),
           //.obi_rsp_o(sl_obi2axi_resp),
-        //   .obi_req_o(),  //obi_sl_req),
-        //   .obi_rsp_o(),  //obi_sl_rsp),
+          //   .obi_req_o(),  //obi_sl_req),
+          //   .obi_rsp_o(),  //obi_sl_rsp),
 
           .obi_req_i(sl_axi2obi_req),  //sl_axi2obi_req),  //axi_in_req_i
           .obi_rsp_i(sl_axi2obi_resp), //sl_axi2obi_resp),
 
-    .reader_req_i(),
-    .reader_resp_o(),
+          .reader_req_i (),
+          .reader_resp_o(),
 
 
           .cfg_req_i(cfg_req_ext),  //register configuration

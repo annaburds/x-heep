@@ -63,7 +63,7 @@
             type: output
         }
         gpio: {
-            num: 17,
+            num: 14,
             num_offset: 0, #first gpio is gpio0
             type: inout
         }
@@ -218,9 +218,6 @@
                 spi2_cs_1: {
                     type: inout
                 },
-                gpio_17: {
-                    type: inout
-                }
                 gpio_24: {
                     type: inout
                 }

@@ -158,6 +158,7 @@ module system_bus
   assign dma_write_resp_o[${i}] = int_master_resp[${4+i*3}];
   assign dma_addr_resp_o[${i}] = int_master_resp[${5+i*3}];
   % endfor
+  assign axi_sl_m_resp_o = int_master_resp[core_v_mini_mcu_pkg::AXI_SL_M_IDX];
   
   // External master responses
   if (EXT_XBAR_NMASTER == 0) begin

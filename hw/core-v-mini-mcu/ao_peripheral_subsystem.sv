@@ -228,7 +228,7 @@ module ao_peripheral_subsystem
 
   //assign slave_fifo_req_sel = slave_fifoout_req;
   //assign slave_fifoout_resp = slave_fifo_resp_sel;
- // assign slave_fifoin_req   = slave_req_i;
+  // assign slave_fifoin_req   = slave_req_i;
   //assign slave_resp_o       = slave_fifoin_resp;
 
   /* Peripheral to register interface converter*/

@@ -7,7 +7,7 @@ package testharness_pkg;
   import addr_map_rule_pkg::*;
   import core_v_mini_mcu_pkg::*;
 
-  localparam EXT_XBAR_NMASTER = 4;
+  localparam EXT_XBAR_NMASTER = 5;
   localparam EXT_XBAR_NSLAVE = 3;
 
   //master idx
@@ -16,8 +16,8 @@ package testharness_pkg;
   localparam logic [31:0] EXT_MASTER2_IDX = 2;
   localparam logic [31:0] EXT_MASTER3_IDX = 3;
   localparam logic [31:0] EXT_MASTER4_IDX = 4;  // serial link external master
- 
- localparam logic [31:0] SLOW_MEMORY_START_ADDRESS = core_v_mini_mcu_pkg::EXT_SLAVE_START_ADDRESS;
+
+  localparam logic [31:0] SLOW_MEMORY_START_ADDRESS = core_v_mini_mcu_pkg::EXT_SLAVE_START_ADDRESS;
   localparam logic [31:0] SLOW_MEMORY_SIZE = 32'h400;
   localparam logic [31:0] SLOW_MEMORY_END_ADDRESS = SLOW_MEMORY_START_ADDRESS + SLOW_MEMORY_SIZE;
   localparam logic [31:0] SLOW_MEMORY0_IDX = 32'd0;
