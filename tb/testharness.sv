@@ -281,8 +281,8 @@ module testharness #(
       .ext_dma_write_resp_i(heep_dma_write_resp),
       .ext_dma_addr_req_o(heep_dma_addr_req),
       .ext_dma_addr_resp_i(heep_dma_addr_resp),
-      //.hw_fifo_req_o(hw_fifo_req),
-      //.hw_fifo_resp_i(hw_fifo_resp),
+      .hw_fifo_req_o(hw_fifo_req),
+      .hw_fifo_resp_i(hw_fifo_resp),
       .ext_ao_peripheral_req_i(ext_ao_peripheral_req),
       .ext_ao_peripheral_resp_o(ext_ao_peripheral_resp),
       .ext_peripheral_slave_req_o(periph_slave_req),
@@ -519,15 +519,15 @@ module testharness #(
           .dma_done_o()
       );
 
-      //dlc dlc_i (
-      //    .clk_i(clk_i),
-      //    .rst_ni(rst_ni),
-      //    .dlc_xing_intr_o(),
-      //    .reg_req_i(ext_periph_slv_req[testharness_pkg::DLC_IDX]),
-      //    .reg_rsp_o(ext_periph_slv_rsp[testharness_pkg::DLC_IDX]),
-      //    .hw_fifo_req_i(hw_fifo_req),
-      //    .hw_fifo_resp_o(hw_fifo_resp)
-      //);
+      dlc dlc_i (
+          .clk_i(clk_i),
+          .rst_ni(rst_ni),
+          .dlc_xing_intr_o(),
+          .reg_req_i(ext_periph_slv_req[testharness_pkg::DLC_IDX]),
+          .reg_rsp_o(ext_periph_slv_rsp[testharness_pkg::DLC_IDX]),
+          .hw_fifo_req_i(hw_fifo_req),
+          .hw_fifo_resp_o(hw_fifo_resp)
+      );
 
       simple_accelerator #(
           .reg_req_t (reg_pkg::reg_req_t),

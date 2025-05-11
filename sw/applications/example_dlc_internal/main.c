@@ -30,7 +30,7 @@
     #define PRINTF(...)
 #endif
 
-#define DLC_START_ADDRESS PERIPHERAL_START_ADDRESS + 0x00080000
+#define DLC_START_ADDRESS DLCI_START_ADDRESS
 
 int main() {
  
