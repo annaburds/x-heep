@@ -22,11 +22,11 @@ The DMA **SDK**, on the other hand, offers user-friendly functions for essential
 
 ## Structural description
 
-![DMA subsystem structure](https://github.com/esl-epfl/x-heep/docs/images/dma_structure.png)
+![DMA subsystem structure](/images/dma_structure.png)
 
 <p  align="center">Figure 1: Structure of the DMA subsystem in X-Heep </p>
 
-#### DMA channels layout
+### DMA channels layout
 
 The DMA subsystem is composed of a parametrized number of control units called **channels**. 
 Each channel can be configured, by the CPU or by an external controller, to perform a *transaction*, independently of the state of other channels.
@@ -52,7 +52,7 @@ While the 1st solution is a general purpose, balanced configuration, the 2nd sol
 This mechanism guarantees **maximum flexibility**, enabling the user to adapt the DMA subsystem to its requirements, both in terms of area and performance.
 <br>
 
-#### Interrupts
+### Interrupts
 
 If enabled, a transaction interrupt is raised every time a DMA transaction is completed. However, due to architectural limitations, there is only a single transaction done signal for the entire DMA subsystem.
 
@@ -64,7 +64,7 @@ It is possible that a channel could raise an interrupt while the CPU is processi
 
 For this reason, the handler implemented by the user should be as brief as possible.
 
-#### Data FIFOs configuration
+### Data FIFOs configuration
 
 Each DMA channel uses FIFOs to buffer the data to be read and written, which is crucial for mitigating the combined delays from the system bus and the Always On Peripheral Bus (**AOPB**). 
 
@@ -96,7 +96,7 @@ Now, let's set the first 2 channels, CH0 and CH1, to the large size, CH2 to smal
 
 <br>
 
-#### Triggers
+### Triggers
 
 In the case of memory-peripheral operations, it is common for the peripheral to have a reaction time that cannot match the system clock. For example, the SPI trasmits data with a period of circa 30 clock cycles. 
 
@@ -107,7 +107,7 @@ The DMA can be configured to respond to triggers by enabling the appropriate _sl
 
 <br>
 
-#### Tips for DMA-based accelerator developers
+### Tips for DMA-based accelerator developers
 
 The DMA subsystem has been developed with specific features to facilitate the creation of custom accelerators that can leverage it to improve memory-intense applications.
 
@@ -132,7 +132,7 @@ Additional documentation can be found in the **VerifHEEP documentation**, but in
   - Analyze the performance of the tests. 
 <br>
 
-### Registers description
+## Registers description
 
 This section will describe every register of a DMA channel and their function.
 The complete addres of a DMA channel register is the following:
@@ -318,6 +318,8 @@ The previous parameters, including the register offsets, can be found at `sw/dev
     - 0: _linear mode_
     - 1: _circular mode_
     - 2: _address mode_
+    - 3: _subaddress mode_
+    - 4: _hardware fifo mode_
 
 <hr>
 
@@ -560,7 +562,7 @@ If senseless configurations are input to functions, assertions may halt the whol
 
 #### Transaction modes
 
-There are three different transaction modes:
+There are five different transaction modes:
 
 **Single Mode:** The default mode, where the DMA channel will perform the copy from the source target to the destination, and trigger an interrupt once done.
 
@@ -568,6 +570,14 @@ There are three different transaction modes:
 
 **Address Mode:** Instead of using the destination pointer and increment to decide where to copy information, an _address list_ must be provided, containing addresses for each data unit being copied. It is only carried out in _single_ mode. 
 In this mode it's possible to perform only 1D transactions.
+
+**Subaddress Mode:** In this mode, the DMA can be configured to transfer words, half words or bytes from Flash to the destination target via the SPI slot. This mode is particularly useful as it allows the DMA to sequentially read the half words or bytes composing the word retrieved from Flash, and forward them to the appropriate location in the destination target. The key difference between Subaddress Mode and Single Mode in terms of SPI-Flash interaction lies in how data is handled. In Single Mode, when the destination data type is set to `Half-Word` or `Byte`, the DMA writes only the least significant half-word or byte from the word fetched via SPI. In contrast, Subaddress Mode ensures that each half-word or byte within the fetched word is considered and transferred correctly to the destination.
+
+**Hardware Fifo Mode:** In this mode, the DMA fetches data from the source target and forwards it directly to an external accelerator tightly coupled with the DMA itself. The DMA exposes a dedicated interface composed of two ports, respectively of type `hw_fifo_req_t` and `hw_fifo_resp_t`. Using this interface, the DMA can interact with an external streaming accelerator through input/output FIFOs. Input data to the DMA bypass the DMA internal FIFOs, and they are directly forwarded to the accelerator, which is required to have two internal FIFOs. The first one, referred to as _hardware read fifo_, is filled with data coming from the source target through the `hw_fifo_req_t` port. The second, referred to as _hardware write fifo_, is used by the accelerator to store the results of its computation. Once data is written in the hardware read fifo, the accelerator is in charge of popping from it and processing the data. In the end, results must be pushed into the hardware write fifo. Subsequently, the DMA reads data from the hardware write fifo through the `hw_fifo_resp_t` port, and stores it into the destination target. A block diagram showing this DMA interface along with an external accelerator is shown in figure.
+
+![hw fifo](/images/hw_fifo_mode.png)
+
+<p  align="center">Figure 2: External Streaming Accelerator tightly coupled with the DMA to be used in Hardware Fifo Mode </p>
 
   
 
@@ -747,8 +757,9 @@ Here is a brief overview of the examples:
 6) Matrix zero padding
 7) Multichannel mem2mem transaction, focusing on the IRQ handler
 8) Multichannel flash2mem transaction using the SPI FLASH
+9) Single-channel flash2mem read transactions with different data widths (bytes, half-words and words) using the SPI FLASH
 
-The complete code for these examples can be found in `sw/applications/example_dma`, `sw/applications/example_dma_2d`, `sw/applications/example_dma_multichannel` and `sw/applications/example_dma_sdk`. These applications offer both verification and performance estimation modes, enabling users to verify the DMA and measure the application's execution time.
+The complete code for these examples can be found in `sw/applications/example_dma`, `sw/applications/example_dma_2d`, `sw/applications/example_dma_multichannel`, `sw/applications/example_dma_sdk` and `sw/applications/example_dma_subaddressing`. These applications offer both verification and performance estimation modes, enabling users to verify the DMA and measure the application's execution time.
 
 The user is strongly incouraged to look at these applications, as well as any other application that employs the DMA, to gain insight in practical examples of the use of this peripheral. Some aspects or specific usecases might in fact not be present in this guide and could be found in the applications.
 
@@ -1808,12 +1819,7 @@ void SPI_setup(){
 
   /* Pick the correct spi device based on simulation type */
   spi_host_t *spi;
-
-  #ifndef USE_SPI_FLASH
-  spi = spi_host1;
-  #else
   spi = spi_flash;
-  #endif
 
   /* Init SPI host and SPI<->Flash bridge parameters */
   if (w25q128jw_init(spi) != FLASH_OK)
@@ -1912,3 +1918,34 @@ int main()
 }
 
 ```
+
+### 9. Single-channel flash2mem read transactions with different data widths (bytes, half-words and words) using the SPI FLASH
+
+The goal of this example is to exploit the DMA Subaddress Mode to transfer data from the SPI Flash to X-Heep internal memory in these configurations:
+- Using the _SPI Host 1_ configured to read at standard speed.
+- Using the _SPI Host 1_ configured to read at quad speed.
+- Using the _SPI Flash_ configured to read at standard speed. 
+
+For each configuration, five data transfers are performed chaging source and destination targets data types in the following manner:
+- Both source and destination data types are `Word`
+- Source data type is `Word`, destination one is `Half-word` and data is signed-extended before being written in the destination. 
+- Source data type is `Word`, destination one is `Half-word` and no sign-extension is performed. 
+- Source data type is `Word`, destination one is `Byte` and data is signed-extended before being written in the destination.
+- Source data type is `Word`, destination one is `Byte` and no sign-extension is performed.
+
+> :warning: This example can be executed only on QuestaSim or FPGA targets with the appropriate compilation flags.
+
+#### Data to be transfered and golden outputs
+File `buffer.h` contains input data for the DMA transfers, i.e. `original_128B` and `flash_only_buffer`. It also contains golden outputs for all the previously mentioned test cases.
+
+#### Test Functions
+Three test functions have been implemented to perform tests using the DMA in Subaddress Mode along with both _SPI Host 1_, configured to read at standard and quad speed, and _SPI Flash_ configured to read at standard speed:
+
+- `test_read_dma` configures the dma transfer source and destination targets, sets up the SPI host to read at standard speed, and launches the DMA transfer. The increment of the source target is set to 0, since the DMA must always read from the same location, while the increment of the destination is set to 1. As regards data types, source data type is always set to `Word`, while the destination one is changed each time `test_read_dma` is called. This allows testing the writing of `Word`, `Half-Words` and `Bytes` to the destination target.
+
+- `test_read_quad_dma` has the same structure of `test_read_dma`, but it configures the SPI host to read at quad speed.
+
+- `test_read_flash_only_dma` has the same structure of `test_read_dma`, but it uses the _SPI Flash_ host to read at standard speed from flash.
+
+#### Result Comparison and Correctness Checks
+The `check_result` function is used after each transfer to check if the destination target has been filled with the correct data. This is accomplished by comparing the destination target buffer with the related golden outputs contained in `buffer.h`

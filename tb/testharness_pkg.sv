@@ -7,8 +7,8 @@ package testharness_pkg;
   import addr_map_rule_pkg::*;
   import core_v_mini_mcu_pkg::*;
 
-  localparam EXT_XBAR_NMASTER = 5;
-  localparam EXT_XBAR_NSLAVE = 2;
+  localparam EXT_XBAR_NMASTER = 4;
+  localparam EXT_XBAR_NSLAVE = 3;
 
   //master idx
   localparam logic [31:0] EXT_MASTER0_IDX = 0;
@@ -16,23 +16,28 @@ package testharness_pkg;
   localparam logic [31:0] EXT_MASTER2_IDX = 2;
   localparam logic [31:0] EXT_MASTER3_IDX = 3;
   localparam logic [31:0] EXT_MASTER4_IDX = 4;  // serial link external master
-
-  //slave mmap and idx
-  localparam logic [31:0] SLOW_MEMORY_START_ADDRESS = core_v_mini_mcu_pkg::EXT_SLAVE_START_ADDRESS+ 32'h0;
-  localparam logic [31:0] SLOW_MEMORY_SIZE = 32'h200;
+ 
+ localparam logic [31:0] SLOW_MEMORY_START_ADDRESS = core_v_mini_mcu_pkg::EXT_SLAVE_START_ADDRESS;
+  localparam logic [31:0] SLOW_MEMORY_SIZE = 32'h400;
   localparam logic [31:0] SLOW_MEMORY_END_ADDRESS = SLOW_MEMORY_START_ADDRESS + SLOW_MEMORY_SIZE;
-  localparam logic [31:0] SLOW_MEMORY_IDX = 32'd0;
+  localparam logic [31:0] SLOW_MEMORY0_IDX = 32'd0;
+  localparam logic [31:0] SLOW_MEMORY1_IDX = 32'd1;
+
 
   //slave sl
   localparam logic [31:0] SL_EXT_START_ADDRESS = core_v_mini_mcu_pkg::EXT_SLAVE_START_ADDRESS + 32'h10000;
   localparam logic [31:0] SL_EXT_SIZE = 32'h200;
   localparam logic [31:0] SL_EXT_END_ADDRESS = SL_EXT_START_ADDRESS + SL_EXT_SIZE;
-  localparam logic [31:0] SL_EXT_IDX = 32'd1;
-
+  localparam logic [31:0] SL_EXT_IDX = 32'd2;
 
   localparam addr_map_rule_t [EXT_XBAR_NSLAVE-1:0] EXT_XBAR_ADDR_RULES = '{
       '{
-          idx: SLOW_MEMORY_IDX,
+          idx: SLOW_MEMORY0_IDX,
+          start_addr: SLOW_MEMORY_START_ADDRESS,
+          end_addr: SLOW_MEMORY_END_ADDRESS
+      },
+      '{
+          idx: SLOW_MEMORY1_IDX,
           start_addr: SLOW_MEMORY_START_ADDRESS,
           end_addr: SLOW_MEMORY_END_ADDRESS
       },
@@ -40,7 +45,7 @@ package testharness_pkg;
   };
 
   //slave encoder
-  localparam EXT_NPERIPHERALS = 6;
+  localparam EXT_NPERIPHERALS = 7;
 
   // Memcopy controller (external peripheral example)
   localparam logic [31:0] MEMCOPY_CTRL_START_ADDRESS = core_v_mini_mcu_pkg::EXT_PERIPHERAL_START_ADDRESS + 32'h0;
@@ -70,7 +75,15 @@ package testharness_pkg;
   localparam logic [31:0] IM2COL_SPC_START_ADDRESS = core_v_mini_mcu_pkg::EXT_PERIPHERAL_START_ADDRESS + 32'h04000;
   localparam logic [31:0] IM2COL_SPC_SIZE = 32'h100;
   localparam logic [31:0] IM2COL_SPC_END_ADDRESS = IM2COL_SPC_START_ADDRESS + IM2COL_SPC_SIZE;
-  localparam logic [31:0] IM2COL_SPC_IDX = 32'd5;
+  localparam logic [31:0] IM2COL_SPC_IDX = 32'd4;
+
+  // External Digital Level Crossing Block Peripheral
+  localparam logic [31:0] DLC_START_ADDRESS = core_v_mini_mcu_pkg::EXT_PERIPHERAL_START_ADDRESS + 32'h05000;
+  localparam logic [31:0] DLC_SIZE = 32'h100;
+  localparam logic [31:0] DLC_END_ADDRESS = DLC_START_ADDRESS + DLC_SIZE;
+  localparam logic [31:0] DLC_IDX = 32'd5;
+
+
   localparam logic [31:0] SL_REG_START_ADDRESS= core_v_mini_mcu_pkg::EXT_PERIPHERAL_START_ADDRESS+ 32'h04000;
   localparam logic [31:0] SL_REG_SIZE = 32'h200;
   localparam logic [31:0] SL_REG_END_ADDRESS = SL_REG_START_ADDRESS + SL_REG_SIZE;
@@ -94,7 +107,8 @@ package testharness_pkg;
           start_addr: IM2COL_SPC_START_ADDRESS,
           end_addr: IM2COL_SPC_END_ADDRESS
       },
-      '{idx: SL_REG_IDX, start_addr: SL_REG_START_ADDRESS, end_addr: SL_REG_END_ADDRESS}
+      '{idx: SL_REG_IDX, start_addr: SL_REG_START_ADDRESS, end_addr: SL_REG_END_ADDRESS},
+      '{idx: DLC_IDX, start_addr: DLC_START_ADDRESS, end_addr: DLC_END_ADDRESS}
   };
 
   localparam int unsigned EXT_PERIPHERALS_PORT_SEL_WIDTH = EXT_NPERIPHERALS > 1 ? $clog2(

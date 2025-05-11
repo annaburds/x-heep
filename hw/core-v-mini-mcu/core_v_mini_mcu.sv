@@ -172,6 +172,28 @@ module core_v_mini_mcu
     input logic spi_sd_3_i,
     output logic spi_sd_3_oe_o,
 
+    input  logic spi_slave_sck_i,
+    output logic gpio_14_o,
+    input  logic gpio_14_i,
+    output logic gpio_14_oe_o,
+
+    input  logic spi_slave_cs_i,
+    output logic gpio_15_o,
+    input  logic gpio_15_i,
+    output logic gpio_15_oe_o,
+
+    output logic spi_slave_miso_o,
+    input  logic spi_slave_miso_i,
+    output logic spi_slave_miso_oe_o,
+    output logic gpio_16_o,
+    input  logic gpio_16_i,
+    output logic gpio_16_oe_o,
+
+    input  logic spi_slave_mosi_i,
+    output logic gpio_17_o,
+    input  logic gpio_17_i,
+    output logic gpio_17_oe_o,
+
     output logic pdm2pcm_pdm_o,
     input logic pdm2pcm_pdm_i,
     output logic pdm2pcm_pdm_oe_o,
@@ -593,7 +615,8 @@ module core_v_mini_mcu
 
   debug_subsystem #(
       .NRHARTS    (NRHARTS),
-      .JTAG_IDCODE(JTAG_IDCODE)
+      .JTAG_IDCODE(JTAG_IDCODE),
+      .SPI_SLAVE  (1)
   ) debug_subsystem_i (
       .clk_i,
       .rst_ni,
@@ -602,6 +625,11 @@ module core_v_mini_mcu
       .jtag_trst_ni,
       .jtag_tdi_i,
       .jtag_tdo_o,
+      .spi_slave_sck_i(spi_slave_sck_i),
+      .spi_slave_cs_i(spi_slave_cs_i),
+      .spi_slave_miso_o(spi_slave_miso_o),
+      .spi_slave_miso_oe_o(spi_slave_miso_oe_o),
+      .spi_slave_mosi_i(spi_slave_mosi_i),
       .debug_core_req_o(debug_req),
       .debug_ndmreset_no(debug_reset_n),
       .debug_slave_req_i(debug_slave_req),
@@ -716,6 +744,8 @@ module core_v_mini_mcu
       .dma_addr_resp_i(dma_addr_resp),
       .dma_done_intr_o(dma_done_intr),
       .dma_window_intr_o(dma_window_intr),
+      .hw_fifo_req_o,
+      .hw_fifo_resp_i,
       .spi_flash_intr_event_o(spi_flash_intr),
       .pad_req_o,
       .pad_resp_i,

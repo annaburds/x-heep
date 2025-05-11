@@ -49,6 +49,11 @@ module xilinx_core_v_mini_mcu_wrapper
     inout logic spi_csb_o,
     inout logic spi_sck_o,
 
+    inout logic spi_slave_sck_io,
+    inout logic spi_slave_cs_io,
+    inout logic spi_slave_mosi_io,
+    inout logic spi_slave_miso_io,
+
     inout logic [3:0] spi2_sd_io,
     inout logic [1:0] spi2_csb_o,
     inout logic spi2_sck_o,
