@@ -26,7 +26,6 @@ void wait_for_interrupt(void);
 void dma_intr_handler_trans_done(uint8_t channel){}
 
 int main(int argc, char *argv[]){
-    printf("AAAAAAAA:\n");
     volatile int32_t *addr_p = 0x50000040;
     volatile int32_t *addr_p_external = 0xF0010000;
     volatile int32_t *addr_p_recreg = 0x51000000;
@@ -42,8 +41,8 @@ int main(int argc, char *argv[]){
     uint32_t chunks = TEST_DATA_LARGE / DMA_DATA_LARGE;
     uint32_t remainder = TEST_DATA_LARGE % DMA_DATA_LARGE;
     for (uint32_t i = 0; i < chunks; i++) {
-        SL_CPU_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
-        //SL_DMA_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
+        //SL_CPU_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
+        SL_DMA_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE);
     }
     if (remainder > 0) {
         //SL_CPU_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE, remainder);
