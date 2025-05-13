@@ -16,10 +16,8 @@ To debug the **X-HEEP** SoC running on an FPGA like the ZCU104 using the ILA too
    - Click on **Create Block Design** and name it so that you can easily find it later.
    - Press **+** and search for **System ILA**.
    - Double-click to configure the IP. In **General Options**, choose **Monitor Type** as **Native** to customize your signal probes (interface used for AXI signals). For native probe width propagation, you can leave it as **AUTO**. If you choose **Manual**, you will need to manually specify the bit width of each signal. The **Number of Probes** corresponds to the number of signals you want to monitor. 
-   <div align="center">
-     <img src="./../images/ila_guide/General_Options_ILA.png" alt="General ILA" width="500"/>
-     <p><em>Figure 1: Example General Options ILA.</em></p>
-   </div>
+   
+   ![General ILA](../images/ila_guide/General_Options_ILA.png)
    
    For example, to observe the OBI `obi_req_t` structure:
 
@@ -31,43 +29,52 @@ To debug the **X-HEEP** SoC running on an FPGA like the ZCU104 using the ILA too
      logic [31:0] addr;
      logic [31:0] wdata;
    } obi_req_t;
+   ```
 
 2. **Configure Probes**
    - Inside the Probe_Ports if you have chosen "Manual" probe width propagation you need to manually specify the signals length. In most of the cases you can keep number of comparators to 1, you need  to modify this parameter only if you want to catch this signal being equal to different signals (FSM case). Please refer to the ILA documentation.
-   <div align="center">
-     <img src="./../images/ila_guide/Probe_Ports.png" alt="Probes ILA" width="500"/>
-     <p><em>Figure 1: Example General Options ILA.</em></p>
-   </div>
+   ![Probe_ports](../images/ila_guide/Probe_Ports.png)
    - To keep the IP clean and tidy right click and **make external**. This will allow you to rename the probes and to extract the VHDL script which you will be able to connect within your RTL.
-    <div align="center">
-        <img src="./../images/ila_guide/External_ILA.png" alt="External" width="500"/>
-        <p><em>Figure 1: Example General Options ILA.</em></p>
-    </div>
-
+   ![External_ILA](../images/ila_guide/External_ILA.png)
    - Save it and close it.
 
 4. **Generate RTL wrapper**
    - Inside **Hierarchy** find the ila you just generated (if it is not visible try to click update IP sources).
    - Right click **Create HDL Wrapper**  (In our case we need to connect the ILA within the RTL since X-HEEP does not allow you to see the whole Block Diagram due to the diversity of the HDL languages. For this case we create the HDL wrapper which is needed to beconnected inside the RTL modules).
-   <div align="center">
-     <img src="./../images/ila_guide/ILA_verilog.png" alt="External" width="500"/>
-     <p><em>Figure 1: Example General Options ILA.</em></p>
-   </div>
+   ![External_ILA](../images/ila_guide/ILA_verilog.png)
 
 5. **Connect ILA to your RTL**
    - Connect it to the signals within your RTL by instantiation the ILA module same way as you do for any other module.
 
 6. **Generate Bitstream**
    - You need to synthesize, implement, and regenerate the bitstream with the ILA logic included.
+   ```{note}
+   Your ILA block can not be compiled with mcu-gen/verilator. So you have to rerun your synthesis & implementation with Vivado.
+   ```
 
-7. **Program the Board**
+7. **Program the Board and Use the ILA Debugger**
    - Open *Hardware Manager* and program the FPGA with the new bitstream.
+   You should see the empty waveform window. Then you need to insert your probe trigger signal setting by clicking **+** in the trigger setup window. In your hardware window the status of ILA should be IDLE.
+   - Set up trigget settings:
+   - - Increase **Window Data Depth** to 128 (how many cycles you are gonna catch)
+   - - **Trigger Position Window** is telling you when you are gonna see your signal: 0 - you see the transmission and then WDD of clock cycles, 64 - you see 64 cycles before your trigger and 64 after.
+   
+![Empty_ILA](../images/ila_guide/empty_ILA.png)
+   - CLick run and your status shold change to **Waiting for Trigger**
+   - As soon as you press the SW reset on FPGA you are gonna see your waveforms
 
-8. **Use the ILA Debugger**
-   - In *Hardware Manager*, connect to the FPGA and open the ILA core view.
-   - Set up triggers (e.g., rising edge of `valid`, or value match on `address`).
-   - Run a capture and inspect the waveforms of your internal signals.
-
+![Empty_ILA](../images/ila_guide/waveforms_ILA.png)
+```{note}
+   If when you press **start** button and your status never goes into waiting for trigger mode you might have messed up few things with the clock so check the next point.   
+```
+8. **Troubleshoot**
+   - Be careful with correctly initializing your ILA within your rtl. The clock which is used with ILA should be the same as your system clock and it should not pass any CDCs, Clock Dividors, Resetted Clock or anything which can perturb the system clock. If you use it within core-v-mini-mcu as in the image it should work well.
+   - Not obvious problem could be that the JTAG clock is too fast for your ILA to sense the clock so follow the next steps to solve your problem:
+   - - DO not delete or change anythin in your design if you are sure the clock is safe and sound and your trigger signal is moving (you can run picocom in parallel with ILA and if you see the output on the terminal you are sure that your FPGA is correctly running).
+   - - Close the hardware manager and reopen it without connection to your board. Then **Open Target** -> **Next** -> Select what to connect to 99%  stay on local server and click **Next** -> NOW in the JTAG Clock Frequency choose lower one (in pynq z2 the default one is 15MHz, so you can decrease it to 10 or 5 MHz) and click Next. Try to run and see if the status of your ILA changes to **Waiting for Trigger** and test it with the sw reset.  
+```{Warning}
+   Do not decrease it the JTAG Frequency too much, it is not gonna work either. You need to find the golden middle.
+```
 ---
 
 ### ✅ Tipzzzzzzz
