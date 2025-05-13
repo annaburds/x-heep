@@ -8,4 +8,3 @@ Check this section to run your design on the FPGA.
    :glob:
    RunOnFPGAsS
    *
-Ы
