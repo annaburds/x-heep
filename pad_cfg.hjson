@@ -63,7 +63,7 @@
             type: output
         }
         gpio: {
-            num: 14,
+            num: 11,
             num_offset: 0, #first gpio is gpio0
             type: inout
         }
@@ -97,6 +97,15 @@
             mux: {
                 spi_slave_sck: {
                     type: input
+                }
+                gpio_11: {
+                    type: inout
+                }
+                gpio_13: {
+                    type: inout
+                }
+                gpio_12: {
+                    type: inout
                 }
                 gpio_14: {
                     type: inout

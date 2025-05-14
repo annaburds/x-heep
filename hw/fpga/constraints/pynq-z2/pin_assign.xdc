@@ -72,10 +72,10 @@ set_property -dict {PACKAGE_PIN V10 IOSTANDARD LVCMOS33} [get_ports {gpio_io[7]}
 set_property -dict {PACKAGE_PIN F20 IOSTANDARD LVCMOS33} [get_ports {gpio_io[8]}] ; # rpi_gpio_tri_io[2]
 set_property -dict {PACKAGE_PIN P16 IOSTANDARD LVCMOS33} [get_ports {gpio_io[9]}] ; # rpi_gpio_tri_io[14]
 set_property -dict {PACKAGE_PIN Y13 IOSTANDARD LVCMOS33} [get_ports {gpio_io[10]}] ; # rpi_gpio_tri_io[19]
-set_property -dict {PACKAGE_PIN R16 IOSTANDARD LVCMOS33} [get_ports {gpio_io[11]}] ; # rpi_gpio_tri_io[9]
-set_property -dict {PACKAGE_PIN V6 IOSTANDARD LVCMOS33} [get_ports {gpio_io[12]}] ; # rpi_gpio_tri_io[6]
-set_property -dict {PACKAGE_PIN U13 IOSTANDARD LVCMOS33} [get_ports {gpio_io[13]}] ; # arduino_gpio_tri_io[2]
-set_property -dict {PACKAGE_PIN V13 IOSTANDARD LVCMOS33} [get_ports {gpio_io[14]}] ; # arduino_gpio_tri_io[3]
+#set_property -dict {PACKAGE_PIN R16 IOSTANDARD LVCMOS33} [get_ports {gpio_io[11]}] ; # rpi_gpio_tri_io[9]
+#set_property -dict {PACKAGE_PIN V6 IOSTANDARD LVCMOS33} [get_ports {gpio_io[12]}] ; # rpi_gpio_tri_io[6]
+#set_property -dict {PACKAGE_PIN U13 IOSTANDARD LVCMOS33} [get_ports {gpio_io[13]}] ; # arduino_gpio_tri_io[2]
+#set_property -dict {PACKAGE_PIN V13 IOSTANDARD LVCMOS33} [get_ports {gpio_io[14]}] ; # arduino_gpio_tri_io[3]
 
 # SERIAL LINK
 set_property -dict {PACKAGE_PIN W9 IOSTANDARD LVCMOS33} [get_ports {ddr_rcv_clk_i}] ; # rpi_gpio_tri_io[17]
@@ -115,8 +115,15 @@ set_property -dict {PACKAGE_PIN T16 IOSTANDARD LVCMOS33} [get_ports {spi2_sd_io[
 set_property -dict {PACKAGE_PIN R17 IOSTANDARD LVCMOS33} [get_ports {spi2_sd_io[3]}] ; # arduino_gpio_tri_io[11]
 
 # Tri-color LEDs for TARGET_PYNQ_Z2
-set_property -dict {PACKAGE_PIN M15 IOSTANDARD LVCMOS33} [get_ports {gpio_io[15]}] ; # rgbleds_6bits_tri_o[5]
-set_property -dict {PACKAGE_PIN G14 IOSTANDARD LVCMOS33} [get_ports {gpio_io[16]}] ; # rgbled_6bits_tri_o[3]
+#set_property -dict {PACKAGE_PIN M15 IOSTANDARD LVCMOS33} [get_ports {gpio_io[15]}] ; # rgbleds_6bits_tri_o[5]
+#set_property -dict {PACKAGE_PIN G14 IOSTANDARD LVCMOS33} [get_ports {gpio_io[16]}] ; # rgbled_6bits_tri_o[3]
 
 set_property -dict {PACKAGE_PIN N15 IOSTANDARD LVCMOS33} [get_ports {fifo_empty_o}] ;
 set_property -dict {PACKAGE_PIN L15 IOSTANDARD LVCMOS33} [get_ports {fifo_full_o}] ;
+
+# SPI SLAVE
+set_property -dict {PACKAGE_PIN R16 IOSTANDARD LVCMOS33} [get_ports {spi_slave_sck_io}] ; # rpi_gpio_tri_io[9]
+set_property -dict {PACKAGE_PIN U13 IOSTANDARD LVCMOS33} [get_ports {spi_slave_cs_io}] ; # rpi_gpio_tri_io[6]
+set_property -dict {PACKAGE_PIN V6 IOSTANDARD LVCMOS33} [get_ports {spi_slave_miso_io}] ; # arduino_gpio_tri_io[2]
+
+set_property -dict {PACKAGE_PIN V13 IOSTANDARD LVCMOS33} [get_ports {spi_slave_mosi_io}] ; # arduino_gpio_tri_io[3]

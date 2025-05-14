@@ -41,22 +41,23 @@ filesets:
     - x-heep:ip:pdm2pcm
     - esl_epfl:ip:obi_spi_slave
     files:
-    - hw/core-v-mini-mcu/core_v_mini_mcu.sv
-    - hw/core-v-mini-mcu/cpu_subsystem.sv
-    - hw/core-v-mini-mcu/memory_subsystem.sv
-    - hw/core-v-mini-mcu/xbar_varlat_one_to_n.sv
-    - hw/core-v-mini-mcu/xbar_varlat_n_to_one.sv
-    - hw/core-v-mini-mcu/system_bus.sv
-    - hw/core-v-mini-mcu/system_xbar.sv
-    - hw/core-v-mini-mcu/spi_subsystem.sv
-    - hw/core-v-mini-mcu/debug_subsystem.sv
-    - hw/core-v-mini-mcu/peripheral_subsystem.sv
-    - hw/core-v-mini-mcu/ao_peripheral_subsystem.sv
-    - hw/core-v-mini-mcu/axi2obi.sv
-    - hw/core-v-mini-mcu/double_access_reg.sv
-    - hw/core-v-mini-mcu/clock_divider_simple.sv
-    - hw/core-v-mini-mcu/fifo_serial_link_wrapper.sv
-    file_type: systemVerilogSource
+    - hw/core-v-mini-mcu/core_v_mini_mcu.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/cpu_subsystem.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/memory_subsystem.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/xbar_varlat_one_to_n.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/xbar_varlat_n_to_one.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/system_bus.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/system_xbar.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/spi_subsystem.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/debug_subsystem.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/peripheral_subsystem.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/ao_peripheral_subsystem.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/axi2obi.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/double_access_reg.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/clock_divider_simple.sv:  { file_type: systemVerilogSource }
+    - hw/core-v-mini-mcu/fifo_serial_link_wrapper.sv:  { file_type: systemVerilogSource }
+    #- build/openhwgroup.org_systems_core-v-mini-mcu_0/pynq-z2-vivado/openhwgroup.org_systems_core-v-mini-mcu_0.gen/sources_1/bd/ILA_OBI_test/hdl/ILA_OBI_test_wrapper.v
+    #file_type: systemVerilogSource
 
   rtl-simulation:
     depend:

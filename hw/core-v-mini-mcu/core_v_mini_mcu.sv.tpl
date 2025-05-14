@@ -568,7 +568,15 @@ ${pad.core_v_mini_mcu_interface}
     obi_resp_t  obi_sl_rsp;
 
 
-
+   //ILA_OBI_test_wrapper ILA_OBI_i
+   //(
+   // .addr(core_instr_req.addr),
+   // .be(core_instr_req.be),
+   // .clk_0(clk_i),
+   // .data(core_instr_req.wdata),
+   // .req(core_instr_req.req),
+   // .we(core_instr_req.we)
+   // );1
 
   
 

@@ -92,18 +92,6 @@ module core_v_mini_mcu
     input  logic gpio_10_i,
     output logic gpio_10_oe_o,
 
-    output logic gpio_11_o,
-    input  logic gpio_11_i,
-    output logic gpio_11_oe_o,
-
-    output logic gpio_12_o,
-    input  logic gpio_12_i,
-    output logic gpio_12_oe_o,
-
-    output logic gpio_13_o,
-    input  logic gpio_13_i,
-    output logic gpio_13_oe_o,
-
     output logic spi_flash_sck_o,
     input  logic spi_flash_sck_i,
     output logic spi_flash_sck_oe_o,
@@ -161,6 +149,15 @@ module core_v_mini_mcu
     output logic spi_sd_3_oe_o,
 
     input  logic spi_slave_sck_i,
+    output logic gpio_11_o,
+    input  logic gpio_11_i,
+    output logic gpio_11_oe_o,
+    output logic gpio_13_o,
+    input  logic gpio_13_i,
+    output logic gpio_13_oe_o,
+    output logic gpio_12_o,
+    input  logic gpio_12_i,
+    output logic gpio_12_oe_o,
     output logic gpio_14_o,
     input  logic gpio_14_i,
     output logic gpio_14_oe_o,
@@ -826,7 +823,14 @@ module core_v_mini_mcu
   obi_resp_t obi_sl_rsp;
 
 
-
+  //ILA_OBI_test_wrapper ILA_OBI_i (
+  //    .addr(axi_sl_slave_req.addr),
+  //    .be(axi_sl_slave_req.be),
+  //    .clk_0(clk_i),
+  //    .data(axi_sl_slave_req.wdata),
+  //    .req(axi_sl_slave_req.req),
+  //    .we(axi_sl_slave_req.we)
+  //);
 
 
 
