@@ -1,0 +1,11 @@
+diff --git a/hw/vendor/pulp_platform_axi/src/axi_isolate_inner.sv b/hw/vendor/pulp_platform_axi/src/axi_isolate_inner.sv
+index a1d09d2..9ff6be6 100644
+--- a/hw/vendor/pulp_platform_axi/src/axi_isolate_inner.sv
++++ b/hw/vendor/pulp_platform_axi/src/axi_isolate_inner.sv
+@@ -246,4 +246,4 @@ module axi_isolate_inner #(
+       $fatal(1, "pending_ar_q underflowed");
+ `endif
+ // pragma translate_on
+-endmodule
+\ No newline at end of file
++endmodule
