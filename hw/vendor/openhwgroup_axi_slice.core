@@ -1,0 +1,23 @@
+CAPI=2:
+name : pulp-platform.org::axi_slice
+filesets:
+  rtl:
+    depend:
+    - pulp-platform.org::axi:0.39.4
+    - pulp-platform.org::common_cells
+    - pulp-platform.org::register_interface
+    files:
+    - pulp_platform_axi_slice/src/axi_ar_buffer.sv
+    - pulp_platform_axi_slice/src/axi_aw_buffer.sv
+    - pulp_platform_axi_slice/src/axi_b_buffer.sv
+    - pulp_platform_axi_slice/src/axi_r_buffer.sv
+    - pulp_platform_axi_slice/src/axi_single_slice.sv
+    - pulp_platform_axi_slice/src/axi_slice_wrap.sv
+    - pulp_platform_axi_slice/src/axi_w_buffer.sv
+    - pulp_platform_axi_slice/src/axi_slice.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets : 
+    - rtl

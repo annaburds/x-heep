@@ -1,0 +1,20 @@
+CAPI=2:
+name : pulp-platform.org::per2axi
+
+filesets:
+  rtl:
+    depend:
+    - pulp-platform.org::axi:0.39.4
+    - pulp-platform.org::common_cells
+    - pulp-platform.org::register_interface
+    files:
+    - pulp_platform_per2axi/src/per2axi_busy_unit.sv
+    - pulp_platform_per2axi/src/per2axi_req_channel.sv
+    - pulp_platform_per2axi/src/per2axi_res_channel.sv
+    - pulp_platform_per2axi/src/per2axi.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets : 
+    - rtl

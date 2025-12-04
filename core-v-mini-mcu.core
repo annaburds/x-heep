@@ -21,6 +21,7 @@ filesets:
     - pulp-platform.org::cluster_interconnect
     - pulp-platform.org::riscv_dbg
     - pulp-platform.org::register_interface
+    - pulp-platform.org::serial_link
     #- pulp-platform.org::core2axi
     - openhwgroup.org:ip:soc_ctrl
     - lowrisc:ip:uart:0.1
@@ -38,7 +39,7 @@ filesets:
     - x-heep:ip:fast_intr_ctrl
     - x-heep:ip:obi_fifo
     - x-heep:ip:pdm2pcm
-    - pulp-platform.org::serial-link
+    - x-heep:ip:serial_link
     - esl_epfl:ip:obi_spi_slave
     files:
     - hw/core-v-mini-mcu/core_v_mini_mcu.sv
