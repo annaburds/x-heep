@@ -50,6 +50,30 @@ __attribute__ ((optimize("O0"))) void waiting_for_spc_irq( void )
   }
 }
 
+void dma_run(dma_trans_t * trans)
+{
+    int res = dma_validate_transaction(trans, DMA_ENABLE_REALIGN, DMA_PERFORM_CHECKS_INTEGRITY );
+    PRINTF_DEB("DMA validation result: %d\n\r", res);
+    res = dma_load_transaction(trans);
+    PRINTF_DEB("DMA load result: %d\n\r", res);
+    res = dma_launch(trans);
+    PRINTF_DEB("DMA launch result: %d\n\r", res);
+
+    while( ! dma_is_ready(0)) {
+        /* Disable_interrupts */
+        /* This does not prevent waking up the core as this is controlled by the MIP register */
+        
+        CSR_CLEAR_BITS(CSR_REG_MSTATUS, 0x8);
+        if ( dma_is_ready(0) == 0 ) {
+            asm volatile("wfi");
+            /* From here the core wakes up even if we did not jump to the ISR */
+        }
+        CSR_SET_BITS(CSR_REG_MSTATUS, 0x8);
+    }
+
+    return;
+}
+
 int im2col_nchw_int32(uint8_t test_id, unsigned int *cycles)
 {
     int size_transfer = 0;
@@ -165,7 +189,7 @@ int im2col_nchw_int32(uint8_t test_id, unsigned int *cycles)
         dma_config_flags_t res;
 
         static dma_target_t tgt_src = {
-                                    .ptr        = input_image_nchw,
+                                    .ptr        = (uint8_t*)input_image_nchw,
                                     .inc_d1_du  = STRIDE_D1,
                                     .type       = INPUT_DATATYPE
                             };
@@ -283,10 +307,10 @@ int im2col_nchw_int32(uint8_t test_id, unsigned int *cycles)
                 input_image_ptr = &input_image_nchw[0] + index;
                 PRINTF_DEB("\n\rsrc_ptr: %x dst_ptr: %x\n\r", input_image_ptr, output_data_ptr);
 
-                tgt_src.ptr = input_image_ptr;
+                tgt_src.ptr = (uint8_t*)input_image_ptr;
                 tgt_src.inc_d2_du = src_inc_d2;
 
-                tgt_dst.ptr = output_data_ptr;
+                tgt_dst.ptr = (uint8_t*)output_data_ptr;
 
                 trans.src = &tgt_src;
                 trans.dst = &tgt_dst;
@@ -372,7 +396,7 @@ int im2col_nchw_int32(uint8_t test_id, unsigned int *cycles)
         timer_start();
         #endif
 
-        im2col_spc_init(NULL);
+        im2col_spc_init(0);
 
         static im2col_trans_t im2col_spc_trans = {
           .ch_mask = SPC_CH_MASK,
@@ -449,28 +473,4 @@ int verify()
       }
     
     return errors;
-}
-
-void dma_run(dma_trans_t * trans)
-{
-    int res = dma_validate_transaction(trans, DMA_ENABLE_REALIGN, DMA_PERFORM_CHECKS_INTEGRITY );
-    PRINTF_DEB("DMA validation result: %d\n\r", res);
-    res = dma_load_transaction(trans);
-    PRINTF_DEB("DMA load result: %d\n\r", res);
-    res = dma_launch(trans);
-    PRINTF_DEB("DMA launch result: %d\n\r", res);
-
-    while( ! dma_is_ready(0)) {
-        /* Disable_interrupts */
-        /* This does not prevent waking up the core as this is controlled by the MIP register */
-        
-        CSR_CLEAR_BITS(CSR_REG_MSTATUS, 0x8);
-        if ( dma_is_ready(0) == 0 ) {
-            asm volatile("wfi");
-            /* From here the core wakes up even if we did not jump to the ISR */
-        }
-        CSR_SET_BITS(CSR_REG_MSTATUS, 0x8);
-    }
-
-    return;
 }

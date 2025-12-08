@@ -18,7 +18,7 @@ Following you find ASIC implementations that uses X-HEEP.
 
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/esl-epfl/x-heep/refs/heads/main/docs/source/images/chips/heepocrates.png" />
+  <img src="https://raw.githubusercontent.com/x-heep/x-heep/refs/heads/main/docs/source/images/chips/heepocrates.png" />
 </p>
 
 <p  align="center">Figure 1: HEEPocrates Test Chip layout in TSMC 65nm LP </p>
@@ -64,7 +64,7 @@ Other resources that leverages `HEEPocrates` (silicon implementation, FPGA, or s
 [TCL](https://www.epfl.ch/labs/tcl/) lab of EPFL.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/esl-epfl/x-heep/refs/heads/main/docs/source/images/chips/heepnosis.png" />
+  <img src="https://raw.githubusercontent.com/x-heep/x-heep/refs/heads/main/docs/source/images/chips/heepnosis.png" />
 </p>
 
 <p  align="center">Figure 2: HEEPnosis Test Chip layout in GF 22nm FDX </p>
@@ -140,3 +140,19 @@ In addition to the novel coprocessor and memory units, HEEPatia contains various
 HEEPatia is implemented using a mixture of LVT and SVT cells. Its purposes are to serve as a research platform used for comparing various hardware IPs in terms of PPA trade-offs, and to use a combination of the aforementioned IPs to execute state-of-the-art edge-AI applicaitons.
 
 This chip has been sponsored by [SwissChips](https://swisschips.ethz.ch/).
+
+## polHEEPo
+
+`polHEEPo` is the first silicon tape‑out of the X‑HEEP design carried out by the [VLSI](https://www.vlsilab.polito.it/) lab at the Poltecnico di Torino, Italy.
+
+![polHEEPo](..//images/chips/polheepo.png)
+
+<p  align="center">Figure 5: polHEEPo Test Chip layout in TSMC 65nm LP </p>
+
+The chip was taped out in October 2025. The chosen X-HEEP configuration for this SoC includes a CV32E40P CPU, an NtoM bus topology and ten interleaved banks of 32 KB each for a total of 320 KB of on-chip memory. Peripherals include a 4 channel DMA, configured to have 4 maasters on the bus, SPI interfaces, an I2C interface, GPIOs, a UART, and JTAG. 
+
+polHEEPo integrates different accelerators to target many applications, from edge AI and ML to postquantum cryptography. These include [KECCAK](https://dl.acm.org/doi/abs/10.1145/3587135.3591432), [ASCON](https://ieeexplore.ieee.org/abstract/document/11130264), and ROGUE, targeting post-quantum cryptography, lightweight cryptography, and AI/ML workloads. There is also [PUFFo](https://www.mdpi.com/1424-8220/25/6/1678), which is a hardware Physically Unclonable Function (PUF) module, enabling on-chip generation of unique and tamper-resistant cryptographic keys. 
+
+The design uses LVT cells, slim digital IOs, and CUP bondpads, and memory macros sourced from TSMC.
+
+This chip has been sponsored by project SERICS (PE00000014) under the MUR National Recovery and Resilience Plan funded by the European Union – NextGenerationEU with the collaboration of [Chips-IT foundation](https://www.chips.it).

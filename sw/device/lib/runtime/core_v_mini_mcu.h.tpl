@@ -127,14 +127,20 @@ extern "C" {
 #define ${key.upper()} ${value}
 % endfor
 
-% if pads_attributes != None:
-% for pad in pad_list:
+% if xheep.get_padring().pads_attributes != None:
+% for pad in xheep.get_padring().pad_list:
 #define ${pad.localparam}_ATTRIBUTE ${pad.index}
 % endfor
 % endif
 
 #define GPIO_AO_DOMAIN_LIMIT 8
 
+#ifndef __ASSEMBLER__
+//heep functions prototypes
+uint32_t * heep_get_flash_address_offset(uint32_t* data_address_lma);
+void heep_init_lfsr();
+uint32_t heep_rand_lfsr();
+#endif // __ASSEMBLER__
 
 #ifdef __cplusplus
 }  // extern "C"

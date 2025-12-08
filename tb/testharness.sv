@@ -9,13 +9,13 @@ import UPF::*;
 
 
 module testharness #(
-    parameter COREV_PULP                  = 0,
-    parameter FPU                         = 0,
-    parameter ZFINX                       = 0,
-    parameter X_EXT                       = 0,         // eXtension interface in cv32e40x
-    parameter JTAG_DPI                    = 0,
-    parameter USE_EXTERNAL_DEVICE_EXAMPLE = 1,
-    parameter CLK_FREQUENCY               = 'd100_000  //KHz
+    parameter bit COREV_PULP                  = 0,
+    parameter bit FPU                         = 0,
+    parameter bit ZFINX                       = 1,
+    parameter bit X_EXT                       = 0,         // eXtension interface in cv32e40x
+    parameter bit JTAG_DPI                    = 0,
+    parameter bit USE_EXTERNAL_DEVICE_EXAMPLE = 1,
+    parameter     CLK_FREQUENCY               = 'd100_000  //KHz
 ) (
 `ifdef VERILATOR
     input  wire         clk_i,
@@ -214,7 +214,6 @@ module testharness #(
     $display("%t: the parameter FPU is %x", $time, FPU);
     $display("%t: the parameter ZFINX is %x", $time, ZFINX);
     $display("%t: the parameter X_EXT is %x", $time, X_EXT);
-    $display("%t: the parameter ZFINX is %x", $time, ZFINX);
     $display("%t: the parameter JTAG_DPI is %x", $time, JTAG_DPI);
     $display("%t: the parameter EXT_DOMAINS is %x", $time, core_v_mini_mcu_pkg::EXTERNAL_DOMAINS);
     $display("%t: the parameter USE_EXTERNAL_DEVICE_EXAMPLE is %x", $time,
@@ -398,14 +397,17 @@ module testharness #(
 
   // Power switch emulation
   // ----------------------
-  assign external_subsystem_powergate_switch_ack_n[0] = external_subsystem_powergate_switch_n;
-  assign cpu_subsystem_powergate_switch_ack_n[0] = cpu_subsystem_powergate_switch_n;
-  assign peripheral_subsystem_powergate_switch_ack_n[0] = peripheral_subsystem_powergate_switch_n;
   always_ff @(posedge clk_i) begin : blockName
-    for (int unsigned i = 0; i < SWITCH_ACK_LATENCY; i++) begin
-      external_subsystem_powergate_switch_ack_n[i+1] <= external_subsystem_powergate_switch_ack_n[i];
-      cpu_subsystem_powergate_switch_ack_n[i+1] <= cpu_subsystem_powergate_switch_ack_n[i];
-      peripheral_subsystem_powergate_switch_ack_n[i+1] <= peripheral_subsystem_powergate_switch_ack_n[i];
+    for (int unsigned i = 0; i <= SWITCH_ACK_LATENCY; i++) begin
+      if (i == 0) begin
+        external_subsystem_powergate_switch_ack_n[0] <= external_subsystem_powergate_switch_n;
+        cpu_subsystem_powergate_switch_ack_n[0] <= cpu_subsystem_powergate_switch_n;
+        peripheral_subsystem_powergate_switch_ack_n[0] <= peripheral_subsystem_powergate_switch_n;
+      end else begin
+        external_subsystem_powergate_switch_ack_n[i] <= external_subsystem_powergate_switch_ack_n[i-1];
+        cpu_subsystem_powergate_switch_ack_n[i] <= cpu_subsystem_powergate_switch_ack_n[i-1];
+        peripheral_subsystem_powergate_switch_ack_n[i] <= peripheral_subsystem_powergate_switch_ack_n[i-1];
+      end
     end
   end
 
@@ -682,7 +684,7 @@ module testharness #(
           .io3(spi_flash_sd_io[3])
       );
 
-      if ((core_v_mini_mcu_pkg::CpuType == cv32e40x || core_v_mini_mcu_pkg::CpuType == cv32e40px) && X_EXT != 0) begin: gen_fpu_ss_wrapper
+      if ((core_v_mini_mcu_pkg::CpuType == cv32e40x || core_v_mini_mcu_pkg::CpuType == cv32e40px || (ZFINX && core_v_mini_mcu_pkg::CpuType == cv32e20)) && X_EXT != 0) begin: gen_fpu_ss_wrapper
         fpu_ss_wrapper #(
             .PULP_ZFINX(ZFINX),
             .INPUT_BUFFER_DEPTH(1),

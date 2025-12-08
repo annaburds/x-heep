@@ -8,7 +8,7 @@
 sudo apt install pkg-config libftdi1-2
 ```
 
-You need at least gcc>10, so in case you do not have it:
+You need at least GCC>10, so in case you do not have it:
 
 ```
 sudo apt install gcc-10 g++-10
@@ -65,7 +65,7 @@ make questasim-build FUSESOC_PARAM="--JTAG_DPI=1"
 then, go to your target system built folder
 
 ```
-cd ./build/openhwgroup.org_systems_core-v-mini-mcu_0/sim-modelsim/
+cd ./build/openhwgroup.org_systems_core-v-mini-mcu_<version>/sim-modelsim/
 ```
 
 and type to run your compiled software:
@@ -255,7 +255,7 @@ openocd -f ./tb/core-v-mini-mcu-nexsys-hs2.cfg
 or with the EPFL Programmer using this command:
 
 ```
-openocd -f ./tb/core-v-mini-mcu-pynq-z2-esl-programmer.cfg
+openocd -f ./tb/core-v-mini-mcu-esl-programmer.cfg
 ```
 
 or with the EPFL Programmer also using this other command (**strongly recommended**):

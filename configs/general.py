@@ -4,7 +4,6 @@ from x_heep_gen.bus_type import BusType
 from x_heep_gen.memory_ss.memory_ss import MemorySS
 from x_heep_gen.memory_ss.linker_section import LinkerSection
 from x_heep_gen.peripherals.base_peripherals import (
-    BasePeripheralDomain,
     SOC_ctrl,
     Bootrom,
     SPI_flash,
@@ -17,8 +16,11 @@ from x_heep_gen.peripherals.base_peripherals import (
     Pad_control,
     GPIO_ao,
 )
+
+from x_heep_gen.peripherals.base_peripherals_domain import BasePeripheralDomain
+from x_heep_gen.peripherals.user_peripherals_domain import UserPeripheralDomain
+
 from x_heep_gen.peripherals.user_peripherals import (
-    UserPeripheralDomain,
     RV_plic,
     SPI_host,
     GPIO,
@@ -37,9 +39,8 @@ def config():
 
     memory_ss = MemorySS()
     memory_ss.add_ram_banks([32] * 2)
-    memory_ss.add_ram_banks_il(2, 64, "data_interleaved")
-    memory_ss.add_linker_section(LinkerSection.by_size("code", 0, 0x00000C800))
-    memory_ss.add_linker_section(LinkerSection("data", 0x00000C800, None))
+    memory_ss.add_linker_section(LinkerSection.by_size("code", 0, 0x00000E800))
+    memory_ss.add_linker_section(LinkerSection("data", 0x00000E800, None))
     system.set_memory_ss(memory_ss)
 
     # Peripheral domains initialization
@@ -47,6 +48,15 @@ def config():
     user_peripheral_domain = UserPeripheralDomain()
 
     # Base peripherals. All base peripherals must be added. They can be either added with "add_peripheral" or "add_missing_peripherals" (adds all base peripherals).
+    base_peripheral_domain.add_peripheral(
+        DMA(
+            address=0x30000,
+            length=0x10000,
+            num_channels=4,
+            num_master_ports=2,
+            num_channels_per_master_port=2,
+        )
+    )
     base_peripheral_domain.add_missing_peripherals()
 
     # User peripherals. All are optional. They must be added with "add_peripheral".
