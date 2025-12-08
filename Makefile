@@ -61,7 +61,7 @@ XHEEP_CONFIG_CACHE ?= $(BUILD_DIR)/xheep_config_cache.pickle
 # Compiler options are 'gcc' (default) and 'clang'
 COMPILER 		?= gcc
 # Compiler prefix options are 'riscv32-unknown-' (default) and 'riscv32-corev-'
-COMPILER_PREFIX ?= riscv32-unknown-
+COMPILER_PREFIX ?= riscv32-corev-
 # Compiler flags to be passed (for both linking and compiling)
 COMPILER_FLAGS 	?=
 # Arch options are any RISC-V ISA string supported by the CPU. Default 'rv32imc_zicsr'
