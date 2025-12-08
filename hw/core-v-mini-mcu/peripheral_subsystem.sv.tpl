@@ -86,8 +86,8 @@ module peripheral_subsystem
     //Serial Link
     input  logic [serial_link_single_channel_reg_pkg::NumChannels-1:0]    ddr_rcv_clk_i,  
     output logic [serial_link_single_channel_reg_pkg::NumChannels-1:0]    ddr_rcv_clk_o,
-    input  logic [serial_link_single_channel_reg_pkg::NumChannels-1:0][serial_link_pkg::NumLanes-1:0] ddr_i,
-    output logic [serial_link_single_channel_reg_pkg::NumChannels-1:0][serial_link_pkg::NumLanes-1:0] ddr_o,
+    input  logic [serial_link_single_channel_reg_pkg::NumChannels-1:0][serial_link_minimum_axi_pkg::NumLanes-1:0] ddr_i,
+    output logic [serial_link_single_channel_reg_pkg::NumChannels-1:0][serial_link_minimum_axi_pkg::NumLanes-1:0] ddr_o,
     %endif
     // PDM2PCM Interface
     output logic pdm2pcm_clk_o,
@@ -633,8 +633,6 @@ module peripheral_subsystem
 
 % if user_peripheral_domain.contains_peripheral('serial_link'):
   serial_link_xheep_wrapper #(
-    .NumChannels(1),
-    .NumLanes(4),
     .MaxClkDiv(32),
     .AddrWidth(32),
     .DataWidth(32)

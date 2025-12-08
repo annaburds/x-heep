@@ -154,8 +154,8 @@ module testharness #(
   reg_req_t periph_slave_req;
   reg_rsp_t periph_slave_rsp;
 
-  logic [serial_link_single_channel_reg_pkg::NumChannels-1:0][serial_link_pkg::NumLanes-1:0] ddr_i_xheep;  // check NumLanes parameter
-  logic [serial_link_single_channel_reg_pkg::NumChannels-1:0][serial_link_pkg::NumLanes-1:0] ddr_o_xheep;
+  logic [serial_link_single_channel_reg_pkg::NumChannels-1:0][serial_link_minimum_axi_pkg::NumLanes-1:0] ddr_i_xheep;
+  logic [serial_link_single_channel_reg_pkg::NumChannels-1:0][serial_link_minimum_axi_pkg::NumLanes-1:0] ddr_o_xheep;
   logic [serial_link_single_channel_reg_pkg::NumChannels-1:0] clk_sl_int2ext;
   logic [serial_link_single_channel_reg_pkg::NumChannels-1:0] clk_sl_ext2int;
 
@@ -707,8 +707,6 @@ module testharness #(
 
 
       serial_link_xheep_wrapper #(
-          .NumChannels(1),
-          .NumLanes(4),
           .MaxClkDiv(32),
           .AddrWidth(32),
           .DataWidth(32)

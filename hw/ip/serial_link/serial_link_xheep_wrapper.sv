@@ -3,10 +3,6 @@ module serial_link_xheep_wrapper
   import serial_link_minimum_axi_pkg::*;
   import axi_pkg::*;
 #(
-    //parameter MODE = 0,
-    parameter int NumChannels = 1,
-    //parameter int NumChannels = 32,
-    parameter int NumLanes = 4,  //8,
     parameter int MaxClkDiv = 32,
     parameter int AddrWidth = 32,
     parameter int DataWidth = 32
@@ -28,10 +24,10 @@ module serial_link_xheep_wrapper
     output reg_pkg::reg_rsp_t cfg_rsp_o,
 
 
-    input  logic [NumChannels-1:0]    ddr_rcv_clk_i,
-    output logic [NumChannels-1:0]    ddr_rcv_clk_o,
-    input  logic [NumChannels-1:0][NumLanes-1:0] ddr_i,
-    output logic [NumChannels-1:0][NumLanes-1:0] ddr_o
+    input logic [serial_link_minimum_axi_pkg::NumChannels-1:0] ddr_rcv_clk_i,
+    output logic [serial_link_minimum_axi_pkg::NumChannels-1:0] ddr_rcv_clk_o,
+    input  logic [serial_link_minimum_axi_pkg::NumChannels-1:0][serial_link_minimum_axi_pkg::NumLanes-1:0] ddr_i,
+    output logic [serial_link_minimum_axi_pkg::NumChannels-1:0][serial_link_minimum_axi_pkg::NumLanes-1:0] ddr_o
 
 );
 
@@ -60,7 +56,6 @@ module serial_link_xheep_wrapper
       .AxiAddrWidth(AddrWidth),
       .DataWidth   (DataWidth),
       .MaxRequests (DataWidth),  // fifo size
-      //.AxiProt         ( AxiProt  ),
       .axi_req_t   (serial_link_minimum_axi_pkg::axi_req_t),
       .axi_rsp_t   (serial_link_minimum_axi_pkg::axi_resp_t)
   ) i_obi2axi (
@@ -125,37 +120,6 @@ module serial_link_xheep_wrapper
       .rst_ni(rst_ni)
   );
 
-  //assign fast_sl_rsp_O.ar_ready = 1;
-  //assign fast_sl_rsp_O.aw_ready = 1;
-  //assign fast_sl_rsp_O.w_ready  = 1;
-
-  // axi_to_mem #(
-  //   .axi_req_t(axi_req_t),
-  //   .axi_resp_t(axi_rsp_t),
-  //   .AddrWidth(AddrWidth),
-  //   .DataWidth(DataWidth),
-  //   //.IdWidth(),
-  //   .NumBanks(1),
-  //   //.BufDepth(),
-  //   //.HideStrb(),
-  //   .OutFifoDepth(1)
-  //   ) axi_to_mem_i(
-  //   .clk_i,
-  //   .rst_ni,
-  //   .busy_o(),
-  //   .axi_req_i(axi_out_req_o),
-  //   .axi_resp_o(axi_out_rsp_i),
-  //   .mem_req_o(obi_req_o.req),
-  //   .mem_gnt_i(obi_rsp_o.gnt),
-  //   .mem_addr_o(obi_req_o.addr),
-  //   .mem_wdata_o(obi_req_o.wdata),
-  //   .mem_strb_o(),
-  //   .mem_atop_o(),
-  //   .mem_we_o(obi_req_o.we),
-  //   .mem_rvalid_i(obi_rsp_o.rvalid),
-  //   .mem_rdata_i(obi_rsp_o.rdata)
-  // );
-
 
 
   tc_clk_mux2 i_tc_reset_mux (
@@ -181,8 +145,8 @@ module serial_link_xheep_wrapper
         .cfg_rsp_t  (reg_pkg::reg_rsp_t),
         .hw2reg_t   (serial_link_reg_pkg::serial_link_hw2reg_t),
         .reg2hw_t   (serial_link_reg_pkg::serial_link_reg2hw_t),
-        .NumChannels(NumChannels),
-        .NumLanes   (NumLanes),
+        .NumChannels(serial_link_minimum_axi_pkg::NumChannels),
+        .NumLanes   (serial_link_minimum_axi_pkg::NumLanes),
         .MaxClkDiv  (MaxClkDiv)
     ) i_serial_link (
         .clk_i        (clk_i),
@@ -196,9 +160,6 @@ module serial_link_xheep_wrapper
         .axi_in_rsp_o (axi_in_rsp_o),
         .axi_out_req_o(fast_sl_req_O),
         .axi_out_rsp_i(fast_sl_rsp_O),
-        // .axi_out_req_o  ( axi_out_req_o     ),
-        // .axi_out_rsp_i  ( axi_out_rsp_i     ),
-
         .cfg_req_i    (cfg_req_i),
         .cfg_rsp_o    (cfg_rsp_o),
         .ddr_rcv_clk_i(ddr_rcv_clk_i),
@@ -226,8 +187,8 @@ module serial_link_xheep_wrapper
         .cfg_rsp_t  (reg_pkg::reg_rsp_t),
         .hw2reg_t   (serial_link_single_channel_reg_pkg::serial_link_single_channel_hw2reg_t),
         .reg2hw_t   (serial_link_single_channel_reg_pkg::serial_link_single_channel_reg2hw_t),
-        .NumChannels(NumChannels),
-        .NumLanes   (NumLanes),
+        .NumChannels(serial_link_minimum_axi_pkg::NumChannels),
+        .NumLanes   (serial_link_minimum_axi_pkg::NumLanes),
         .MaxClkDiv  (MaxClkDiv)
     ) i_serial_link (
         .clk_i        (clk_i),
@@ -241,8 +202,6 @@ module serial_link_xheep_wrapper
         .axi_in_rsp_o (axi_in_rsp_o),
         .axi_out_req_o(fast_sl_req_O),
         .axi_out_rsp_i(fast_sl_rsp_O),
-        // .axi_out_req_o  ( axi_out_req_o     ),
-        // .axi_out_rsp_i  ( axi_out_rsp_i     ),
         .cfg_req_i    (cfg_req_i),
         .cfg_rsp_o    (cfg_rsp_o),
         .ddr_rcv_clk_i(ddr_rcv_clk_i),

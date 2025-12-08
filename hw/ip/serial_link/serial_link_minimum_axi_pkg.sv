@@ -7,20 +7,11 @@ package serial_link_minimum_axi_pkg;
   parameter int unsigned AXI_DATA_WIDTH = 32;
   parameter int unsigned AXI_USER_WIDTH = 1;  //8
   parameter int unsigned AXI_ID_WIDTH = 1;  //8
+  parameter int NumChannels = 1;
+  parameter int NumLanes = 4;  //8,
 
   parameter int unsigned AxiDataWidth = 32;
-  // parameter int unsigned RegDataWidth = 32;
-  // parameter int unsigned StreamDataBytes = 32;
   localparam int unsigned AxiStrbWidth = AxiDataWidth / 8;
-  // localparam int unsigned RegStrbWidth = RegDataWidth / 8;
-  // typedef logic [StreamDataBytes*8-1:0] tdata_t;
-  // typedef logic [StreamDataBytes-1:0] tstrb_t;
-  // typedef logic [StreamDataBytes-1:0] tkeep_t;
-  // typedef logic tlast_t;
-  // typedef logic id_t;
-  // typedef logic tdest_t;
-  // typedef logic tuser_t;
-  // typedef logic tready_t;
   typedef logic [AXI_ADDR_WIDTH-1:0] axi_addr_t;
   typedef logic [AXI_DATA_WIDTH-1:0] axi_data_t;
   typedef logic [AxiStrbWidth-1:0] axi_strb_t;
