@@ -6,21 +6,19 @@
 //
 //
 
-`include "common_cells/assertions.svh"
+`include "prim_assert.sv"
 
 module spi_host
   import spi_host_reg_pkg::*;
 #(
-  parameter logic [NumAlerts-1:0] AlertAsyncOn = {NumAlerts{1'b1}},
-  parameter type reg_req_t = logic,
-  parameter type reg_rsp_t = logic
+  parameter logic [NumAlerts-1:0] AlertAsyncOn = {NumAlerts{1'b1}}
 ) (
   input              clk_i,
   input              rst_ni,
 
   // Register interface
-  input              reg_req_t reg_req_i,
-  output             reg_rsp_t reg_rsp_o,
+  input              tlul_pkg::tl_h2d_t tl_i,
+  output             tlul_pkg::tl_d2h_t tl_o,
 
   // Alerts
   input  prim_alert_pkg::alert_rx_t [NumAlerts-1:0] alert_rx_i,
@@ -39,10 +37,6 @@ module spi_host
   input  spi_device_pkg::passthrough_req_t passthrough_i,
   output spi_device_pkg::passthrough_rsp_t passthrough_o,
 
-  // DMA Interface
-  output logic             rx_valid_o,
-  output logic             tx_ready_o,
-
   output logic             intr_error_o,
   output logic             intr_spi_event_o
 );
@@ -52,29 +46,26 @@ module spi_host
   spi_host_reg2hw_t reg2hw;
   spi_host_hw2reg_t hw2reg;
 
-  reg_req_t [1:0] fifo_win_h2d;
-  reg_rsp_t [1:0] fifo_win_d2h;
+  tlul_pkg::tl_h2d_t fifo_win_h2d [2];
+  tlul_pkg::tl_d2h_t fifo_win_d2h [2];
 
   // Register module
   logic [NumAlerts-1:0] alert_test, alerts;
-  spi_host_reg_top #(
-    .reg_req_t (reg_req_t),
-    .reg_rsp_t (reg_rsp_t)
-  ) u_reg (
+  spi_host_reg_top u_reg (
     .clk_i,
     .rst_ni,
-    .reg_req_i,
-    .reg_rsp_o,
-    .reg_req_win_o (fifo_win_h2d),
-    .reg_rsp_win_i (fifo_win_d2h),
+    .tl_i       (tl_i),
+    .tl_o       (tl_o),
+    .tl_win_o   (fifo_win_h2d),
+    .tl_win_i   (fifo_win_d2h),
     .reg2hw,
     .hw2reg,
     // SEC_CM: BUS.INTEGRITY
+    .intg_err_o (alerts[0]),
     .devmode_i  (1'b1)
   );
 
   // Alerts
-  assign alerts[0] = 1'b0;
   assign alert_test = {
     reg2hw.alert_test.q &
     reg2hw.alert_test.qe
@@ -135,7 +126,7 @@ module spi_host
   end                   : gen_passthrough_implementation
   else begin            : gen_passthrough_ignore
      // Passthrough only supported for instances with one CSb line
-    `ASSERT(PassthroughNumCSCompat_A, $isunknown(rst_ni) || (!passthrough_i.passthrough_en), clk_i, rst_ni)
+    `ASSERT(PassthroughNumCSCompat_A, !passthrough_i.passthrough_en, clk_i, rst_ni)
 
     assign cio_sck_o    = sck;
     assign cio_sck_en_o = output_en;
@@ -304,10 +295,7 @@ module spi_host
   logic        rx_valid;
   logic        rx_ready;
 
-  spi_host_window #(
-    .reg_req_t  (reg_req_t),
-    .reg_rsp_t  (reg_rsp_t)
-  ) u_window (
+  spi_host_window u_window (
     .clk_i,
     .rst_ni,
     .rx_win_i   (fifo_win_h2d[0]),
@@ -337,9 +325,6 @@ module spi_host
 
   logic        tx_empty, tx_full, tx_wm;
   logic        rx_empty, rx_full, rx_wm;
-
-  assign rx_valid_o = rx_valid;
-  assign tx_ready_o = tx_ready;
 
   assign rx_watermark = reg2hw.control.rx_watermark.q;
   assign tx_watermark = reg2hw.control.tx_watermark.q;
@@ -616,7 +601,8 @@ module spi_host
   );
 
 
-  `ASSERT_KNOWN(TlAReadyKnownO_A, reg_rsp_o.ready)
+  `ASSERT_KNOWN(TlDValidKnownO_A, tl_o.d_valid)
+  `ASSERT_KNOWN(TlAReadyKnownO_A, tl_o.a_ready)
   `ASSERT_KNOWN(AlertKnownO_A, alert_tx_o)
   `ASSERT_KNOWN(CioSckKnownO_A, cio_sck_o)
   `ASSERT_KNOWN(CioSckEnKnownO_A, cio_sck_en_o)
@@ -630,4 +616,6 @@ module spi_host
   `ASSERT_KNOWN_IF(PassthroughKnownO_A, passthrough_o,
     passthrough_i.passthrough_en && passthrough_i.csb_en && !passthrough_i.csb)
 
+  // Alert assertions for reg_we onehot check
+  `ASSERT_PRIM_REG_WE_ONEHOT_ERROR_TRIGGER_ALERT(RegWeOnehotCheck_A, u_reg, alert_tx_o[0])
 endmodule : spi_host

@@ -127,9 +127,8 @@ module addr_decode #(
       $fatal(1, $sformatf("At least one index needed"));
   end
 
-  // Assertion commented to avoid this warning while using the interleaved bus
-  // assert final ($onehot0(matched_rules)) else
-  //   $warning("More than one bit set in the one-hot signal, matched_rules");
+  assert final ($onehot0(matched_rules)) else
+    $warning("More than one bit set in the one-hot signal, matched_rules");
 
   // These following assumptions check the validity of the address map.
   // The assumptions gets generated for each distinct pair of rules.
