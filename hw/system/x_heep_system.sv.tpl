@@ -138,14 +138,13 @@ ${pad.internal_signals}
     .AO_SPC_NUM(AO_SPC_NUM),
     .EXT_HARTS(EXT_HARTS)
   ) core_v_mini_mcu_i (
-    % if user_peripheral_domain.contains_peripheral('serial_link'):
+  % if user_peripheral_domain.contains_peripheral('serial_link'):
     //Serial Link
     .ddr_rcv_clk_i,  
     .ddr_rcv_clk_o,
     .ddr_i,
     .ddr_o,
-    %endif
-% if total_pad_muxed > 0:
+  %endif
     .rst_ni(rst_ngen),
 % for pad in xheep.get_padring().pad_list:
 ${pad.core_v_mini_mcu_bonding}
