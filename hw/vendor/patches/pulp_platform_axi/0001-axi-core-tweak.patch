@@ -8,10 +8,10 @@ Subject: [PATCH] pulp_platform_axi: tweak src/axi.core common cells
  hw/vendor/pulp_platform_axi/axi.core | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/hw/vendor/pulp_platform_axi/axi.core b/hw/vendor/pulp_platform_axi/axi.core
+diff --git a/axi.core b/axi.core
 index 5d17f61..d9b7b97 100644
---- a/hw/vendor/pulp_platform_axi/axi.core
-+++ b/hw/vendor/pulp_platform_axi/axi.core
+--- a/axi.core
++++ b/axi.core
 @@ -71,14 +71,13 @@ filesets:
        - src/axi_chan_compare.sv
        - src/axi_dumper.sv
