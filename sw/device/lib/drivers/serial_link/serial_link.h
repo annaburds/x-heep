@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include "x-heep.h"
 #include "core_v_mini_mcu.h"

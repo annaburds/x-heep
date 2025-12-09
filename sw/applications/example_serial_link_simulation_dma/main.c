@@ -28,7 +28,12 @@ int main(int argc, char *argv[]){
     
     // DMA
     for (uint32_t i = 0; i < chunks; i++) {
-        SL_DMA_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE,SL_EXTERNAL_WRITE,SL_INTERNAL_READ );
+        SL_DMA_TRANS(
+        to_be_sent_4B  + i * DMA_DATA_LARGE,   // src_d
+        copied_data_4B + i * DMA_DATA_LARGE,   // dst_d
+        SL_EXTERNAL_WRITE,                     // src (FIFO addr)
+        SL_INTERNAL_READ,                      // dst (FIFO addr)
+        DMA_DATA_LARGE);
     }
     if (remainder > 0) {
         SL_DMA_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE,SL_EXTERNAL_WRITE,SL_INTERNAL_READ,remainder);
@@ -37,10 +42,20 @@ int main(int argc, char *argv[]){
 
     // CPU
     for (uint32_t i = 0; i < chunks; i++) {
-        SL_CPU_TRANS(to_be_sent_4B + i * DMA_DATA_LARGE, copied_data_4B + i * DMA_DATA_LARGE, DMA_DATA_LARGE,SL_EXTERNAL_WRITE,SL_INTERNAL_READ );
+        SL_CPU_TRANS(
+        to_be_sent_4B  + i * DMA_DATA_LARGE,
+        copied_data_4B + i * DMA_DATA_LARGE,
+        SL_EXTERNAL_WRITE,
+        SL_INTERNAL_READ,
+        DMA_DATA_LARGE);
     }
     if (remainder > 0) {        
-        SL_CPU_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE,SL_EXTERNAL_WRITE,SL_INTERNAL_READ,remainder);
+        SL_CPU_TRANS(
+        to_be_sent_4B  + chunks * DMA_DATA_LARGE,
+        copied_data_4B + chunks * DMA_DATA_LARGE,
+        SL_EXTERNAL_WRITE,
+        SL_INTERNAL_READ,
+        remainder);
     }
 
     printf("CPU DONE\n"); 
