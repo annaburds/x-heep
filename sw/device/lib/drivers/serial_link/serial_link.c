@@ -1,6 +1,7 @@
 
 
 #include <stdio.h>
+#include <stdint.h>
 #include "serial_link.h"
 #include "serial_link_single_channel_regs.h" 
 #include "serial_link_regs.h"
@@ -97,12 +98,12 @@ void __attribute__ ((optimize("00"))) SL_DMA_TRANS(uint32_t *src_d, uint32_t *ds
 
 
         dma_init(NULL);
-        tgt_src_d.ptr = (uint32_t *)src_d;
+        tgt_src_d.ptr = (uint8_t *)src_d;
         tgt_src_d.inc_d1_du = 1;
         tgt_src_d.trig = DMA_TRIG_MEMORY;
         tgt_src_d.type = DMA_DATA_TYPE_WORD;
 
-        tgt_dst_d.ptr = (uint32_t *)src;
+        tgt_dst_d.ptr = (uint8_t *)src;
         tgt_dst_d.inc_d1_du = 0;
         tgt_dst_d.trig = DMA_TRIG_MEMORY;
         tgt_dst_d.type = DMA_DATA_TYPE_WORD;
@@ -129,12 +130,12 @@ void __attribute__ ((optimize("00"))) SL_DMA_TRANS(uint32_t *src_d, uint32_t *ds
 
 
         dma_init(NULL);
-        tgt_src_d.ptr = (uint32_t *)dst;
+        tgt_src_d.ptr = (uint8_t *)dst;
         tgt_src_d.inc_d1_du = 0;
         tgt_src_d.trig = DMA_TRIG_MEMORY;
         tgt_src_d.type = DMA_DATA_TYPE_WORD;
 
-        tgt_dst_d.ptr = (uint32_t *)dst_d;
+        tgt_dst_d.ptr = (uint8_t *)dst_d;
         tgt_dst_d.inc_d1_du = 1;
         tgt_dst_d.trig = DMA_TRIG_MEMORY;
         tgt_dst_d.type = DMA_DATA_TYPE_WORD;
