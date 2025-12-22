@@ -1,3 +1,11 @@
+/*
+ * Copyright 2025 EPFL
+ * Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+ * SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+ *  
+ * Info: Wrapper for the Serial Link D2D IP to receive the data 
+ *       as an array saved into the fifo and not as a master request to the bus
+ */
 module fifo_serial_link_wrapper #(
 
     parameter type axi_req_t = logic,
@@ -22,19 +30,8 @@ module fifo_serial_link_wrapper #(
     output logic [DATA_WIDTH-1:0] reader_rdata_o,
     input  logic [DATA_WIDTH-1:0] reader_wdata_i,
 
-    // request from the serial link
-    input  axi_req_t writer_axi_req,
+    input axi_req_t writer_axi_req,
     output axi_rsp_t writer_axi_rsp,
-
-    // input  logic                  writer_req_i,     // req.w_valid
-    // output logic                  writer_gnt_o,     
-    // output logic                  writer_rvalid_o,  // rsp.b_valid
-    // input  logic [ADDR_WIDTH-1:0] writer_addr_i,    // req.ar.addr
-    // input  logic                  writer_we_i,      // 1
-    // input  logic [           3:0] writer_be_i,      // 0
-    // output logic [DATA_WIDTH-1:0] writer_rdata_o,   // rsp.r.data
-    // input  logic [DATA_WIDTH-1:0] writer_wdata_i,   // req.w.data
-
     output logic fifo_empty_o,
     output logic fifo_full_o,
 
@@ -45,22 +42,16 @@ module fifo_serial_link_wrapper #(
   logic push, pop, full, empty;
   logic [DATA_WIDTH-1:0] reader_rdata_n;
 
-  // assign writer_rdata_o = 0;
-
-  // assign writer_gnt_o = ~full;
   assign reader_gnt_o = ~empty;
 
-  // assign push = (~full) & writer_req_i & (writer_we_i);
   assign push = writer_axi_req.w_valid & writer_axi_rsp.w_ready;
   assign pop = (~empty) & reader_req_i & (~reader_we_i);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      // writer_rvalid_o <= 0;
       reader_rvalid_o <= 0;
       reader_rdata_o  <= 0;
     end else begin
-      // writer_rvalid_o <= push;
       reader_rvalid_o <= pop;
       reader_rdata_o  <= reader_rdata_n;
     end

@@ -25,7 +25,7 @@ package testharness_pkg;
   localparam logic [31:0] SLOW_MEMORY1_IDX = 32'd1;
 
   //slave sl
-  localparam logic [31:0] SL_EXT_START_ADDRESS = core_v_mini_mcu_pkg::EXT_SLAVE_START_ADDRESS + 32'h20000;
+  localparam logic [31:0] SL_EXT_START_ADDRESS = SLOW_MEMORY_END_ADDRESS;
   localparam logic [31:0] SL_EXT_SIZE = 32'h200;
   localparam logic [31:0] SL_EXT_END_ADDRESS = SL_EXT_START_ADDRESS + SL_EXT_SIZE;
   localparam logic [31:0] SL_EXT_IDX = 32'd2;

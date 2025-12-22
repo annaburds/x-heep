@@ -18,7 +18,7 @@
 #define SL_INTERNAL_WRITE  (int32_t *)(SERIAL_LINK_START_ADDRESS)
 #define SL_INTERNAL_READ   (int32_t *)(SERIAL_LINK_RECEIVER_FIFO_START_ADDRESS)
 
-#define SL_EXTERNAL_WRITE  (int32_t *)(EXT_SLAVE_START_ADDRESS + 0x20000)
+#define SL_EXTERNAL_WRITE  (int32_t *)(EXT_SLAVE_START_ADDRESS + 0x400) // the end address of the previous slave on the external bus
 #define SL_EXTERNAL_READ  
 
 // CFG REGISTERS
@@ -31,13 +31,111 @@
 
 
 
+/**
+ * @brief Configure SL control registers (single-channel).
+ *
+ * This function enables the SL clock and performs a reset sequence:
+ *  - Step 1: Clock enabled, reset asserted
+ *  - Step 2: Clock enabled, reset de-asserted
+ *
+ * This is required to bring the SL into a known operational state.
+ */
+void reg_config(void);
 
-void REG_CONFIG(void);
-void REG_CONFIG_MULTI(void);
-void RAW_MODE_EN(void);
-void AXI_ISOLATE(void);
-void EXTERNAL_BUS_SL_CONFIG(void);
-void SIM_INIT(void);
-void SL_CPU_TRANS(uint32_t *src_d, uint32_t *dst_d, uint32_t *src, uint32_t *dst, uint32_t large);
-void SL_DMA_TRANS(uint32_t *src_d, uint32_t *dst_d, uint32_t *src, uint32_t *dst, uint32_t large);
+/**
+ * @brief Configure SL control registers (multi-channel variant).
+ *
+ * Same as REG_CONFIG(), but targeting the multi-channel control register base.
+ * This must be used only when the SL is synthesized with multiple channels.
+ */
+void reg_config_multi(void);
+
+/**
+ * @brief Enable RAW mode for single-channel Serial Link.
+ *
+ * RAW mode allows direct access to the SL input/output data paths,
+ * bypassing higher-level protocol layers.
+ *
+ * This function:
+ *  - Enables RAW mode
+ *  - Selects the input channel
+ *  - Enables output channel masking
+ *  - Enables RAW-mode FIFOs and data paths
+ *
+ * RAW mode usage and limitations are documented in the official SL repository.
+ */
+void raw_mode_en(void);
+
+/**
+ * @brief Disable AXI isolation for the Serial Link IP.
+ *
+ * When AXI isolation is enabled, the SL is disconnected from the AXI fabric.
+ * This function clears the isolation bits for both AXI input and output,
+ * allowing normal memory-mapped accesses and data transfers.
+ */
+void axi_isolate(void);
+
+/**
+ * @brief Configure Serial Link registers in the simulation testharness.
+ *
+ * This function mirrors the SL initialization sequence on the external
+ * testharness instance used in simulation:
+ *  - Enables SL clock
+ *  - Performs reset sequence
+ *  - Disables AXI isolation
+ *
+ * This function must only be called in simulation environments.
+ */
+void external_bus_sl_config(void);
+
+/**
+ * @brief Initialize Serial Link for SIMULATION.
+ *
+ * This function performs the full Serial Link bring-up sequence for simulation:
+ *  1) Programs the SL configuration registers
+ *  2) De-asserts AXI isolation on the SL IP
+ *  3) Programs the SL instance located in the simulation testharness
+ *
+ * SIM_INIT must NOT be used on real hardware or FPGA, as it accesses
+ * testharness-only address space.
+ */
+void sl_sim_init(void);
+
+/**
+ * @brief Initialize Serial Link for FPGA / silicon.
+ *
+ * This function wakes up the Serial Link IP by:
+ *  - Enabling its clock
+ *  - Releasing reset
+ *  - Disabling AXI isolation
+ *
+ * This is the minimal initialization required before using the SL.
+ */
+void sl_init(void);
+
+/**
+ * @brief Transmit data using CPU-driven transfers.
+ *
+ * This function performs a simple, blocking data transfer:
+ *  - Writes data from src_d into the SL transmit register (src)
+ *  - Reads data from the SL receive register (dst) into dst_d
+ *
+ * The parameter "large" must not exceed the SL FIFO depth
+ * (default FIFO size is 8 entries).
+ */
+void sl_cpu_trans(uint32_t *src_d, uint32_t *dst_d, uint32_t *src, uint32_t *dst, uint32_t large);
+
+/**
+ * @brief Transmit data using the DMA engine.
+ *
+ * This function performs a two-phase DMA transfer:
+ *  1) Memory → SL transmit register
+ *  2) SL receive register → Memory
+ *
+ * DMA is preferred for large transfers or when CPU load must be minimized.
+ *
+ * The parameter "large" must be less than or equal to the SL FIFO size.
+ * See example_serial_link_simulation_dma for usage patterns.
+ */
+void sl_dma_trans(uint32_t *src_d, uint32_t *dst_d, uint32_t *src, uint32_t *dst, uint32_t large);
 void wait_for_interrupt(void);

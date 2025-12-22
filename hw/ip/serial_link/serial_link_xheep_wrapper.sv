@@ -1,3 +1,12 @@
+/*
+ * Copyright 2025 EPFL
+ * Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+ * SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+ *  
+ * Info: SL wrapper to transmit the data through DDR D2D interconnection. 
+ *       Data is saved in the memory mapped fifo at the receiveing end. 
+ */
+
 module serial_link_xheep_wrapper
   import obi_pkg::*;
   import serial_link_minimum_axi_pkg::*;
@@ -15,8 +24,7 @@ module serial_link_xheep_wrapper
 
     input  obi_pkg::obi_req_t  obi_req_i,
     output obi_pkg::obi_resp_t obi_rsp_i,
-    // output obi_req_t                  obi_req_o, //master port writing to a bus 
-    // input  obi_resp_t                 obi_rsp_o,
+
     input  obi_pkg::obi_req_t  reader_req_i,
     output obi_pkg::obi_resp_t reader_resp_o,
 
@@ -31,7 +39,6 @@ module serial_link_xheep_wrapper
 
 );
 
-  //logic clk_serial_link;
   logic rst_serial_link_n;
 
   logic reset_n;
@@ -92,8 +99,6 @@ module serial_link_xheep_wrapper
       .mst_resp_i(axi_in_rsp_o)
   );
 
-
-
   fifo_serial_link_wrapper #(
       .axi_req_t (axi_req_t),
       .axi_rsp_t (axi_resp_t),
@@ -120,17 +125,12 @@ module serial_link_xheep_wrapper
       .rst_ni(rst_ni)
   );
 
-
-
   tc_clk_mux2 i_tc_reset_mux (
       .clk0_i(reset_n),
       .clk1_i(rst_ni),
       .clk_sel_i(testmode_i),
       .clk_o(rst_serial_link_n)
   );
-
-
-
 
   if (NumChannels > 1) begin : gen_multi_channel_serial_link
     serial_link #(
@@ -170,9 +170,6 @@ module serial_link_xheep_wrapper
         .isolate_o    (),
         .clk_ena_o    (),
         .reset_no     (reset_n)
-
-
-
     );
   end else begin : gen_single_channel_serial_link
     serial_link #(

@@ -1,6 +1,8 @@
 CAPI=2:
 name : pulp-platform.org::serial_link
-
+# Copyright 2025 EPFL.
+# Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+# SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 filesets:
   includes:
     files:
@@ -16,12 +18,11 @@ filesets:
     - pulp-platform.org::per2axi
     - pulp-platform.org::axi_slice   
     files:
-    - pulp_platform_register_interface/src/reg_cdc.sv
     - pulp_platform_serial_link/src/serial_link_pkg.sv
     - pulp_platform_serial_link/src/regs/serial_link_reg_pkg.sv
     - pulp_platform_serial_link/src/regs/serial_link_reg_top.sv
-    - pulp_platform_serial_link/src/regs/serial_link_single_channel_reg_pkg.sv
-    - pulp_platform_serial_link/src/regs/serial_link_single_channel_reg_top.sv
+    #- pulp_platform_serial_link/src/regs/serial_link_single_channel_reg_pkg.sv
+    #- pulp_platform_serial_link/src/regs/serial_link_single_channel_reg_top.sv
     - pulp_platform_serial_link/src/channel_allocator/serial_link_channel_allocator.sv
     - pulp_platform_serial_link/src/channel_allocator/stream_dechopper.sv
     - pulp_platform_serial_link/src/channel_allocator/stream_chopper.sv

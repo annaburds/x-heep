@@ -6,16 +6,57 @@
 #include "serial_link_single_channel_regs.h" 
 #include "serial_link_regs.h"
 
-// Adapted to be used with single channel
+/*
+ * ============================================================================
+ * Serial Link (SL) driver – single-channel adaptation
+ * ============================================================================
+ *
+ * This file provides low-level bring-up and data transfer routines for the
+ * Serial Link IP, adapted specifically for SINGLE-CHANNEL configurations.
+ *
+ * Core responsibilities:
+ *  - Wake up the Serial Link by programming configuration registers
+ *  - De-assert AXI isolation to enable data transfers
+ *  - Provide CPU-based and DMA-based data transmission helpers
+ *
+ * IMPORTANT:
+ *  - INIT() must be called before any SL_CPU_TRANS or SL_DMA_TRANS
+ *  - SIM_INIT() must be used only in simulation environments
+ *  - Register configuration differs for single vs multi-channel designs
+ *
+ * AXI isolation and RAW mode behavior are documented in:
+ * https://github.com/pulp-platform/serial_link
+ */
 
 
-void __attribute__ ((optimize("00"))) SIM_INIT(void){
-    REG_CONFIG();
-    AXI_ISOLATE();
-    EXTERNAL_BUS_SL_CONFIG();
+/* ----------------------------------------------------------------------------
+ * Initialization functions
+ * ----------------------------------------------------------------------------
+ */
+
+/**
+ * @brief Initialize Serial Link for SIMULATION.
+ *
+ * This function performs the full Serial Link bring-up sequence for simulation:
+ *  1) Programs the SL configuration registers
+ *  2) De-asserts AXI isolation on the SL IP
+ *  3) Programs the SL instance located in the simulation testharness
+ *
+ * SIM_INIT must NOT be used on real hardware or FPGA, as it accesses
+ * testharness-only address space.
+ */
+void __attribute__ ((optimize("00"))) sl_sim_init(void){
+    reg_config();
+    axi_isolate();
+    external_bus_sl_config();
 }
 
-void __attribute__ ((optimize("00"))) REG_CONFIG(void){
+void __attribute__ ((optimize("00"))) sl_init(void){
+    reg_config();
+    axi_isolate();
+}
+
+void __attribute__ ((optimize("00"))) reg_config(void){
     volatile uint32_t * const ctrl = (volatile uint32_t *)CTRL_REG_ADDR;
     // Step 1: clock enabled, reset asserted (RESET_N = 0)
     *ctrl = CTRL_CLK_EN_MASK;
@@ -24,7 +65,7 @@ void __attribute__ ((optimize("00"))) REG_CONFIG(void){
 }
 
 
-void __attribute__ ((optimize("00"))) REG_CONFIG_MULTI(void){
+void __attribute__ ((optimize("00"))) reg_config_multi(void){
     volatile uint32_t * const ctrl = (volatile uint32_t *)CTRL_REG_ADDR_MULTI;
     // Step 1: clock enabled, reset asserted (RESET_N = 0)
     *ctrl = CTRL_CLK_EN_MASK;
@@ -32,7 +73,7 @@ void __attribute__ ((optimize("00"))) REG_CONFIG_MULTI(void){
     *ctrl = CTRL_CLK_EN_MASK | CTRL_RESET_N_MASK;
 }
 
-void __attribute__ ((optimize("00"))) RAW_MODE_EN(void){
+void __attribute__ ((optimize("00"))) raw_mode_enable(void){
     int32_t *addr_p_reg_RAW_MODE =(int32_t *)(SERIAL_LINK_REG_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_RAW_MODE_EN_REG_OFFSET); 
     *addr_p_reg_RAW_MODE = (*addr_p_reg_RAW_MODE)| 0x00000001; // raw mode en
 
@@ -54,14 +95,14 @@ void __attribute__ ((optimize("00"))) RAW_MODE_EN(void){
     *addr_p_RAW_MODE_IN_DATA_REG = (*addr_p_RAW_MODE_IN_DATA_REG)| 0x00000001; 
 }
 
-void __attribute__ ((optimize("00"))) AXI_ISOLATE(void){
+void __attribute__ ((optimize("00"))) axi_isolate(void){
     int32_t *addr_p_reg_ISOLATE_IN =(int32_t *)(SERIAL_LINK_REG_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET); 
     *addr_p_reg_ISOLATE_IN &= ~(1<<8);
     int32_t *addr_p_reg_ISOLATE_OUT =(int32_t *)(SERIAL_LINK_REG_START_ADDRESS + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET);
     *addr_p_reg_ISOLATE_OUT &= ~(1<<9); // axi_out_isolate
     }
 
-void __attribute__ ((optimize("00"))) EXTERNAL_BUS_SL_CONFIG(void){
+void __attribute__ ((optimize("00"))) external_bus_sl_config(void){
 
     volatile int32_t *addr_p_reg_ext =(int32_t *)(EXT_PERIPHERAL_START_ADDRESS + 0x06000 + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET); //0x06000000 
     *addr_p_reg_ext = (*addr_p_reg_ext)| 0x00000001; // ctrl clock enable external
@@ -72,12 +113,10 @@ void __attribute__ ((optimize("00"))) EXTERNAL_BUS_SL_CONFIG(void){
     *addr_p_reg_ISOLATE_IN_ext &= ~(1<<8);
     int32_t *addr_p_reg_ISOLATE_OUT_ext =(int32_t *)(EXT_PERIPHERAL_START_ADDRESS + 0x06000 + SERIAL_LINK_SINGLE_CHANNEL_CTRL_REG_OFFSET);
     *addr_p_reg_ISOLATE_OUT_ext &= ~(1<<9);
-
-
     }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    void __attribute__ ((optimize("00"))) SL_CPU_TRANS(uint32_t *src_d, uint32_t *dst_d,uint32_t *src, uint32_t *dst,  uint32_t large ){
+    
+    void __attribute__ ((optimize("00"))) sl_cpu_trans(uint32_t *src_d, uint32_t *dst_d,uint32_t *src, uint32_t *dst,  uint32_t large ){
 
     for (int i = 0; i < large; i++) {
         *src = *(src_d + i);
@@ -89,8 +128,8 @@ void __attribute__ ((optimize("00"))) EXTERNAL_BUS_SL_CONFIG(void){
 
 }
 
-// parameter "large" should equal to or less than FIFO size (default 8)
-void __attribute__ ((optimize("00"))) SL_DMA_TRANS(uint32_t *src_d, uint32_t *dst_d, uint32_t *src, uint32_t *dst,uint32_t large){
+
+void __attribute__ ((optimize("00"))) sl_dma_trans(uint32_t *src_d, uint32_t *dst_d, uint32_t *src, uint32_t *dst,uint32_t large){
     volatile static dma_config_flags_t res;
     volatile static dma_target_t tgt_src_d;
     volatile static dma_target_t tgt_dst_d;

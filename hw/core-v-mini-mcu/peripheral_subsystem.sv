@@ -150,9 +150,6 @@ module peripheral_subsystem
   logic uart_intr_rx_timeout;
   logic uart_intr_rx_parity_err;
 
-
-
-  //----------------------------------------------------------------
   // this avoids lint errors
   assign unused_irq_id = irq_id;
 
@@ -526,34 +523,18 @@ module peripheral_subsystem
       .rst_ni(rst_ni),
       .clk_reg_i(clk_i),
       .rst_reg_ni(rst_ni),
-
       .testmode_i('0),
-
       .obi_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::SERIAL_LINK_IDX]),
       .obi_rsp_i(peripheral_slv_rsp[core_v_mini_mcu_pkg::SERIAL_LINK_IDX]),
-
-      .reader_req_i (peripheral_slv_req[core_v_mini_mcu_pkg::SERIAL_LINK_RECEIVER_FIFO_IDX]),
+      .reader_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::SERIAL_LINK_RECEIVER_FIFO_IDX]),
       .reader_resp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::SERIAL_LINK_RECEIVER_FIFO_IDX]),
-
       .cfg_req_i(peripheral_slv_req[core_v_mini_mcu_pkg::SERIAL_LINK_REG_IDX]),
       .cfg_rsp_o(peripheral_slv_rsp[core_v_mini_mcu_pkg::SERIAL_LINK_REG_IDX]),
-
-
-
       .ddr_rcv_clk_i,
       .ddr_i,
-
       .ddr_rcv_clk_o,
       .ddr_o
-
   );
-
-
-
-
-
-
-
 
 
 

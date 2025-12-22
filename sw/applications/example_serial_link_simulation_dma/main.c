@@ -1,3 +1,9 @@
+// Copyright 2025 EPFL
+// Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+// Description: Example application to test the Serial Link in simulation with DMA. 
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "serial_link_single_channel_regs.h"
@@ -11,12 +17,24 @@
 static uint32_t to_be_sent_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 
+/* By default, printfs are activated for FPGA and disabled for simulation. */
+#define PRINTF_IN_FPGA  1
+#define PRINTF_IN_SIM   0
+
+
+#if TARGET_SIM && PRINTF_IN_SIM
+        #define PRINTF(fmt, ...)    printf(fmt, ## __VA_ARGS__)
+#elif PRINTF_IN_FPGA && !TARGET_SIM
+    #define PRINTF(fmt, ...)    printf(fmt, ## __VA_ARGS__)
+#else
+    #define PRINTF(...)
+#endif
 
 
 
 int main(int argc, char *argv[]){
     
-    SIM_INIT();
+    sl_sim_init();
     
     for (int i = 0; i < TEST_DATA_LARGE; i++) {
         to_be_sent_4B[i] = i+1;
@@ -28,7 +46,7 @@ int main(int argc, char *argv[]){
     
     // DMA
     for (uint32_t i = 0; i < chunks; i++) {
-        SL_DMA_TRANS(
+        sl_dma_trans(
         to_be_sent_4B  + i * DMA_DATA_LARGE,   // src_d
         copied_data_4B + i * DMA_DATA_LARGE,   // dst_d
         SL_EXTERNAL_WRITE,                     // src (FIFO addr)
@@ -36,13 +54,13 @@ int main(int argc, char *argv[]){
         DMA_DATA_LARGE);
     }
     if (remainder > 0) {
-        SL_DMA_TRANS(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE,SL_EXTERNAL_WRITE,SL_INTERNAL_READ,remainder);
+        sl_dma_trans(to_be_sent_4B + chunks * DMA_DATA_LARGE, copied_data_4B + chunks * DMA_DATA_LARGE,SL_EXTERNAL_WRITE,SL_INTERNAL_READ,remainder);
     }
-    printf("DMA DONE\n"); 
+    PRINTF("DMA DONE\n"); 
 
     // CPU
     for (uint32_t i = 0; i < chunks; i++) {
-        SL_CPU_TRANS(
+        sl_cpu_trans(
         to_be_sent_4B  + i * DMA_DATA_LARGE,
         copied_data_4B + i * DMA_DATA_LARGE,
         SL_EXTERNAL_WRITE,
@@ -50,7 +68,7 @@ int main(int argc, char *argv[]){
         DMA_DATA_LARGE);
     }
     if (remainder > 0) {        
-        SL_CPU_TRANS(
+        sl_cpu_trans(
         to_be_sent_4B  + chunks * DMA_DATA_LARGE,
         copied_data_4B + chunks * DMA_DATA_LARGE,
         SL_EXTERNAL_WRITE,
@@ -58,13 +76,13 @@ int main(int argc, char *argv[]){
         remainder);
     }
 
-    printf("CPU DONE\n"); 
-    printf("data saved:\n");
+    PRINTF("CPU DONE\n"); 
+    PRINTF("data saved:\n");
     for (int i = 0; i < TEST_DATA_LARGE; i++) {
-        printf("%x\n", copied_data_4B[i]);
+        PRINTF("%x\n", copied_data_4B[i]);
     }
 
-    printf("DONE\n");  
+    PRINTF("DONE\n");  
     return EXIT_SUCCESS;
 }
 

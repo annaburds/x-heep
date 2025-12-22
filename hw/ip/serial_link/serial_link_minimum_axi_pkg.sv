@@ -1,4 +1,10 @@
-
+/*
+ * Copyright 2025 EPFL
+ * Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+ * SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+ *  
+ * Info: Adjustable data format package for SL. Used to generate the payload.
+ */
 
 
 package serial_link_minimum_axi_pkg;
