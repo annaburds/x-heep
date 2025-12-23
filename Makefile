@@ -66,6 +66,8 @@ COMPILER_PREFIX ?= riscv32-corev-
 COMPILER_FLAGS 	?=
 # Arch options are any RISC-V ISA string supported by the CPU. Default 'rv32imc_zicsr'
 ARCH     		?= rv32imc_zicsr
+# Tell clang to use the gcc link instead of the llvm linker (useful for old clang). Default '0' (set it to 1)
+CLANG_LINKER_USE_LD ?= 0
 
 # Path relative from the location of sw/Makefile from which to fetch source files. The directory of that file is the default value.
 SOURCE 	 ?= $(".")
@@ -192,7 +194,7 @@ format-python:
 ## @param COMPILER_PREFIX=riscv32-corev-(default),riscv32-unknown-
 ## @param ARCH=rv32imc(default),<any_RISC-V_ISA_string_supported_by_the_CPU>
 app: clean-app
-	@$(MAKE) -C sw PROJECT=$(PROJECT) TARGET=$(TARGET) LINKER=$(LINKER) LINK_FOLDER=$(LINK_FOLDER) COMPILER=$(COMPILER) COMPILER_PREFIX=$(COMPILER_PREFIX) COMPILER_FLAGS=$(COMPILER_FLAGS) ARCH=$(ARCH) SOURCE=$(SOURCE) \
+	@$(MAKE) -C sw PROJECT=$(PROJECT) TARGET=$(TARGET) LINKER=$(LINKER) LINK_FOLDER=$(LINK_FOLDER) COMPILER=$(COMPILER) COMPILER_PREFIX=$(COMPILER_PREFIX) COMPILER_FLAGS=$(COMPILER_FLAGS) ARCH=$(ARCH) SOURCE=$(SOURCE) CLANG_LINKER_USE_LD=$(CLANG_LINKER_USE_LD) \
 	|| { \
 	echo "\033[0;31mHmmm... seems like the compilation failed...\033[0m"; \
 	echo "\033[0;31mIf you do not understand why, it is likely that you either:\033[0m"; \

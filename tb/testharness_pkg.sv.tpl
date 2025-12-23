@@ -11,10 +11,10 @@ package testharness_pkg;
   import addr_map_rule_pkg::*;
   import core_v_mini_mcu_pkg::*;
 % if user_peripheral_domain.contains_peripheral('serial_link'):
-  localparam EXT_XBAR_NMASTER = 5;
+  localparam EXT_XBAR_NMASTER = 8;
   localparam EXT_XBAR_NSLAVE = 3;
 % else: 
-  localparam EXT_XBAR_NMASTER = 4;
+  localparam EXT_XBAR_NMASTER = 8;
   localparam EXT_XBAR_NSLAVE = 2;
 %endif
   //master idx
@@ -23,6 +23,9 @@ package testharness_pkg;
   localparam logic [31:0] EXT_MASTER2_IDX = 2;
   localparam logic [31:0] EXT_MASTER3_IDX = 3;
   localparam logic [31:0] EXT_MASTER4_IDX = 4;
+  localparam logic [31:0] EXT_MASTER5_IDX = 5;
+  localparam logic [31:0] EXT_MASTER6_IDX = 6;
+  localparam logic [31:0] EXT_MASTER7_IDX = 7;
 
   //slave mmap and idx of slow memory interleaved
   localparam logic [31:0] SLOW_MEMORY_START_ADDRESS = core_v_mini_mcu_pkg::EXT_SLAVE_START_ADDRESS;

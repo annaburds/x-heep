@@ -208,6 +208,12 @@ parameters:
     description: |
       Enables RV32Zfinx RISC-V extensions. Admitted values: 1|0.
     default: 0
+  QUADRILATERO:
+    datatype: int
+    paramtype: vlogparam
+    description: |
+      Enables Matrix custom RISC-V extensions. Admitted values: 1|0.
+    default: 0
   JTAG_DPI:
     datatype: int
     paramtype: vlogparam
@@ -349,6 +355,7 @@ targets:
     - COREV_PULP
     - FPU
     - ZFINX
+    - QUADRILATERO
     - JTAG_DPI
     - X_EXT
     - USE_EXTERNAL_DEVICE_EXAMPLE
@@ -404,7 +411,7 @@ targets:
           - '--x-initial unique'
           - '--exe tb_top.cpp'
           - '-CFLAGS "-Wall -fpermissive"'
-          - '-LDFLAGS "-pthread -lutil -lelf"'
+          - '-LDFLAGS "-lutil -lelf"'
           - "-Wall"
 
   sim_sc:
