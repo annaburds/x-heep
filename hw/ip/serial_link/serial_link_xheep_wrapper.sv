@@ -22,8 +22,8 @@ module serial_link_xheep_wrapper
     input logic rst_reg_ni,
     input logic testmode_i,
 
-    input  obi_pkg::obi_req_t  obi_req_i,
-    output obi_pkg::obi_resp_t obi_rsp_i,
+    input  obi_pkg::obi_req_t  writer_req_i,
+    output obi_pkg::obi_resp_t writer_rsp_i,
 
     input  obi_pkg::obi_req_t  reader_req_i,
     output obi_pkg::obi_resp_t reader_resp_o,
@@ -51,11 +51,8 @@ module serial_link_xheep_wrapper
       fast_sl_req_i, fast_sl_req_O, axi_in_req_i, axi_out_req_o, axi_lite_req;
   serial_link_minimum_axi_pkg::axi_resp_t
       fast_sl_rsp_i, fast_sl_rsp_O, axi_in_rsp_o, axi_out_rsp_i, axi_lite_rsp;
-  reg_pkg::reg_req_t  fast_cfg_req_i;
-  reg_pkg::reg_rsp_t  fast_cfg_rsp_o;
-
-  obi_pkg::obi_req_t  obi_req_o;  //fifo writing
-  obi_pkg::obi_resp_t obi_rsp_o;
+  reg_pkg::reg_req_t fast_cfg_req_i;
+  reg_pkg::reg_rsp_t fast_cfg_rsp_o;
 
 
   axi_lite_from_mem #(
@@ -68,14 +65,14 @@ module serial_link_xheep_wrapper
   ) i_obi2axi (
       .clk_i,
       .rst_ni,
-      .mem_req_i      (obi_req_i.req),
-      .mem_addr_i     (obi_req_i.addr),
-      .mem_we_i       (obi_req_i.we),
-      .mem_wdata_i    (obi_req_i.wdata),
-      .mem_be_i       (obi_req_i.be),
-      .mem_gnt_o      (obi_rsp_i.gnt),
-      .mem_rsp_valid_o(obi_rsp_i.rvalid),
-      .mem_rsp_rdata_o(obi_rsp_i.rdata),
+      .mem_req_i      (writer_req_i.req),
+      .mem_addr_i     (writer_req_i.addr),
+      .mem_we_i       (writer_req_i.we),
+      .mem_wdata_i    (writer_req_i.wdata),
+      .mem_be_i       (writer_req_i.be),
+      .mem_gnt_o      (writer_rsp_i.gnt),
+      .mem_rsp_valid_o(writer_rsp_i.rvalid),
+      .mem_rsp_rdata_o(writer_rsp_i.rdata),
       .mem_rsp_error_o(),
       .axi_req_o      (axi_lite_req),
       .axi_rsp_i      (axi_lite_rsp)

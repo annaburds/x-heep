@@ -25,7 +25,7 @@
 #endif
 
 
-int32_t NUM_TO_CHECK = 429496729;
+int32_t NUM_TO_CHECK = 525;
 int main(int argc, char *argv[])
 {
 

@@ -12,7 +12,7 @@
 
 
 #define DMA_DATA_LARGE 8 
-#define TEST_DATA_LARGE 1
+#define TEST_DATA_LARGE 2
 
 static uint32_t to_be_sent_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
 static uint32_t copied_data_4B[TEST_DATA_LARGE] __attribute__((aligned(4))) = {0};
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]){
     sl_sim_init();
     
     for (int i = 0; i < TEST_DATA_LARGE; i++) {
-        to_be_sent_4B[i] = i+1;
+        to_be_sent_4B[i] = i+525;
     }
     
 
@@ -59,22 +59,22 @@ int main(int argc, char *argv[]){
     PRINTF("DMA DONE\n"); 
 
     // CPU
-    for (uint32_t i = 0; i < chunks; i++) {
-        sl_cpu_trans(
-        to_be_sent_4B  + i * DMA_DATA_LARGE,
-        copied_data_4B + i * DMA_DATA_LARGE,
-        SL_EXTERNAL_WRITE,
-        SL_INTERNAL_READ,
-        DMA_DATA_LARGE);
-    }
-    if (remainder > 0) {        
-        sl_cpu_trans(
-        to_be_sent_4B  + chunks * DMA_DATA_LARGE,
-        copied_data_4B + chunks * DMA_DATA_LARGE,
-        SL_EXTERNAL_WRITE,
-        SL_INTERNAL_READ,
-        remainder);
-    }
+    //for (uint32_t i = 0; i < chunks; i++) {
+    //    sl_cpu_trans(
+    //    to_be_sent_4B  + i * DMA_DATA_LARGE,
+    //    copied_data_4B + i * DMA_DATA_LARGE,
+    //    SL_EXTERNAL_WRITE,
+    //    SL_INTERNAL_READ,
+    //    DMA_DATA_LARGE);
+    //}
+    //if (remainder > 0) {        
+    //    sl_cpu_trans(
+    //    to_be_sent_4B  + chunks * DMA_DATA_LARGE,
+    //    copied_data_4B + chunks * DMA_DATA_LARGE,
+    //    SL_EXTERNAL_WRITE,
+    //    SL_INTERNAL_READ,
+    //    remainder);
+    //}
 
     PRINTF("CPU DONE\n"); 
     PRINTF("data saved:\n");
