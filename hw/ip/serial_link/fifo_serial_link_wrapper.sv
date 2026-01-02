@@ -40,20 +40,25 @@ module fifo_serial_link_wrapper #(
 );
 
   logic push, pop, full, empty;
+  logic reader_req_q;
+  logic reader_req_rising;
   logic [DATA_WIDTH-1:0] reader_rdata_n;
 
   assign reader_gnt_o = ~empty;
 
   assign push = writer_axi_req.w_valid & writer_axi_rsp.w_ready;
-  assign pop = (~empty) & reader_req_i & (~reader_we_i);
+  assign reader_req_rising = reader_req_i & ~reader_req_q;
+  assign pop = (~empty) & reader_req_rising & (~reader_we_i);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       reader_rvalid_o <= 0;
       reader_rdata_o  <= 0;
+      reader_req_q    <= 0;
     end else begin
       reader_rvalid_o <= pop;
       reader_rdata_o  <= reader_rdata_n;
+      reader_req_q    <= reader_req_i;
     end
   end
 

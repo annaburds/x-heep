@@ -31,15 +31,15 @@ int main(int argc, char *argv[])
 
     volatile int32_t *addr_p_external = SL_EXTERNAL_WRITE;
     volatile int32_t *addr_p_recreg = SL_INTERNAL_READ;
+    int32_t rcv_data;
 
     sl_sim_init();
     
     *addr_p_external = NUM_TO_CHECK;
-    while(1){
-    if (*addr_p_recreg ==NUM_TO_CHECK){
-        
-        break;
-        }
+    rcv_data = *addr_p_recreg;
+    if (rcv_data != NUM_TO_CHECK){
+        PRINTF("Received data (%u) does not match expected (%d)\n", rcv_data, NUM_TO_CHECK);
+        return EXIT_FAILURE;
     }
 
     PRINTF("DONE\n");
