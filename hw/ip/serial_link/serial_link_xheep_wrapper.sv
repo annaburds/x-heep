@@ -22,8 +22,8 @@ module serial_link_xheep_wrapper
     input logic rst_reg_ni,
     input logic testmode_i,
 
-    input  obi_pkg::obi_req_t  obi_req_i,
-    output obi_pkg::obi_resp_t obi_rsp_i,
+    input  obi_pkg::obi_req_t  writer_req_i,
+    output obi_pkg::obi_resp_t writer_rsp_i,
 
     input  obi_pkg::obi_req_t  reader_req_i,
     output obi_pkg::obi_resp_t reader_resp_o,
@@ -68,14 +68,14 @@ module serial_link_xheep_wrapper
   ) i_obi2axi (
       .clk_i,
       .rst_ni,
-      .mem_req_i      (obi_req_i.req),
-      .mem_addr_i     (obi_req_i.addr),
-      .mem_we_i       (obi_req_i.we),
-      .mem_wdata_i    (obi_req_i.wdata),
-      .mem_be_i       (obi_req_i.be),
-      .mem_gnt_o      (obi_rsp_i.gnt),
-      .mem_rsp_valid_o(obi_rsp_i.rvalid),
-      .mem_rsp_rdata_o(obi_rsp_i.rdata),
+      .mem_req_i      (writer_req_i.req),
+      .mem_addr_i     (writer_req_i.addr),
+      .mem_we_i       (writer_req_i.we),
+      .mem_wdata_i    (writer_req_i.wdata),
+      .mem_be_i       (writer_req_i.be),
+      .mem_gnt_o      (writer_rsp_i.gnt),
+      .mem_rsp_valid_o(writer_rsp_i.rvalid),
+      .mem_rsp_rdata_o(writer_rsp_i.rdata),
       .mem_rsp_error_o(),
       .axi_req_o      (axi_lite_req),
       .axi_rsp_i      (axi_lite_rsp)
