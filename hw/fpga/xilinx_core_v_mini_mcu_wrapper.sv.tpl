@@ -75,7 +75,18 @@ module xilinx_core_v_mini_mcu_wrapper
 
     inout logic i2s_sck_io,
     inout logic i2s_ws_io,
-    inout logic i2s_sd_io
+    inout logic i2s_sd_io,
+
+    inout wire ddr_rcv_clk_i_io,
+    inout wire ddr_rcv_clk_o_io,
+    inout wire ddr_i_0_io,
+    inout wire ddr_i_1_io,
+    inout wire ddr_i_2_io,
+    inout wire ddr_i_3_io,
+    inout wire ddr_o_0_io,
+    inout wire ddr_o_1_io,
+    inout wire ddr_o_2_io,
+    inout wire ddr_o_3_io
 
 );
 
@@ -146,14 +157,7 @@ module xilinx_core_v_mini_mcu_wrapper
   );
 `endif
 
-  x_heep_system x_heep_system_i (
-    % if user_peripheral_domain.contains_peripheral('serial_link'):
-      //Serial Link
-      .ddr_rcv_clk_i,  
-      .ddr_rcv_clk_o,
-      .ddr_i,
-      .ddr_o,
-    %endif  
+  x_heep_system x_heep_system_i ( 
       .hart_id_i('0),
       .xheep_instance_id_i('0),
       .intr_vector_ext_i('0),
@@ -211,6 +215,16 @@ module xilinx_core_v_mini_mcu_wrapper
       .gpio_4_io(gpio_io[4]),
       .gpio_5_io(gpio_io[5]),
       .gpio_6_io(gpio_io[6]),
+      .ddr_rcv_clk_i_io,
+      .ddr_rcv_clk_o_io,
+      .ddr_i_0_io,
+      .ddr_i_1_io,
+      .ddr_i_2_io,
+      .ddr_i_3_io,
+      .ddr_o_0_io,
+      .ddr_o_1_io,
+      .ddr_o_2_io,
+      .ddr_o_3_io,
       .spi_slave_sck_io(spi_slave_sck_io),
       .spi_slave_cs_io(spi_slave_cs_io),
       .spi_slave_miso_io(spi_slave_miso_io),
@@ -248,7 +262,7 @@ module xilinx_core_v_mini_mcu_wrapper
       .ext_dma_stop_i('0),
       .intr_ext_peripheral_i('0),
       .hw_fifo_done_i('0),
-      .dma_done_o(),
+      .dma_done_o()
       
   );
 
