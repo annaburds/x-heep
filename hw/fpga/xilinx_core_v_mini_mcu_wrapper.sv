@@ -145,11 +145,6 @@ module xilinx_core_v_mini_mcu_wrapper
 `endif
 
   x_heep_system x_heep_system_i (
-      //Serial Link
-      .ddr_rcv_clk_i,
-      .ddr_rcv_clk_o,
-      .ddr_i,
-      .ddr_o,
       .hart_id_i('0),
       .xheep_instance_id_i('0),
       .intr_vector_ext_i('0),
