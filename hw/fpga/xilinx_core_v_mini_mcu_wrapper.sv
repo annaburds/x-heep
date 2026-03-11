@@ -75,17 +75,8 @@ module xilinx_core_v_mini_mcu_wrapper
     inout logic i2s_ws_io,
     inout logic i2s_sd_io,
 
-    inout wire ddr_rcv_clk_i_io,
-    inout wire ddr_rcv_clk_o_io,
-    inout wire ddr_i_0_io,
-    inout wire ddr_i_1_io,
-    inout wire ddr_i_2_io,
-    inout wire ddr_i_3_io,
-    inout wire ddr_o_0_io,
-    inout wire ddr_o_1_io,
-    inout wire ddr_o_2_io,
-    inout wire ddr_o_3_io
-
+    inout wire ddr_rcv_clk_i_i,
+    inout wire ddr_rcv_clk_o_o
 );
 
   wire                               clk_gen;
@@ -213,16 +204,15 @@ module xilinx_core_v_mini_mcu_wrapper
       .gpio_4_io(gpio_io[4]),
       .gpio_5_io(gpio_io[5]),
       .gpio_6_io(gpio_io[6]),
-      .ddr_rcv_clk_i_io,
-      .ddr_rcv_clk_o_io,
-      .ddr_i_0_io,
-      .ddr_i_1_io,
-      .ddr_i_2_io,
-      .ddr_i_3_io,
-      .ddr_o_0_io,
-      .ddr_o_1_io,
-      .ddr_o_2_io,
-      .ddr_o_3_io,
+      .gpio_7_io(gpio_io[7]),
+      .gpio_8_io(gpio_io[8]),
+      .gpio_9_io(gpio_io[9]),
+      .gpio_10_io(gpio_io[10]),
+      .gpio_11_io(gpio_io[11]),
+      .gpio_12_io(gpio_io[12]),
+      .gpio_13_io(gpio_io[13]),
+      .ddr_rcv_clk_i_i,
+      .ddr_rcv_clk_o_o,
       .spi_slave_sck_io(spi_slave_sck_io),
       .spi_slave_cs_io(spi_slave_cs_io),
       .spi_slave_miso_io(spi_slave_miso_io),

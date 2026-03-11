@@ -588,18 +588,12 @@ module core_v_mini_mcu
     // Serial Link pin assignments
     // For now supports only single channel 4 lanes 
     assign ddr_rcv_clk_o_o = ddr_rcv_clk_o;
-    assign ddr_rcv_clk_o_oe_o = 1'b1;
     assign ddr_rcv_clk_i = ddr_rcv_clk_i_i;
   
     assign ddr_o_0_o = ddr_o[0][0];
     assign ddr_o_1_o = ddr_o[0][1];
     assign ddr_o_2_o = ddr_o[0][2];
     assign ddr_o_3_o = ddr_o[0][3];
-
-    assign ddr_o_0_oe_o = 1'b1;
-    assign ddr_o_1_oe_o = 1'b1;
-    assign ddr_o_2_oe_o = 1'b1;
-    assign ddr_o_3_oe_o = 1'b1;
     
     assign ddr_i[0][0] = ddr_i_0_i;
     assign ddr_i[0][1] = ddr_i_1_i;
