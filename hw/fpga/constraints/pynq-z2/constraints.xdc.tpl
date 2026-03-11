@@ -1,10 +1,15 @@
-
+<%
+  user_peripheral_domain = xheep.get_user_peripheral_domain()
+%>
 create_clock -add -name sys_clk_pin -period 8.00 -waveform {0 5} [get_ports {clk_i}];
 create_clock -add -name jtag_clk_pin -period 100.00 -waveform {0 5} [get_ports {jtag_tck_i}];
 create_clock -add -name spi_slave_clk_pin -period 16.00 -waveform {0 5} [get_ports {spi_slave_sck_io}];
 
+### Reset Constraints
 set_false_path -from x_heep_system_i/core_v_mini_mcu_i/debug_subsystem_i/dm_obi_top_i/i_dm_top/i_dm_csrs/dmcontrol_q_reg\[ndmreset\]/C
 set_false_path -from x_heep_system_i/rstgen_i/i_rstgen_bypass/synch_regs_q_reg[3]/C
+% if user_peripheral_domain.contains_peripheral('serial_link'):
+### Serial Link 
 # Derived clock period and phase settings
 set T_CLK 66.667              ;# Period of clk_gen in ns.
 set FWD_CLK_DIV 8             ;# Divider for forward clock
@@ -18,11 +23,13 @@ create_clock -name clk_ddr_in -period $T_FWD_CLK -waveform $ddr_edge_list [get_p
 
 
 # The data launching clock with 0 degree clock phase
-create_generated_clock -name clk_slow -source [get_pins xilinx_clk_wizard_wrapper_i/clk_out1_0] -divide_by $FWD_CLK_DIV     [get_pins -hierarchical clk_slow_reg/Q]
+create_generated_clock -name clk_slow -source [get_pins xilinx_clk_wizard_wrapper_i/clk_out1_0] -divide_by $FWD_CLK_DIV \
+    [get_pins -hierarchical clk_slow_reg/Q]
 
 # this is the "forwarded clock", we are assuming it is shifted by -90 or +270 degrees (or +90 degrees and inverted)
 set ddr_edge_list [list [expr 1 + $FWD_CLK_DIV / 2 * 3] [expr 1 + $FWD_CLK_DIV / 2 * 5] [expr 1 + $FWD_CLK_DIV / 2 * 7]]
-create_generated_clock -name clk_ddr_out -source [get_pins xilinx_clk_wizard_wrapper_i/clk_out1_0] -edges $ddr_edge_list     [get_pins -hierarchical ddr_rcv_clk_o_reg/Q]
+create_generated_clock -name clk_ddr_out -source [get_pins xilinx_clk_wizard_wrapper_i/clk_out1_0] -edges $ddr_edge_list \
+    [get_pins -hierarchical ddr_rcv_clk_o_reg/Q]
 # create_generated_clock -name clk_ddr_out -source [get_pins -hierarchical "*clk_slow_reg/Q*"] -edges {1 2 3} -edge_shift {-133.334 -133.334 -133.334} [get_pins -hierarchical "*ddr_rcv_clk_o_reg/Q*"]
 # Input
 set_false_path -setup -rise_from [get_clocks vir_clk_ddr_in] -rise_to [get_clocks clk_ddr_in]
@@ -61,3 +68,4 @@ set_output_delay -max -clock [get_clocks clk_ddr_out] [expr $T_FWD_CLK / 4 - $MA
 set_output_delay -add_delay -min -clock [get_clocks clk_ddr_out] [expr $MARGIN - $T_FWD_CLK / 4] -reference_pin [get_ports ddr_rcv_clk_o] [get_ports ddr_o]
 set_output_delay -add_delay -max -clock_fall -clock [get_clocks clk_ddr_out] [expr $T_FWD_CLK / 4 - $MARGIN] -reference_pin [get_ports ddr_rcv_clk_o] [get_ports ddr_o]
 set_output_delay -add_delay -min -clock_fall -clock [get_clocks clk_ddr_out] [expr $MARGIN - $T_FWD_CLK / 4] -reference_pin [get_ports ddr_rcv_clk_o] [get_ports ddr_o]
+% endif
