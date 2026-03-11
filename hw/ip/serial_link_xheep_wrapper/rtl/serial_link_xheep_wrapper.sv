@@ -17,7 +17,6 @@ module serial_link_xheep_wrapper
   import axi_pkg::*;
 #(
     parameter int MaxClkDiv = 32,
-    parameter int OBI_AddrWidth = 32,
     parameter int DataWidth = 32
 ) (
     input logic clk_i,
@@ -50,8 +49,11 @@ module serial_link_xheep_wrapper
   serial_link_minimum_axi_pkg::axi_req_t fast_sl_req_O, axi_in_req, axi_lite_req;
   serial_link_minimum_axi_pkg::axi_resp_t fast_sl_rsp_O, axi_in_rsp, axi_lite_rsp;
 
+  // Transaltes the OBI request into the AXI request
+  // To allow transparent functionality of the SL and send data only
+  // The serial_link_minimum_axi_pkg parameters are used
   axi_lite_from_mem #(
-      .MemAddrWidth(OBI_AddrWidth),
+      .MemAddrWidth(32'd32),
       .AxiAddrWidth(serial_link_minimum_axi_pkg::AXI_ADDR_WIDTH),
       .DataWidth   (DataWidth),
       .MaxRequests (DataWidth),  // fifo size
