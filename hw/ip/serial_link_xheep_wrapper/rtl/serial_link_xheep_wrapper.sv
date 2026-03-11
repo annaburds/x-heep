@@ -53,7 +53,7 @@ module serial_link_xheep_wrapper
   // To allow transparent functionality of the SL and send data only
   // The serial_link_minimum_axi_pkg parameters are used
   axi_lite_from_mem #(
-      .MemAddrWidth(32'd32),
+      .MemAddrWidth(32'd32), // obi addr width
       .AxiAddrWidth(serial_link_minimum_axi_pkg::AXI_ADDR_WIDTH),
       .DataWidth   (DataWidth),
       .MaxRequests (DataWidth),  // fifo size
