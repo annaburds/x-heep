@@ -17,7 +17,7 @@ module serial_link_xheep_wrapper
   import axi_pkg::*;
 #(
     parameter int MaxClkDiv = 32,
-    parameter int AddrWidth = 32,
+    parameter int OBI_AddrWidth = 32,
     parameter int DataWidth = 32
 ) (
     input logic clk_i,
@@ -51,8 +51,8 @@ module serial_link_xheep_wrapper
   serial_link_minimum_axi_pkg::axi_resp_t fast_sl_rsp_O, axi_in_rsp, axi_lite_rsp;
 
   axi_lite_from_mem #(
-      .MemAddrWidth(AddrWidth),
-      .AxiAddrWidth(AddrWidth),
+      .MemAddrWidth(OBI_AddrWidth),
+      .AxiAddrWidth(serial_link_minimum_axi_pkg::AXI_ADDR_WIDTH),
       .DataWidth   (DataWidth),
       .MaxRequests (DataWidth),  // fifo size
       .axi_req_t   (serial_link_minimum_axi_pkg::axi_req_t),
