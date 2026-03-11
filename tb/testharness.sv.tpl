@@ -765,7 +765,8 @@ module testharness #(
 
       % if user_peripheral_domain.contains_peripheral('serial_link'):
       serial_link_xheep_wrapper #(
-          .MaxClkDiv(32)
+          .MaxClkDiv(32),
+          .DataWidth(32)
       ) serial_link_xheep_wrapper_i (
           .clk_i        (clk_i),
           .rst_ni       (rst_ni),
