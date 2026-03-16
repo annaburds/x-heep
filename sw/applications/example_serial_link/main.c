@@ -13,7 +13,7 @@
 #include "pad_control_regs.h"  // Generated.
 
 
-#define FPGA_RECEIVE 0 // 1 - receive the data, 0 - send the data
+#define FPGA_RECEIVE 1 // 1 - receive the data, 0 - send the data
 
 /* By default, printfs are activated for FPGA and disabled for simulation. */
 #define PRINTF_IN_FPGA  1
