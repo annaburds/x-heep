@@ -4,5 +4,10 @@
 
 `verilator_config
 
-lint_off -rule UNUSEDSIGNAL -file "*/stream_ebpc/rtl/ebpc_xheep_wrapper.sv"
-lint_off -rule WIDTHTRUNC -file "*/stream_ebpc/rtl/ebpc_xheep_wrapper.sv"
+lint_off -rule UNUSEDSIGNAL -file "*/stream_ebpc/rtl/ebpc_wrapper.sv"
+lint_off -rule WIDTHTRUNC -file "*/stream_ebpc/rtl/ebpc_wrapper.sv"
+lint_off -rule IMPORTSTAR -file "*/stream_ebpc/rtl/ebpc_wrapper.sv"
+lint_off -rule VARHIDDEN -file "*/stream_ebpc/rtl/ebpc_wrapper.sv"
+lint_off -rule VARHIDDEN -file "*/pulp_platform_common_cells/src/gray_to_binary.sv"
+lint_off -rule VARHIDDEN -file "*/lowrisc_opentitan/hw/ip/rv_timer/rtl/timer_core.sv"
+lint_off -rule VARHIDDEN -file "*/pulp_platform_common_cells/src/binary_to_gray.sv"

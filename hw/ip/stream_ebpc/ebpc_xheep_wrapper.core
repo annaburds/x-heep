@@ -9,7 +9,7 @@ filesets:
     depend:
     - pulp-platform.org::ebpc 
     files:
-    - rtl/ebpc_xheep_wrapper.sv
+    - rtl/ebpc_wrapper.sv
     file_type: systemVerilogSource
 
 targets:
