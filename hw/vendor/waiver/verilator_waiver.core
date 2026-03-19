@@ -32,6 +32,7 @@ filesets:
     - lint/serial_link.vlt
     - lint/axi.vlt
     - lint/quadrilatero.vlt
+    - lint/ebpc.vlt
     file_type: vlt
 
 generate:

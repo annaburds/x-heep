@@ -1,0 +1,39 @@
+CAPI=2:
+name : pulp-platform.org::ebpc
+# Copyright 2025 EPFL.
+# Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+# SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+filesets:
+
+  rtl:
+    depend:
+    - pulp-platform.org::axi:0.39.8
+    - pulp-platform.org::common_cells
+    - pulp-platform.org::register_interface
+    - pulp-platform.org::axi_slice   
+    files:
+    - pulp_platform_stream_ebpc/src/ebpc_pkg.sv
+    - pulp_platform_stream_ebpc/src/fifo_slice.sv
+    - pulp_platform_stream_ebpc/src/decoder/buffer.sv
+    - pulp_platform_stream_ebpc/src/decoder/delta_reverse.sv
+    - pulp_platform_stream_ebpc/src/decoder/expander.sv
+    - pulp_platform_stream_ebpc/src/decoder/symbol_decoder.sv
+    - pulp_platform_stream_ebpc/src/decoder/unpacker.sv
+    - pulp_platform_stream_ebpc/src/decoder/zrle_decoder.sv
+    - pulp_platform_stream_ebpc/src/decoder/bpc_decoder.sv
+    - pulp_platform_stream_ebpc/src/decoder/ebpc_decoder.sv
+    - pulp_platform_stream_ebpc/src/encoder/shift_streamer.sv
+    - pulp_platform_stream_ebpc/src/encoder/dbp_dbx_enc.sv
+    - pulp_platform_stream_ebpc/src/encoder/dbp_to_dbx_buf.sv
+    - pulp_platform_stream_ebpc/src/encoder/dbx_compressor.sv
+    - pulp_platform_stream_ebpc/src/encoder/seq_coder.sv
+    - pulp_platform_stream_ebpc/src/encoder/zrle.sv
+    - pulp_platform_stream_ebpc/src/encoder/bpc_encoder.sv
+    - pulp_platform_stream_ebpc/src/encoder/ebpc_encoder.sv
+    
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+    - rtl

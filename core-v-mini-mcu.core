@@ -101,6 +101,7 @@ filesets:
     - hw/system/x_heep_system.vlt
     - hw/simulation/simulation.vlt
     - hw/ip/serial_link_xheep_wrapper/serial_link_xheep_wrapper.vlt
+    - hw/ip/stream_ebpc/ebpc_xheep_wrapper.vlt
     file_type: vlt
 
   rtl-fpga:
