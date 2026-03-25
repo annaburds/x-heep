@@ -54,9 +54,9 @@ module serial_link_xheep_wrapper
   ebpc_wrapper #() ebpc_wrapper_i (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
-      .obi_req_i(obi_req_i),
-      .obi_resp_o(obi_resp_o),
-      .bpc_data_o(bpc_data_o),
+      .obi_req_i(writer_req_i),
+      .obi_resp_o(),
+      .bpc_data_o(),
       .bpc_vld_o(),
       .bpc_rdy_i(1'b1),
       .znz_data_o(),
