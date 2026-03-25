@@ -654,17 +654,6 @@ module core_v_mini_mcu
       .dma_done_o
   );
 
-  //ILA_check_wrapper #(
-  //  ) ILA_check_wrapper_i (
-  //      addr(peripheral_slave_req.addr),
-  //      be(peripheral_slave_req.be),
-  //      clk_0(clk_i),
-  //      req(peripheral_slave_req.req),
-  //      wdata(peripheral_slave_req.wdata),
-  //      we(peripheral_slave_req.we)
-  //  );
-
-
   peripheral_subsystem peripheral_subsystem_i (
       .clk_i,
       .rst_ni(peripheral_subsystem_rst_n && debug_reset_n),
