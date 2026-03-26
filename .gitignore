@@ -59,6 +59,8 @@ hw/ip/boot_rom/boot_rom.dump
 hw/fpga/sram_wrapper.sv
 hw/fpga/scripts/generate_sram.tcl
 
+hw/vendor/xheep/spi/rtl/spi_subsystem.sv
+
 # Automatically generated C header files, linker scripts, and assembly files
 sw/device/lib/crt/crt0.S
 
@@ -103,5 +105,6 @@ flow/OpenROAD-flow-scripts
 .vscode
 .continue
 private/
+.DS_Store
 
 
