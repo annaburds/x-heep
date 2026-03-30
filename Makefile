@@ -35,9 +35,9 @@ AREA_PLOT   := $(shell which area-plot)
 endif
 
 # RegTool and StructGen path
-REGTOOL 			?= $(PWD)/hw/vendor/pulp_platform/register_interface/vendor/lowrisc_opentitan/util/regtool.py
-PERIPH_STRUCTS_GEN 	?= $(PWD)/util/periph_structs_gen/periph_structs_gen.py
-TEMPLATE_FILE 		?= $(PWD)/util/periph_structs_gen/periph_structs.tpl
+REGTOOL 			?= $(mkfile_path)/hw/vendor/pulp_platform/register_interface/vendor/lowrisc_opentitan/util/regtool.py
+PERIPH_STRUCTS_GEN 	?= $(mkfile_path)/util/periph_structs_gen/periph_structs_gen.py
+TEMPLATE_FILE 		?= $(mkfile_path)/util/periph_structs_gen/periph_structs.tpl
 
 # Build directories
 BUILD_DIR         = build
@@ -147,7 +147,7 @@ mcu-gen:
 	bash -c "cd hw/system/pad_control; source pad_control_gen.sh; cd ../../../"
 	bash -c "cd hw/vendor/xheep/dma; source dma_gen.sh; cd ../../../"
 	bash -c "cd hw/ip/boot_rom; make clean; make all; cd ../../../"
-	$(MAKE) -C hw/vendor/xheep/spi reg SW_DIR=$(PWD)/sw/device/lib/drivers/
+	$(MAKE) -C hw/vendor/xheep/spi reg SW_DIR=$(mkfile_path)/sw/device/lib/drivers/
 	$(MAKE) verible
 
 ## Display mcu_gen.py help
@@ -189,7 +189,10 @@ app: clean-app
 	echo "\033[0;31mI would start by checking b) or c) if I were you!\033[0m"; \
 	exit 1; \
 	}
-	@$(PYTHON) scripts/building/mem_usage.py
+	@$(PYTHON) scripts/building/mem_usage.py \
+		--elf $(mkfile_path)/sw/build/main.elf \
+		--ld $(mkfile_path)/sw/build/main.ld \
+		--mcu-pkg $(mkfile_path)/hw/core-v-mini-mcu/include/core_v_mini_mcu_pkg.sv
 
 ## Just list the different application names available
 app-list:
@@ -301,10 +304,10 @@ asic:
 	$(FUSESOC) --cores-root . run --no-export --target=asic_synthesis $(FUSESOC_FLAGS) --setup openhwgroup.org:systems:core-v-mini-mcu $(FUSESOC_PARAM) 2>&1 | tee builddesigncompiler.log
 
 openroad-sky130:
-	git checkout hw/vendor/pulp_platform_common_cells/*
-	sed -i 's/(\*[^\n]*\*)//g' hw/vendor/pulp_platform_common_cells/src/*.sv
+	git checkout hw/vendor/pulp_platform/common_cells/*
+	sed -i 's/(\*[^\n]*\*)//g' hw/vendor/pulp_platform/common_cells/src/*.sv
 	$(FUSESOC) --verbose --cores-root . run --target=asic_yosys_synthesis --flag=use_sky130 openhwgroup.org:systems:core-v-mini-mcu $(FUSESOC_PARAM) 2>&1 | tee buildopenroad.log
-	git checkout hw/vendor/pulp_platform_common_cells/*
+	git checkout hw/vendor/pulp_platform/common_cells/*
 
 ## @section Program, Execute, and Debug w/ EPFL_Programmer
 
