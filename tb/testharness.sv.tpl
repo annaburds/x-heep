@@ -782,21 +782,21 @@ module testharness #(
           .MaxClkDiv(32),
           .DataWidth(32)
       ) serial_link_xheep_wrapper_i (
-          .clk_i        (clk_i),
-          .rst_ni       (rst_ni),
-          .clk_reg_i    (clk_i),
-          .rst_reg_ni   (rst_ni),
-          .testmode_i   ('0),
-          .writer_req_i    (ext_slave_req[testharness_pkg::SL_EXT_IDX]),
-          .writer_rsp_i    (ext_slave_resp[testharness_pkg::SL_EXT_IDX]),
-          .reader_req_i (),
+          .clk_i,
+          .rst_ni,
+          .clk_reg_i     (clk_i),
+          .rst_reg_ni    (rst_ni),
+          .testmode_i    ('0),
+          .writer_req_i  (ext_slave_req[testharness_pkg::SL_EXT_IDX]),
+          .writer_rsp_i  (ext_slave_resp[testharness_pkg::SL_EXT_IDX]),
+          .reader_req_i  ('0),
           .reader_resp_o(),
-          .cfg_req_i    (ext_periph_slv_req[testharness_pkg::SL_REG_IDX]),
-          .cfg_rsp_o    (ext_periph_slv_rsp[testharness_pkg::SL_REG_IDX]),
-          .ddr_i        (ddr_o_xheep),
-          .ddr_rcv_clk_i(ddr_clk_o_xheep),
-          .ddr_rcv_clk_o(ddr_clk_i_xheep),
-          .ddr_o        (ddr_i_xheep)
+          .cfg_req_i     (ext_periph_slv_req[testharness_pkg::SL_REG_IDX]),
+          .cfg_rsp_o     (ext_periph_slv_rsp[testharness_pkg::SL_REG_IDX]),
+          .ddr_i         (ddr_o_xheep),
+          .ddr_rcv_clk_i (ddr_clk_o_xheep),
+          .ddr_rcv_clk_o (ddr_clk_i_xheep),
+          .ddr_o         (ddr_i_xheep)
       );
     %endif
 

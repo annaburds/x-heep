@@ -58,6 +58,8 @@ hw/ip/boot_rom/boot_rom.dump
 
 hw/fpga/sram_wrapper.sv
 hw/fpga/scripts/generate_sram.tcl
+hw/fpga/constraints/pynq-z2/constraints.xdc
+hw/fpga/constraints/pynq-z2/pin_assign.xdc
 
 hw/vendor/xheep/spi/rtl/spi_subsystem.sv
 
