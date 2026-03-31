@@ -182,12 +182,6 @@ module testharness #(
   assign gpio[2] = ddr_i_xheep[0][1];
   assign gpio[3] = ddr_i_xheep[0][2];
   assign gpio[6] = ddr_i_xheep[0][3];
-  %else:
-  assign ddr_clk_o_xheep = '0;  
-  assign ddr_o_xheep[0] = '0;
-  assign ddr_o_xheep[1] = '0;
-  assign ddr_o_xheep[2] = '0;
-  assign ddr_o_xheep[3] = '0;
   %endif
 
   reg_pkg::reg_req_t [testharness_pkg::EXT_NPERIPHERALS-1:0] ext_periph_slv_req;
@@ -307,8 +301,8 @@ module testharness #(
       .gpio_11_io(gpio[11]),
       .gpio_12_io(gpio[12]),
       .gpio_13_io(gpio[13]),
-      .ddr_rcv_clk_i_i(ddr_clk_i_xheep[0]),
-      .ddr_rcv_clk_o_o(ddr_clk_o_xheep[0]),
+      .ddr_rcv_clk_i(ddr_clk_i_xheep[0]),
+      .ddr_snd_clk_o(ddr_clk_o_xheep[0]),
       .spi_slave_sck_io(spi_sck),
       .spi_slave_cs_io(spi_csb[0]),
       .spi_slave_miso_io(spi_sd_io[1]),
@@ -795,9 +789,15 @@ module testharness #(
           .cfg_rsp_o     (ext_periph_slv_rsp[testharness_pkg::SL_REG_IDX]),
           .ddr_i         (ddr_o_xheep),
           .ddr_rcv_clk_i (ddr_clk_o_xheep),
-          .ddr_rcv_clk_o (ddr_clk_i_xheep),
+          .ddr_snd_clk_o (ddr_clk_i_xheep),
           .ddr_o         (ddr_i_xheep)
       );
+    %else:
+    assign ddr_clk_i_xheep='0;
+    assign gpio[1] = '0;
+    assign gpio[2] = '0;
+    assign gpio[3] = '0;
+    assign gpio[6] = '0;
     %endif
 
     end else begin : gen_DONT_USE_EXTERNAL_DEVICE_EXAMPLE

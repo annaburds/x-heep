@@ -526,9 +526,15 @@ module core_v_mini_mcu
       .i2s_sd_i(i2s_sd_i),
       .i2s_rx_valid_o(i2s_rx_valid),
       .ddr_rcv_clk_i,  
-      .ddr_rcv_clk_o,
-      .ddr_i,
-      .ddr_o,
+      .ddr_snd_clk_o,
+      .ddr_rcv_0_i,
+      .ddr_rcv_1_i,
+      .ddr_rcv_2_i,
+      .ddr_rcv_3_i,
+      .ddr_snd_0_o,
+      .ddr_snd_1_o,
+      .ddr_snd_2_o,
+      .ddr_snd_3_o,
       .uart_rx_i,
       .uart_tx_o
   );
