@@ -82,7 +82,6 @@ sw/device/lib/drivers/w25q128jw_controller/w25q128jw_controller_structs.h
 sw/device/lib/drivers/w25q128jw_controller/w25q128jw_controller_regs.md
 
 sw/device/lib/drivers/power_manager/power_manager_regs.h
-sw/device/lib/drivers/power_manager/power_manager.h
 sw/device/lib/drivers/power_manager/power_manager_structs.h
 sw/device/lib/drivers/power_manager/power_manager_regs.md
 
