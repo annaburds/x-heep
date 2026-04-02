@@ -26,12 +26,11 @@ create_clock -name clk_ddr_in -period $T_FWD_CLK -waveform $ddr_edge_list [get_p
 # The data launching clock with 0 degree clock phase
 create_generated_clock -name clk_slow -source [get_pins xilinx_clk_wizard_wrapper_i/clk_out1_0] -divide_by $FWD_CLK_DIV \
     [get_pins -hierarchical clk_slow_reg/Q]
-
-
+# this is the "forwarded clock", we are assuming it is shifted by -90 or +270 degrees (or +90 degrees and inverted)
 set ddr_edge_list [list [expr 1 + $FWD_CLK_DIV / 2 * 3] [expr 1 + $FWD_CLK_DIV / 2 * 5] [expr 1 + $FWD_CLK_DIV / 2 * 7]]
 create_generated_clock -name clk_ddr_out -source [get_pins xilinx_clk_wizard_wrapper_i/clk_out1_0] -edges $ddr_edge_list \
     [get_pins -hierarchical ddr_rcv_clk_o_reg/Q]
-  
+
 # Input
 set_false_path -setup -rise_from [get_clocks vir_clk_ddr_in] -rise_to [get_clocks clk_ddr_in]
 set_false_path -setup -fall_from [get_clocks vir_clk_ddr_in] -fall_to [get_clocks clk_ddr_in]
