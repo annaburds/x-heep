@@ -75,8 +75,8 @@ set_input_delay -add_delay -min -clock_fall -clock [get_clocks vir_clk_ddr_in] [
 # gpio_io[8]  = ddr_o_1
 # gpio_io[9]  = ddr_o_2
 # gpio_io[10] = ddr_o_3
-set_output_delay -max -clock [get_clocks clk_ddr_out] [expr $T_FWD_CLK / 4 + $MARGIN] -reference_pin [get_ports ddr_snd_clk_o] [get_ports {gpio_io[7] gpio_io[8] gpio_io[9] gpio_io[10]}]
-set_output_delay -add_delay -min -clock [get_clocks clk_ddr_out] [expr $T_FWD_CLK / 4 - $MARGIN] -reference_pin [get_ports ddr_snd_clk_o] [get_ports {gpio_io[7] gpio_io[8] gpio_io[9] gpio_io[10]}]
-set_output_delay -add_delay -max -clock_fall -clock [get_clocks clk_ddr_out] [expr $T_FWD_CLK / 4 + $MARGIN] -reference_pin [get_ports ddr_snd_clk_o] [get_ports {gpio_io[7] gpio_io[8] gpio_io[9] gpio_io[10]}]
-set_output_delay -add_delay -min -clock_fall -clock [get_clocks clk_ddr_out] [expr $T_FWD_CLK / 4 - $MARGIN] -reference_pin [get_ports ddr_snd_clk_o] [get_ports {gpio_io[7] gpio_io[8] gpio_io[9] gpio_io[10]}]
+set_output_delay -max -clock [get_clocks clk_ddr_out] [expr $T_FWD_CLK / 4 - $MARGIN] -reference_pin [get_ports ddr_snd_clk_o] [get_ports {gpio_io[7] gpio_io[8] gpio_io[9] gpio_io[10]}]
+set_output_delay -add_delay -min -clock [get_clocks clk_ddr_out] [expr $MARGIN - $T_FWD_CLK / 4] -reference_pin [get_ports ddr_snd_clk_o] [get_ports {gpio_io[7] gpio_io[8] gpio_io[9] gpio_io[10]}]
+set_output_delay -add_delay -max -clock_fall -clock [get_clocks clk_ddr_out] [expr $T_FWD_CLK / 4 - $MARGIN] -reference_pin [get_ports ddr_snd_clk_o] [get_ports {gpio_io[7] gpio_io[8] gpio_io[9] gpio_io[10]}]
+set_output_delay -add_delay -min -clock_fall -clock [get_clocks clk_ddr_out] [expr $MARGIN - $T_FWD_CLK / 4] -reference_pin [get_ports ddr_snd_clk_o] [get_ports {gpio_io[7] gpio_io[8] gpio_io[9] gpio_io[10]}]
 % endif
