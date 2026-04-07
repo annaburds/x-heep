@@ -173,10 +173,19 @@ module testharness #(
   % if user_peripheral_domain.contains_peripheral('serial_link'):
   wire [serial_link_single_channel_reg_pkg::NumChannels-1:0][serial_link_minimum_axi_pkg::NumLanes-1:0] ddr_i_xheep;
   wire [serial_link_single_channel_reg_pkg::NumChannels-1:0][serial_link_minimum_axi_pkg::NumLanes-1:0] ddr_o_xheep;
+ `ifdef QUESTA
+  // Workaround for a bug in Questa: GPIOs are inout and assigned to z at 0ns 
+  assign ddr_o_xheep[0][0] = (gpio[7]  === 1'bz) ? 1'b0 : gpio[7];
+  assign ddr_o_xheep[0][1] = (gpio[8]  === 1'bz) ? 1'b0 : gpio[8];
+  assign ddr_o_xheep[0][2] = (gpio[9]  === 1'bz) ? 1'b0 : gpio[9];
+  assign ddr_o_xheep[0][3] = (gpio[10] === 1'bz) ? 1'b0 : gpio[10];
+  `else
+  // Verilator
   assign ddr_o_xheep[0][0] = gpio[7];
   assign ddr_o_xheep[0][1] = gpio[8];
   assign ddr_o_xheep[0][2] = gpio[9];
   assign ddr_o_xheep[0][3] = gpio[10];
+  `endif
 
   assign gpio[1] = ddr_i_xheep[0][0];
   assign gpio[2] = ddr_i_xheep[0][1];
