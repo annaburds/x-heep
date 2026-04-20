@@ -12,26 +12,30 @@ module xilinx_core_v_mini_mcu_wrapper
 ) (
 
 `ifdef FPGA_ZCU104
-    inout  logic clk_300mhz_n,
-    inout  logic clk_300mhz_p,
+    inout logic clk_300mhz_n,
+    inout logic clk_300mhz_p,
 `elsif FPGA_ZCU102
-    inout  logic clk_125mhz_n,
-    inout  logic clk_125mhz_p,
+    inout logic clk_125mhz_n,
+    inout logic clk_125mhz_p,
 `elsif FPGA_AUP_ZU3
-    inout  logic clk_100mhz_n,
-    inout  logic clk_100mhz_p,
+    inout logic clk_100mhz_n,
+    inout logic clk_100mhz_p,
 `elsif FPGA_GENESYS2
-    inout  logic clk_200mhz_n,
-    inout  logic clk_200mhz_p,
+    inout logic clk_200mhz_n,
+    inout logic clk_200mhz_p,
 `elsif FPGA_NEXYS
-    inout  logic clk_i,
+    inout logic clk_i,
 `else
-    inout  logic clk_i,
-    // Serial Link DDR clock ports for PYNQ Z2 board
-    input  wire  ddr_rcv_clk_i,
-    output wire  ddr_snd_clk_o,
+    inout logic clk_i,
 `endif
-    inout  logic rst_i,
+
+`ifndef NO_DDR_CLK_PORTS
+    // Serial Link DDR clock ports for PYNQ Z2 board (set in .core file)
+    input  wire ddr_rcv_clk_i,
+    output wire ddr_snd_clk_o,
+`endif
+
+    inout logic rst_i,
 
     output logic rst_led_o,
     output logic clk_led_o,
@@ -108,10 +112,6 @@ module xilinx_core_v_mini_mcu_wrapper
   `define NO_DDR_CLK_PORTS
 `endif
 
-`ifdef NO_DDR_CLK_PORTS
-  wire ddr_rcv_clk_i;
-  wire ddr_snd_clk_o;
-`endif
 
   // reset LED for debugging
   assign rst_led_o = rst_n;
@@ -231,8 +231,13 @@ module xilinx_core_v_mini_mcu_wrapper
       .gpio_11_io(gpio_io[11]),
       .gpio_12_io(gpio_io[12]),
       .gpio_13_io(gpio_io[13]),
+`ifndef NO_DDR_CLK_PORTS
       .ddr_rcv_clk_i,
       .ddr_snd_clk_o,
+`else
+      .ddr_rcv_clk_i(1'b0),
+      .ddr_snd_clk_o(),
+`endif
       .spi_slave_sck_io(spi_slave_sck_io),
       .spi_slave_cs_io(spi_slave_cs_io),
       .spi_slave_miso_io(spi_slave_miso_io),
