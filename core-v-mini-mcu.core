@@ -241,9 +241,8 @@ parameters:
     datatype: bool
     paramtype: vlogdefine
     default: false
-  # Make the parameter known to FuseSoC to enable overrides from the
-  # command line. If not overwritten, use the generic technology library.
   NO_DDR_CLK_PORTS:
+    datatype: bool
     paramtype: vlogdefine
     default: false
   PRIM_DEFAULT_IMPL:
