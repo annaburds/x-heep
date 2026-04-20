@@ -100,19 +100,6 @@ module xilinx_core_v_mini_mcu_wrapper
   assign rst_n = !rst_i;
 `endif
 
-`ifdef FPGA_ZCU104
-  `define NO_DDR_CLK_PORTS
-`elsif FPGA_ZCU102
-  `define NO_DDR_CLK_PORTS
-`elsif FPGA_AUP_ZU3
-  `define NO_DDR_CLK_PORTS
-`elsif FPGA_GENESYS2
-  `define NO_DDR_CLK_PORTS
-`elsif FPGA_NEXYS
-  `define NO_DDR_CLK_PORTS
-`endif
-
-
   // reset LED for debugging
   assign rst_led_o = rst_n;
 
