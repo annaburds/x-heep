@@ -275,7 +275,7 @@ verilator-waves: .check-gtkwave
 questasim-run: 
 	$(MAKE) -C $(QUESTASIM_DIR) run PLUSARGS="c firmware=../../../sw/build/main.hex"
 
-## Does the same as Questasim-run and on top generates vcd and opens questasim waveforms
+## Does the same as Questasim-run and on top generates and opens waveforms
 questasim-waveforms:
 	$(MAKE) -C $(QUESTASIM_DIR) run \
 		PLUSARGS="c firmware=../../../sw/build/main.hex" \
